@@ -106,7 +106,12 @@ export function SnowField({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    // Sem animação contínua com "reduzir movimento", economia de dados ou aparelho fraco
+    const reduced =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      Boolean(conn?.saveData) ||
+      (navigator.hardwareConcurrency ?? 8) <= 2;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const crystalSprite = makeCrystalSprite(64);
     const dotSprite = makeDotSprite(32);

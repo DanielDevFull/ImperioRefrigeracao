@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, IBM_Plex_Sans } from "next/font/google";
+import { MotionProvider } from "@/components/brand/motion-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -41,7 +42,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`dark ${cinzel.variable} ${plex.variable} h-full`}>
       <body className="min-h-full">
-        <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
+        </MotionProvider>
         <Toaster position="top-center" richColors closeButton />
       </body>
     </html>

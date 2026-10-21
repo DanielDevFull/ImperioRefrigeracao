@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { createContext, startTransition, useContext, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -86,3 +86,48 @@ export function Field({
 /** Classe padrão para <select> nativo no tema. */
 export const nativeSelectClass =
   "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm text-silver shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 [&>option]:bg-night";
+
+const PendingContext = createContext(false);
+
+/**
+ * Formulário ligado a uma Server Action (via useActionState) SEM o reset automático do React 19:
+ * quando a validação falha, o que a pessoa digitou continua nos campos.
+ * Uso: const [state, action, pending] = useActionState(acao, initialActionState);
+ *      <ActionForm action={action} pending={pending}>…<FormSubmit>Salvar</FormSubmit></ActionForm>
+ */
+export function ActionForm({
+  action,
+  pending,
+  className,
+  children,
+}: {
+  action: (fd: FormData) => void;
+  pending: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <form
+      className={className}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (pending) return;
+        const fd = new FormData(e.currentTarget);
+        startTransition(() => action(fd));
+      }}
+    >
+      <PendingContext.Provider value={pending}>{children}</PendingContext.Provider>
+    </form>
+  );
+}
+
+/** Botão de envio do ActionForm, com indicador de carregamento. */
+export function FormSubmit({ children, disabled, ...props }: React.ComponentProps<typeof Button>) {
+  const pending = useContext(PendingContext);
+  return (
+    <Button type="submit" disabled={pending || disabled} {...props}>
+      {pending && <Loader2 className="animate-spin" />}
+      {children}
+    </Button>
+  );
+}

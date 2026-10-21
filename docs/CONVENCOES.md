@@ -81,7 +81,8 @@ Datas: sempre `todayISO()` (fuso de São Paulo) e funções de `@/lib/dates`. Ex
 
 ## Formulários
 
-Padrão: componente cliente com `useActionState(acao, initialActionState)` + Server Action que recebe `FormData`,
+Padrão: componente cliente com `useActionState(acao, initialActionState)` + `ActionForm`/`FormSubmit`
+(evita que o React 19 limpe os campos quando a validação falha) + Server Action que recebe `FormData`,
 valida com **zod** e devolve `ActionState` (`{ ok, error, fieldErrors, message, id }`). Use `runAction(async () => …)`
 para transformar erros de regra em mensagem. Helpers: `formValues(fd)` (lê string/número/dinheiro "1.234,56"),
 `zodFieldErrors`, `SubmitButton`, `Field`, `FieldError`, `useActionToast`, `nativeSelectClass`, `MaskedInput`

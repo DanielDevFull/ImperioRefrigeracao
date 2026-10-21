@@ -33,7 +33,7 @@ export function ReadoutBand({ items, className }: { items: Readout[]; className?
               value={it.value}
               format={it.format ?? "integer"}
               className={cn(
-                "readout mt-1.5 block text-2xl font-semibold md:text-[1.7rem]",
+                "readout mt-1.5 block whitespace-nowrap text-xl font-semibold sm:text-2xl md:text-[1.7rem]",
                 it.tone ? toneText[it.tone] : "text-silver",
               )}
             />
@@ -41,7 +41,7 @@ export function ReadoutBand({ items, className }: { items: Readout[]; className?
           </>
         );
         const cls = cn(
-          "relative flex flex-col px-5 py-4 md:py-5",
+          "relative flex min-w-0 flex-col px-4 py-4 sm:px-5 md:py-5",
           i % 2 === 1 && "border-l border-rime md:border-l",
           i >= 2 && "border-t border-rime md:border-t-0",
           i > 0 && "md:border-l md:border-rime",

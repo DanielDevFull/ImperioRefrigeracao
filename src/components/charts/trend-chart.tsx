@@ -44,7 +44,7 @@ export function TrendChart({
             <YAxis
               tickLine={false}
               axisLine={false}
-              width={64}
+              width={80}
               tick={{ fill: CHART.axis, fontSize: 12 }}
               tickFormatter={(v: number) => formatValue(v, format === "brl" ? "brl-compact" : format)}
             />

@@ -68,7 +68,7 @@ function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone:
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="CNPJ ou CPF" error={e.document} htmlFor="sp-doc">
-          <MaskedInput id="sp-doc" name="document" mask="cpfcnpj" defaultValue={supplier?.document} className="h-9 tabular-nums" />
+          <MaskedInput id="sp-doc" name="document" mask="cpfcnpj" defaultValue={supplier?.document ?? undefined} className="h-9 tabular-nums" />
         </Field>
         <Field label="Contato" error={e.contactName} htmlFor="sp-contact">
           <Input id="sp-contact" name="contactName" defaultValue={supplier?.contactName ?? ""} className="h-9" placeholder="Nome do vendedor" />
@@ -76,7 +76,7 @@ function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone:
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Telefone / WhatsApp" error={e.phone} htmlFor="sp-phone">
-          <MaskedInput id="sp-phone" name="phone" mask="phone" defaultValue={supplier?.phone} className="h-9 tabular-nums" />
+          <MaskedInput id="sp-phone" name="phone" mask="phone" defaultValue={supplier?.phone ?? undefined} className="h-9 tabular-nums" />
         </Field>
         <Field label="E-mail" error={e.email} htmlFor="sp-email">
           <Input id="sp-email" name="email" type="email" defaultValue={supplier?.email ?? ""} className="h-9" placeholder="pedidos@fornecedor.com.br" />

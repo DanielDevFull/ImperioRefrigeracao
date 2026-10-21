@@ -145,7 +145,7 @@ export default async function ContratosPage({ searchParams }: PageProps<"/admin/
                       <span className="tabular-nums text-silver">{formatBRL(r.monthlyAmount)}/mês</span>
                       <span className="text-steel">dia {r.billingDay}</span>
                       <span className="text-steel">{r.equipmentCount} equip.</span>
-                      {r.overdue > 0 && <ToneBadge tone="red">{r.overdue} em atraso</ToneBadge>}
+                      {r.overdue > 0 && <ToneBadge tone="red">{r.overdue === 1 ? "1 vencida" : `${r.overdue} vencidas`}</ToneBadge>}
                     </div>
                   </Link>
                 </li>

@@ -283,7 +283,7 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
         : "Inicie o atendimento para liberar o checklist.";
   const locked = !WORKING.has(status) || closed;
   const when = data.scheduledDate
-    ? `${data.scheduledDate === data.today ? "Hoje" : data.scheduledDate < data.today ? `Atrasada, era ${formatDayMonth(data.scheduledDate)}` : formatDate(data.scheduledDate)}${
+    ? `${data.scheduledDate === data.today ? "Hoje" : data.scheduledDate < data.today && !closed ? `Atrasada, era ${formatDayMonth(data.scheduledDate)}` : `Agendada para ${formatDate(data.scheduledDate)}`}${
         data.scheduledTime ? `, ${formatTime(data.scheduledTime)}${data.endTime ? ` até ${data.endTime}` : ""}` : ""
       }`
     : "Sem data marcada";
@@ -314,6 +314,7 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ duration: 0.2 }}
+              className="inline-flex"
             >
               <WorkOrderStatusBadge status={status} />
             </motion.span>
@@ -452,7 +453,17 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
               : { left: "50%", bottom: 40, width: 1, height: 1 }
           }
         >
-          <FrostBurst burstKey={burst.key} size={280} />
+          {!reduce && (
+            <motion.span
+              key={burst.key}
+              className="absolute left-1/2 top-1/2 size-40 -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{ background: "radial-gradient(circle, rgb(62 224 181 / 0.55), rgb(56 168 255 / 0.15) 45%, transparent 70%)" }}
+              initial={{ scale: 0.4, opacity: 0.9 }}
+              animate={{ scale: 2.2, opacity: 0 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            />
+          )}
+          <FrostBurst burstKey={burst.key} size={300} />
         </div>
       )}
 

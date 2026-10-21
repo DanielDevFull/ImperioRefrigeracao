@@ -266,7 +266,6 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
 
           <Panel title="Diagnóstico e solução" description="Preenchidos pelo técnico no app; a central pode complementar.">
             <NotesForm
-              key={wo.updatedAt.toISOString()}
               id={wo.id}
               values={{ description: wo.description, diagnosis: wo.diagnosis, solution: wo.solution, technicianNotes: wo.technicianNotes }}
             />

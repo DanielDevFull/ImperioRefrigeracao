@@ -31,7 +31,7 @@ export function PortalTabs({
               scroll={false}
               aria-current={on ? "page" : undefined}
               className={cn(
-                "relative whitespace-nowrap rounded-lg px-3.5 py-2 text-sm transition-colors",
+                "relative whitespace-nowrap rounded-lg px-2.5 py-2 text-sm transition-colors sm:px-3.5",
                 on ? "text-silver" : "text-steel hover:text-silver",
               )}
             >

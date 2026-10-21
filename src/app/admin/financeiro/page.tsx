@@ -19,6 +19,7 @@ import { allCategories, bankBalances, getOverview } from "./_lib/queries";
 
 export const metadata: Metadata = { title: "Financeiro" };
 
+const bandFit = "[&_.readout]:whitespace-nowrap max-md:[&_.readout]:text-xl max-md:[&>*]:px-4";
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const plural = (n: number, one: string, many: string) => (n === 1 ? `1 ${one}` : `${n} ${many}`);
 
@@ -53,6 +54,7 @@ export default async function FinanceOverviewPage({ searchParams }: PageProps<"/
       />
 
       <ReadoutBand
+        className={bandFit}
         items={[
           {
             label: "Saldo atual",
@@ -100,7 +102,7 @@ export default async function FinanceOverviewPage({ searchParams }: PageProps<"/
         </div>
 
         <ReadoutBand
-          className="md:grid-cols-3"
+          className={bandFit}
           items={[
             { label: "Recebido no mês", value: o.month.received, format: "brl", href: `/admin/financeiro/receber?status=pago&mes=${month}` },
             { label: "Pago no mês", value: o.month.paid, format: "brl", href: `/admin/financeiro/pagar?status=pago&mes=${month}` },
@@ -110,7 +112,11 @@ export default async function FinanceOverviewPage({ searchParams }: PageProps<"/
               format: "brl",
               tone: o.month.result < 0 ? "red" : o.month.result > 0 ? "mint" : undefined,
               hint:
-                o.month.received > 0 ? `Margem de ${formatPercent(o.month.result / o.month.received)}` : undefined,
+                o.month.received > 0 && o.month.result >= -o.month.received
+                  ? `Margem de ${formatPercent(o.month.result / o.month.received)}`
+                  : o.month.result < 0
+                    ? "Despesas maiores que as receitas"
+                    : undefined,
             },
           ]}
         />
@@ -255,7 +261,7 @@ function Dre({
         <SectionRow label="Receitas" />
         {revenue.length === 0 && (
           <TableRow className="border-rime hover:bg-transparent">
-            <TableCell colSpan={3} className="pl-8 text-sm text-steel">
+            <TableCell colSpan={3} className="pl-8 pr-5 text-sm text-steel">
               Nenhum recebimento confirmado no mês.
             </TableCell>
           </TableRow>
@@ -267,7 +273,7 @@ function Dre({
         <SectionRow label="Despesas" />
         {expense.length === 0 && (
           <TableRow className="border-rime hover:bg-transparent">
-            <TableCell colSpan={3} className="pl-8 text-sm text-steel">
+            <TableCell colSpan={3} className="pl-8 pr-5 text-sm text-steel">
               Nenhuma despesa paga no mês.
             </TableCell>
           </TableRow>
@@ -279,11 +285,14 @@ function Dre({
         <TableRow className="border-0 bg-ice/[0.05] hover:bg-ice/[0.05]">
           <TableCell className="py-3.5 pl-5 text-sm font-semibold text-silver">Resultado do mês</TableCell>
           <TableCell
-            className={cn("py-3.5 text-right text-base font-semibold tabular-nums", result < 0 ? "text-gauge-red" : "text-mint")}
+            className={cn(
+              "py-3.5 text-right text-base font-semibold tabular-nums max-sm:pr-5",
+              result < 0 ? "text-gauge-red" : "text-mint",
+            )}
           >
             {formatBRL(result)}
           </TableCell>
-          <TableCell className="w-20 py-3.5 pr-5 text-right text-xs tabular-nums text-steel">{share(result)}</TableCell>
+          <TableCell className="hidden w-20 py-3.5 pr-5 text-right text-xs tabular-nums text-steel sm:table-cell">{share(result)}</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -293,10 +302,10 @@ function Dre({
 function SectionRow({ label }: { label: string }) {
   return (
     <TableRow className="border-rime hover:bg-transparent">
-      <TableCell colSpan={2} className="pl-5 pt-4 text-xs font-medium text-steel">
+      <TableCell colSpan={2} className="pl-5 pt-4 text-xs font-medium text-steel max-sm:pr-5">
         {label}
       </TableCell>
-      <TableCell className="w-20 pr-5 pt-4 text-right text-xs text-steel/70">% receita</TableCell>
+      <TableCell className="hidden w-20 pr-5 pt-4 text-right text-xs text-steel/70 sm:table-cell">% receita</TableCell>
     </TableRow>
   );
 }
@@ -305,10 +314,10 @@ function LineRow({ label, value, share }: { label: string; value: number; share:
   return (
     <TableRow className="border-rime/60">
       <TableCell className="pl-8 text-sm text-silver/90">{label}</TableCell>
-      <TableCell className={cn("text-right text-sm tabular-nums", value < 0 ? "text-silver/90" : "text-silver")}>
+      <TableCell className={cn("text-right text-sm tabular-nums max-sm:pr-5", value < 0 ? "text-silver/90" : "text-silver")}>
         {formatBRL(value)}
       </TableCell>
-      <TableCell className="w-20 pr-5 text-right text-xs tabular-nums text-steel">{share}</TableCell>
+      <TableCell className="hidden w-20 pr-5 text-right text-xs tabular-nums text-steel sm:table-cell">{share}</TableCell>
     </TableRow>
   );
 }
@@ -317,8 +326,8 @@ function TotalRow({ label, value, share }: { label: string; value: number; share
   return (
     <TableRow className="border-rime hover:bg-transparent">
       <TableCell className="pl-5 text-sm font-medium text-silver">{label}</TableCell>
-      <TableCell className="text-right text-sm font-medium tabular-nums text-silver">{formatBRL(value)}</TableCell>
-      <TableCell className="w-20 pr-5 text-right text-xs tabular-nums text-steel">{share}</TableCell>
+      <TableCell className="text-right text-sm font-medium tabular-nums text-silver max-sm:pr-5">{formatBRL(value)}</TableCell>
+      <TableCell className="hidden w-20 pr-5 text-right text-xs tabular-nums text-steel sm:table-cell">{share}</TableCell>
     </TableRow>
   );
 }

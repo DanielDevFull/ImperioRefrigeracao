@@ -78,7 +78,7 @@ export function describeStatus(wo: WoLike, technicianFirstName?: string | null):
         tone: "violet",
         live: false,
         detail: when
-          ? `Marcada para ${when}${tech ? ` com ${tech}` : ""}.`
+          ? `Marcada para ${when}${tech ? `, com ${tech}` : ""}.`
           : "A visita está agendada. Avisaremos a data por aqui.",
       };
     case "em_deslocamento":

@@ -271,7 +271,7 @@ export function CustomerForm({
         </Panel>
       )}
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col-reverse gap-2 border-t border-rime bg-abyss/85 px-4 py-3 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-end md:-mx-8 md:px-8">
+      <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-2 rounded-2xl border border-rime bg-night/90 px-4 py-3 shadow-[0_20px_40px_-12px_rgb(0_0_0/0.7)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-end">
         {state.error && !state.ok && (
           <p role="alert" className="text-sm text-gauge-red sm:mr-auto">
             {state.error}

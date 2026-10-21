@@ -290,9 +290,12 @@ export async function reactivateContract(contractId: string): Promise<ActionStat
     revalidatePath("/admin/financeiro/receber");
     return {
       ok: true,
-      message: `Contrato reativado: ${count(wos.created, "OM", "OMs")} e ${count(invoices.created, "mensalidade", "mensalidades")} ${
-        wos.created + invoices.created === 1 ? "gerada" : "geradas"
-      }`,
+      message:
+        wos.created + invoices.created === 0
+          ? "Contrato reativado: nada pendente para gerar agora"
+          : `Contrato reativado: ${count(wos.created, "OM", "OMs")} e ${count(invoices.created, "mensalidade", "mensalidades")} ${
+              wos.created + invoices.created === 1 ? "gerada" : "geradas"
+            }`,
     };
   });
 }

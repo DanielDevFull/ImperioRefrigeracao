@@ -5,7 +5,7 @@
  */
 import { addDays, diffDays, type ISODate } from "@/lib/dates";
 import type { Tone } from "@/lib/labels";
-import { tasksDueOn, upcomingVisits, visitIntervalMonths } from "@/server/core/schedule";
+import { scheduleDateFor, tasksDueOn, upcomingVisits, visitIntervalMonths } from "@/server/core/schedule";
 
 export type PlanTaskLike = {
   id: string;
@@ -21,17 +21,19 @@ export type LinkLike = {
   tasks: PlanTaskLike[];
 };
 
-export type ForecastVisit = { date: ISODate; tasks: PlanTaskLike[] };
+/** `due` é o vencimento pelo plano; `date` é o dia útil em que a visita deve acontecer. */
+export type ForecastVisit = { date: ISODate; due: ISODate; tasks: PlanTaskLike[] };
 
 /** Próximas visitas ainda não geradas como OM (as já geradas aparecem como OMs agendadas). */
-export function forecastVisits(link: LinkLike, today: ISODate, count: number): ForecastVisit[] {
+export function forecastVisits(link: LinkLike, today: ISODate, count: number, worksSaturday = false): ForecastVisit[] {
   if (!link.tasks.length) return [];
   const interval = visitIntervalMonths(link.tasks);
   const from =
     link.lastGeneratedDueDate && link.lastGeneratedDueDate >= today ? addDays(link.lastGeneratedDueDate, 1) : today;
-  return upcomingVisits(link.anchorDate, interval, from, count).map((date) => ({
-    date,
-    tasks: tasksDueOn(link.tasks, link.anchorDate, date),
+  return upcomingVisits(link.anchorDate, interval, from, count).map((due) => ({
+    due,
+    date: scheduleDateFor(due, today, worksSaturday),
+    tasks: tasksDueOn(link.tasks, link.anchorDate, due),
   }));
 }
 

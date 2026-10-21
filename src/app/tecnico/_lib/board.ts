@@ -32,3 +32,5 @@ export function greeting(now = new Date()) {
 }
 
 export const firstName = (name: string | null | undefined) => (name ?? "").trim().split(/\s+/)[0] || "técnico";
+
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

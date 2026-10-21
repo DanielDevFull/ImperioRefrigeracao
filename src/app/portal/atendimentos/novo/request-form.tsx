@@ -40,16 +40,30 @@ export function RequestForm({
   const [urgency, setUrgency] = useState<string>("normal");
   const chosen = equipment.find((e) => e.id === equipmentId) ?? null;
   const needsSite = sites.length > 1 && (!chosen || !chosen.siteId);
+  const [eqError, setEqError] = useState<string | null>(null);
   const fe = state.fieldErrors ?? {};
 
+  function choose(id: string) {
+    setEquipmentId(id);
+    setEqError(null);
+  }
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (!equipmentId) {
+      e.preventDefault();
+      setEqError("Escolha o equipamento, ou \"Outro / não sei\".");
+      document.getElementById("passo-equipamento")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} onSubmit={onSubmit} className="space-y-6">
       {/* 1. Equipamento */}
-      <Step n={1} title="Qual equipamento?" hint="Se não souber qual é, escolha a última opção.">
+      <Step n={1} id="passo-equipamento" title="Qual equipamento?" hint="Se não souber qual é, escolha a última opção.">
         <input type="hidden" name="equipmentId" value={equipmentId} />
         <div role="radiogroup" aria-label="Equipamento" className="grid gap-2 sm:grid-cols-2">
           {equipment.map((e) => (
-            <Choice key={e.id} selected={equipmentId === e.id} onSelect={() => setEquipmentId(e.id)}>
+            <Choice key={e.id} selected={equipmentId === e.id} onSelect={() => choose(e.id)}>
               <EquipmentTile icon={e.icon} size="sm" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium text-silver">{e.name}</span>
@@ -57,7 +71,7 @@ export function RequestForm({
               </span>
             </Choice>
           ))}
-          <Choice selected={equipmentId === "outro"} onSelect={() => setEquipmentId("outro")}>
+          <Choice selected={equipmentId === "outro"} onSelect={() => choose("outro")}>
             <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-steel/10 text-steel ring-1 ring-rime">
               <CircleHelp className="size-4" />
             </span>
@@ -67,7 +81,11 @@ export function RequestForm({
             </span>
           </Choice>
         </div>
-        {fe.equipmentId && <p className="mt-2 text-xs text-gauge-red">{fe.equipmentId}</p>}
+        {(eqError ?? fe.equipmentId) && (
+          <p role="alert" className="mt-2 text-xs text-gauge-red">
+            {eqError ?? fe.equipmentId}
+          </p>
+        )}
 
         {needsSite ? (
           <div className="mt-4 space-y-1.5">
@@ -189,7 +207,7 @@ export function RequestForm({
           name="periodo"
           maxLength={200}
           className="h-11"
-          placeholder="Ex.: manhãs de segunda a sexta, ou depois das 14h"
+          placeholder="Ex.: manhãs, ou depois das 14h"
           aria-invalid={Boolean(fe.periodo)}
         />
         {fe.periodo && <p className="mt-1 text-xs text-gauge-red">{fe.periodo}</p>}
@@ -197,7 +215,7 @@ export function RequestForm({
 
       <div className="flex flex-col-reverse gap-3 border-t border-rime pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-steel">Você acompanha o andamento em Atendimentos e recebe um aviso a cada etapa.</p>
-        <SubmitButton size="lg" className="h-12 w-full text-[0.95rem] sm:w-auto sm:px-6" disabled={!equipmentId}>
+        <SubmitButton size="lg" className="h-12 w-full text-[0.95rem] sm:w-auto sm:px-6">
           Enviar solicitação
         </SubmitButton>
       </div>
@@ -205,9 +223,9 @@ export function RequestForm({
   );
 }
 
-function Step({ n, title, hint, children }: { n: number; title: string; hint?: string; children: React.ReactNode }) {
+function Step({ n, id, title, hint, children }: { n: number; id?: string; title: string; hint?: string; children: React.ReactNode }) {
   return (
-    <fieldset className="panel p-4 sm:p-5">
+    <fieldset id={id} className="panel scroll-mt-24 p-4 sm:p-5">
       <legend className="sr-only">{title}</legend>
       <div className="mb-3.5 flex items-start gap-3">
         <span className="readout grid size-7 shrink-0 place-items-center rounded-full bg-ice/12 text-xs font-semibold text-ice ring-1 ring-ice/25">

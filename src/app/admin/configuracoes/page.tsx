@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { desc } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { jobRuns } from "@/db/schema";
+import { jobRuns, user } from "@/db/schema";
 import { PageHeader } from "@/components/system/page-header";
 import { Panel } from "@/components/system/panel";
 import { ToneBadge } from "@/components/system/tone-badge";
@@ -51,11 +51,14 @@ function parseSummary(raw: string | null): { data: RunSummary | null; text: stri
   }
 }
 
-function originLabel(triggeredBy: string | null) {
+function originLabel(triggeredBy: string | null, names: Map<string, string>) {
   if (!triggeredBy) return "—";
-  if (triggeredBy === "cron") return "Automática (6h)";
+  if (triggeredBy === "cron") return "Automática, às 6h";
   if (triggeredBy === "seed") return "Carga inicial";
-  if (triggeredBy.startsWith("manual:")) return `Manual, por ${triggeredBy.slice(7)}`;
+  if (triggeredBy.startsWith("manual:")) {
+    const email = triggeredBy.slice(7);
+    return `Manual, por ${names.get(email) ?? email}`;
+  }
   return triggeredBy;
 }
 
@@ -75,6 +78,11 @@ export default async function SettingsPage() {
     getSettings(),
     db.select().from(jobRuns).orderBy(desc(jobRuns.startedAt)).limit(10),
   ]);
+  const emails = [...new Set(runs.map((r) => r.triggeredBy).filter((t): t is string => !!t?.startsWith("manual:")).map((t) => t.slice(7)))];
+  const people = emails.length
+    ? await db.select({ email: user.email, name: user.name }).from(user).where(inArray(user.email, emails))
+    : [];
+  const names = new Map(people.map((p) => [p.email, p.name]));
 
   return (
     <>
@@ -179,16 +187,21 @@ export default async function SettingsPage() {
                     const running = !r.finishedAt;
                     const errors = data?.erros ?? [];
                     return (
-                      <li key={r.id} className="grid gap-2 px-5 py-3.5 sm:grid-cols-[11rem_1fr_auto] sm:items-start sm:gap-6">
+                      <li key={r.id} className="grid gap-2 px-5 py-3.5 sm:grid-cols-[13rem_1fr_auto] sm:items-start sm:gap-6">
                         <div>
                           <p className="readout text-sm text-silver">{formatDateTime(r.startedAt)}</p>
-                          <p className="text-xs text-steel">
-                            {originLabel(r.triggeredBy)}
-                            {duration(r.startedAt, r.finishedAt) && <span className="readout"> em {duration(r.startedAt, r.finishedAt)}</span>}
-                          </p>
+                          <p className="text-xs text-steel">{originLabel(r.triggeredBy, names)}</p>
+                          {duration(r.startedAt, r.finishedAt) && (
+                            <p className="readout text-xs text-steel/80">Levou {duration(r.startedAt, r.finishedAt)}</p>
+                          )}
                         </div>
                         <div className="min-w-0 text-sm text-steel">
-                          {data ? (
+                          {data && !data.mensalidades && !data.oms && !data.solicitacoesCompra && !(data.erros ?? []).length ? (
+                            <p>
+                              Nada novo para gerar. {plural(data.equipamentosVerificados ?? 0, "equipamento verificado", "equipamentos verificados")}, tudo
+                              em dia.
+                            </p>
+                          ) : data ? (
                             <>
                               <p>
                                 <span className="text-silver">{plural(data.mensalidades ?? 0, "mensalidade", "mensalidades")}</span>,{" "}

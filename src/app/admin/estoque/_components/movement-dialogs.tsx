@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useState } from "react";
 import { ArrowLeftRight, ClipboardCheck, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -339,10 +339,10 @@ function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fi
   useActionToast(state, { onSuccess: onDone });
   const { productId, setProductId, product, levelsOf } = useProduct(data, fixedProductId);
   const warehouse = defaultWarehouse(data.locations);
-  const firstVehicle = useMemo(
-    () => data.locations.find((l) => l.type === "veiculo" && l.id !== warehouse)?.id ?? data.locations.find((l) => l.id !== warehouse)?.id ?? "",
-    [data.locations, warehouse],
-  );
+  const firstVehicle =
+    data.locations.find((l) => l.type === "veiculo" && l.id !== warehouse)?.id ??
+    data.locations.find((l) => l.id !== warehouse)?.id ??
+    "";
   const [fromId, setFromId] = useState(warehouse);
   const [toId, setToId] = useState(firstVehicle);
   const [qty, setQty] = useState("");

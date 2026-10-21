@@ -38,8 +38,9 @@ export function receivableTitle(rec: Pick<Receivable, "kind" | "competence" | "d
 
 export function receivableSubtitle(rec: Pick<Receivable, "kind" | "competence" | "description">) {
   if (rec.kind === "mensalidade" && rec.competence) {
-    const plan = rec.description.replace(/^Mensalidade\s+/, "").split(" — ")[0];
-    return plan || "Plano de manutenção";
+    const rest = rec.description.replace(/^Mensalidade\s+/, "");
+    const cut = rest.lastIndexOf(" — ");
+    return (cut > 0 ? rest.slice(0, cut) : rest) || "Plano de manutenção";
   }
   return rec.kind === "servico" ? "Serviço avulso" : "Cobrança";
 }

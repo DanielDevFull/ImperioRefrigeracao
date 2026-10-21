@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { db } from "@/db";
 import { receivables, workOrders } from "@/db/schema";
-import { Emblem } from "@/components/brand/emblem";
 import { SnowField } from "@/components/brand/snow-field";
 import { EmptyState } from "@/components/system/empty-state";
 import { Panel } from "@/components/system/panel";
@@ -30,7 +29,7 @@ import { addDays, diffDays, todayISO } from "@/lib/dates";
 import { formatBRL, formatCompetence, formatDate, formatTime } from "@/lib/format";
 import { effectiveFinanceStatus, type Tone } from "@/lib/labels";
 import { getSettings } from "@/server/settings";
-import { CustomerStatusBadge, DateChip, EquipmentTile, HealthMeter, SectionTitle, ToneDot } from "./_components/bits";
+import { DateChip, EquipmentTile, HealthMeter, SectionTitle, ToneDot } from "./_components/bits";
 import { PayButton } from "./_components/pay-button";
 import { RatingDisplay } from "./_components/rating";
 import { capitalize, firstName, formatDayMonthLong, formatWeekday, greeting, workOrderTypeForCustomer } from "./_lib/copy";
@@ -219,7 +218,6 @@ export default async function PortalHome() {
           className="absolute inset-0 bg-[radial-gradient(70%_90%_at_92%_-10%,rgb(56_168_255/0.26),transparent_65%),radial-gradient(55%_70%_at_0%_115%,rgb(22_119_214/0.22),transparent_70%)]"
         />
         <SnowField density="calm" interactive={false} />
-        <Emblem size={340} className="pointer-events-none absolute -right-20 -top-16 hidden opacity-[0.05] lg:grid" />
         <div className="relative grid gap-7 px-5 py-7 sm:px-8 md:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] md:items-end md:gap-10 md:px-10 md:py-10">
           <div className="min-w-0">
             <p className="text-sm text-frost/80">{greeting()}</p>
@@ -241,16 +239,16 @@ export default async function PortalHome() {
                 Aqui você acompanha seus equipamentos, atendimentos e pagamentos com a Imperium.
               </p>
             )}
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Button asChild size="lg" className="h-11 px-4">
+            <div className="mt-6 flex gap-2">
+              <Button asChild size="lg" className="h-11 flex-1 px-4 sm:flex-none">
                 <Link href="/portal/atendimentos/novo">
                   <Plus /> Solicitar atendimento
                 </Link>
               </Button>
               {wa && (
-                <Button asChild variant="outline" size="lg" className="h-11 bg-abyss/30 px-4">
-                  <a href={wa} target="_blank" rel="noreferrer">
-                    <MessageCircle /> WhatsApp
+                <Button asChild variant="outline" size="lg" className="h-11 bg-abyss/30 px-3.5 sm:px-4">
+                  <a href={wa} target="_blank" rel="noreferrer" aria-label="Falar no WhatsApp">
+                    <MessageCircle /> <span className="hidden sm:inline">WhatsApp</span>
                   </a>
                 </Button>
               )}
@@ -422,12 +420,15 @@ export default async function PortalHome() {
                         {firstName(w.technician?.name) && (
                           <p className="text-xs text-steel/80">Técnico {firstName(w.technician?.name)}</p>
                         )}
+                        <div className="mt-1.5 sm:hidden">
+                          {w.rating != null ? <RatingDisplay value={w.rating} /> : <span className="text-xs text-ice">Avalie o atendimento</span>}
+                        </div>
                       </div>
-                      <div className="shrink-0">
+                      <div className="hidden shrink-0 sm:block">
                         {w.rating != null ? (
                           <RatingDisplay value={w.rating} />
                         ) : (
-                          <CustomerStatusBadge status={w.status} />
+                          <span className="text-xs text-ice">Avalie o atendimento</span>
                         )}
                       </div>
                       <ChevronRight className="size-4 shrink-0 text-steel/60" />

@@ -16,6 +16,8 @@ import {
 import { todayISO } from "@/lib/dates";
 import { activeWorkOrderStatuses } from "@/lib/labels";
 import { PAGE_SIZE } from "@/lib/params";
+import { scheduleDateFor } from "@/server/core/schedule";
+import { getSettings } from "@/server/settings";
 import { forecastVisits } from "./forecast";
 
 export const EQUIPMENT_STATUSES = ["ativo", "em_manutencao", "inativo", "removido"] as const;
@@ -118,6 +120,7 @@ export async function listEquipment({
       planId: maintenancePlans.id,
       planName: maintenancePlans.name,
       anchorDate: contractEquipment.anchorDate,
+      lastGeneratedDueDate: contractEquipment.lastGeneratedDueDate,
       nextWorkOrderDate: sql<string | null>`(select min(coalesce(w.scheduled_date, w.due_date))::text from ${workOrders} w where w.equipment_id = ${EID} and w.status in (${ACTIVE_WO}))`,
     })
     .from(equipment)
@@ -156,6 +159,7 @@ export async function listEquipment({
         },
         today,
         1,
+        r.lastGeneratedDueDate,
       );
       if (first) nextVisit = { date: first.date, kind: "previsao" };
     }
@@ -217,6 +221,7 @@ export async function getEquipmentDetail(id: string) {
   if (!item) return null;
   const today = todayISO();
 
+  const settings = await getSettings();
   const history = await db.query.workOrders.findMany({
     where: eq(workOrders.equipmentId, id),
     with: {
@@ -251,7 +256,12 @@ export async function getEquipmentDetail(id: string) {
   return {
     item,
     active,
-    forecast: forecast.map((v) => ({ ...v, workOrder: byDue.get(v.date) ?? null })),
+    forecast: forecast.map((v) => ({
+      ...v,
+      /** Dia útil em que a OM será agendada (fim de semana vai para o dia útil anterior) */
+      scheduled: scheduleDateFor(v.date, today, settings.worksSaturday),
+      workOrder: byDue.get(v.date) ?? null,
+    })),
     openOrders,
     done,
     cancelled: history.filter((w) => w.status === "cancelada").length,

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { requireTechnician } from "@/lib/auth/session";
 import { addDays, todayISO } from "@/lib/dates";
 import { formatLongDate } from "@/lib/format";
-import { firstName, greeting, groupConsecutiveBySite } from "./_lib/board";
+import { capitalize, firstName, greeting, groupConsecutiveBySite } from "./_lib/board";
 import { countOn, monthSummary, todayBoard } from "./_lib/queries";
 import { TicketList } from "./_components/om-ticket";
 
@@ -30,7 +30,7 @@ export default async function TechTodayPage() {
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-sm capitalize text-steel">{formatLongDate(today)}</p>
+        <p className="text-sm text-steel">{capitalize(formatLongDate(today))}</p>
         <h1 className="font-display text-silver-brushed mt-1 text-[1.7rem] font-semibold leading-tight">
           {greeting()}, {firstName(technician.name)}
         </h1>

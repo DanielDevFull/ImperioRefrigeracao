@@ -230,9 +230,8 @@ function DescriptionCell({ row, showSupplier = false }: { row: PayableRow; showS
           </Link>
         )}
         {row.commissionPayoutId && (
-          <Link href="/admin/comissoes" className="text-ice hover:text-frost">
-            Comissão{row.payoutTechnician ? ` de ${row.payoutTechnician}` : ""}
-            {row.payoutPeriod ? `, ${formatCompetence(row.payoutPeriod)}` : ""}
+          <Link href="/admin/comissoes" className="text-ice hover:text-frost" title={[row.payoutTechnician, row.payoutPeriod ? formatCompetence(row.payoutPeriod) : null].filter(Boolean).join(", ")}>
+            Fechamento de comissão
           </Link>
         )}
       </span>

@@ -166,6 +166,12 @@ export function OmActions({
                 {transitionLabel(status, to)}
               </DropdownMenuItem>
             ))}
+            {status === "em_execucao" && (
+              <>
+                <DropdownMenuSeparator />
+                <p className="max-w-56 px-1.5 py-1 text-xs text-steel">Para cancelar, pause o atendimento antes.</p>
+              </>
+            )}
             {canCancel && (
               <>
                 {menu.length > 0 && <DropdownMenuSeparator />}

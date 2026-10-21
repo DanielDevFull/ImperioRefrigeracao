@@ -116,6 +116,7 @@ export default async function ComprasPage({ searchParams }: PageProps<"/admin/co
           <Panel flush title="Pedidos de compra" description="Rascunho, enviado ao fornecedor, recebido em partes ou por completo.">
             <div className="border-b border-rime p-4">
               <FilterTabs
+                className="w-fit"
                 param="status"
                 options={[
                   { value: "", label: "Todos", count: counts.all },

@@ -39,6 +39,7 @@ export function CustomerPicker({
           type="button"
           role="combobox"
           aria-expanded={open}
+          aria-controls="customer-picker-list"
           aria-invalid={invalid || undefined}
           className={cn(
             "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-input/30 px-3 text-left text-sm outline-none transition-colors hover:bg-input/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-gauge-red/60",
@@ -63,7 +64,7 @@ export function CustomerPicker({
           filter={(itemValue, search) => (itemValue.toLowerCase().includes(search.toLowerCase().trim()) ? 1 : 0)}
         >
           <CommandInput placeholder="Nome, CLI-0001 ou CPF/CNPJ" />
-          <CommandList>
+          <CommandList id="customer-picker-list">
             <CommandEmpty>Nenhum cliente encontrado. Cadastre o cliente antes de abrir a OM.</CommandEmpty>
             <CommandGroup>
               {customers.map((c) => (

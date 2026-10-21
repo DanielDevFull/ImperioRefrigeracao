@@ -196,8 +196,8 @@ export function EquipmentForm({
       </Panel>
 
       <Panel title="Especificações">
-        <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr_1fr]">
-          <Field label="Capacidade (BTU/h)" htmlFor="capacityBtu" error={fe.capacityBtu}>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.7fr)_1fr_1fr]">
+          <Field label="Capacidade (BTU/h)" htmlFor="capacityBtu" error={fe.capacityBtu} className="sm:col-span-2 lg:col-span-1">
             <Input
               id="capacityBtu"
               name="capacityBtu"
@@ -217,7 +217,7 @@ export function EquipmentForm({
                     onClick={() => setBtu(String(o))}
                     aria-pressed={active}
                     className={cn(
-                      "rounded-md px-2 py-1 text-xs tabular-nums ring-1 transition-colors",
+                      "rounded-md px-1.5 py-1 text-xs tabular-nums ring-1 transition-colors",
                       active ? "bg-ice/15 text-silver ring-ice/40" : "text-steel ring-rime hover:text-silver hover:ring-rime-strong",
                     )}
                   >
@@ -343,7 +343,7 @@ export function EquipmentForm({
         </div>
       </Panel>
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col-reverse gap-2 border-t border-rime bg-abyss/85 px-4 py-3 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-end md:-mx-8 md:px-8">
+      <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-2 rounded-2xl border border-rime bg-night/90 px-4 py-3 shadow-[0_20px_40px_-12px_rgb(0_0_0/0.7)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-end">
         {state.error && !state.ok && (
           <p role="alert" className="text-sm text-gauge-red sm:mr-auto">
             {state.error}

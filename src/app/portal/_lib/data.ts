@@ -14,7 +14,7 @@ import {
 import { todayISO, type ISODate } from "@/lib/dates";
 import { whatsappLink } from "@/lib/format";
 import { activeWorkOrderStatuses } from "@/lib/labels";
-import type { Settings } from "@/server/settings";
+import { getSettings, type Settings } from "@/server/settings";
 import { firstName } from "./copy";
 import { forecastVisits, healthOf, intervalOf, type ForecastVisit, type Health, type PlanTaskLike } from "./forecast";
 
@@ -58,7 +58,7 @@ export type EquipmentOverview = Awaited<ReturnType<typeof getEquipmentOverview>>
  * próxima manutenção (OM agendada ou previsão), último serviço e indicador de saúde.
  */
 export async function getEquipmentOverview(customerId: string, today: ISODate = todayISO()) {
-  const [rows, active, lastRows, customer] = await Promise.all([
+  const [rows, active, lastRows, customer, settings] = await Promise.all([
     db.query.equipment.findMany({
       where: and(eq(equipment.customerId, customerId), ne(equipment.status, "removido")),
       with: {
@@ -97,6 +97,7 @@ export async function getEquipmentOverview(customerId: string, today: ISODate = 
       where: eq(customers.id, customerId),
       columns: { defaultTechnicianId: true },
     }),
+    getSettings(),
   ]);
 
   const defaultTech = customer?.defaultTechnicianId
@@ -109,7 +110,7 @@ export async function getEquipmentOverview(customerId: string, today: ISODate = 
     const link = eq_.contractLinks.find((l) => l.contract.status === "ativo") ?? null;
     const tasks: PlanTaskLike[] = link?.plan.tasks ?? [];
     const linkLike = link ? { anchorDate: link.anchorDate, lastGeneratedDueDate: link.lastGeneratedDueDate, tasks } : null;
-    const forecast: ForecastVisit[] = linkLike ? forecastVisits(linkLike, today, 4) : [];
+    const forecast: ForecastVisit[] = linkLike ? forecastVisits(linkLike, today, 4, settings.worksSaturday) : [];
     const orders = active.filter((w) => w.equipmentId === eq_.id);
     const fallbackTech = firstName(link?.preferredTechnician?.name ?? defaultTech?.name);
 

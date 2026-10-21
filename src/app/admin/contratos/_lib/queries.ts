@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { and, asc, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import {
@@ -97,7 +98,8 @@ export async function listContracts({ status, q, page }: { status?: ContractStat
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const isUuid = (v: string | null | undefined): v is string => !!v && UUID.test(v);
 
-export async function getContract(id: string) {
+/** Deduplicado por requisição (metadata + página). */
+export const getContract = cache(async (id: string) => {
   if (!isUuid(id)) return null;
   return (
     (await db.query.contracts.findFirst({
@@ -121,7 +123,7 @@ export async function getContract(id: string) {
       },
     })) ?? null
   );
-}
+});
 
 export type ContractDetail = NonNullable<Awaited<ReturnType<typeof getContract>>>;
 

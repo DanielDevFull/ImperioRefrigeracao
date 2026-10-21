@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import {
@@ -325,7 +325,27 @@ export async function cancelOmAction(id: string, _prev: ActionState, fd: FormDat
     if (!isUuid(id)) return { ok: false, error: "OM não encontrada." };
     const reason = reasonSchema.safeParse(formValues(fd).str("reason") ?? undefined);
     if (!reason.success) return { ok: false, error: "Informe o motivo do cancelamento.", fieldErrors: { reason: reason.error.issues[0].message } };
-    await db.transaction((tx) => changeWorkOrderStatus(tx, id, "cancelada", actor(user), `Cancelada: ${reason.data}`));
+    await db.transaction(async (tx) => {
+      const wo = await changeWorkOrderStatus(tx, id, "cancelada", actor(user), `Cancelada: ${reason.data}`);
+      // O serviço marca o equipamento "em manutenção" ao iniciar; ao cancelar, devolve para "ativo"
+      // quando não houver outro atendimento em andamento nele.
+      if (wo.equipmentId) {
+        const other = await tx.query.workOrders.findFirst({
+          where: and(
+            eq(workOrders.equipmentId, wo.equipmentId),
+            inArray(workOrders.status, ["em_execucao", "pausada"]),
+            ne(workOrders.id, id),
+          ),
+          columns: { id: true },
+        });
+        if (!other) {
+          await tx
+            .update(equipment)
+            .set({ status: "ativo" })
+            .where(and(eq(equipment.id, wo.equipmentId), eq(equipment.status, "em_manutencao")));
+        }
+      }
+    });
     revalidateOm(id);
     return { ok: true, message: "OM cancelada. Os materiais lançados voltaram ao estoque." };
   });
@@ -482,7 +502,7 @@ export async function removeMaterialAction(materialId: string): Promise<ActionSt
 const PHOTO_KIND = z.enum(["antes", "depois", "problema", "outro"]);
 
 export async function uploadPhotosAction(id: string, _prev: ActionState, fd: FormData): Promise<ActionState> {
-  return runAction(async () => {
+  return runAction(async (): Promise<ActionState> => {
     const user = await assertRole([...STAFF]);
     if (!isUuid(id)) return { ok: false, error: "OM não encontrada." };
     await getWorkOrderOrThrow(db, id);

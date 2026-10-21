@@ -146,7 +146,7 @@ export default async function AtendimentosPage({ searchParams }: PageProps<"/por
                         <DateChip date={date} tone={s.tone === "steel" ? "steel" : s.live ? "ice" : s.tone} />
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2.5">
-                            <p className="truncate text-sm font-medium text-silver">{w.title}</p>
+                            <p className="line-clamp-2 text-sm font-medium text-silver sm:truncate">{w.title}</p>
                           </div>
                           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-steel">
                             <span>{workOrderTypeForCustomer[w.type] ?? w.type}</span>

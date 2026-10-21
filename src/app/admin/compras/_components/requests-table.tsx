@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { ShoppingCart, X } from "lucide-react";
@@ -41,16 +41,14 @@ export function RequestsTable({ requests, suppliers }: { requests: OpenRequest[]
     });
 
   // atalhos "Selecionar itens de <fornecedor>"
-  const groups = useMemo(() => {
-    const m = new Map<string, { id: string; name: string; ids: string[] }>();
-    for (const r of open) {
-      if (!r.supplierId) continue;
-      const g = m.get(r.supplierId) ?? { id: r.supplierId, name: r.supplierName ?? "", ids: [] };
-      g.ids.push(r.id);
-      m.set(r.supplierId, g);
-    }
-    return [...m.values()].sort((a, b) => b.ids.length - a.ids.length);
-  }, [open]);
+  const groupMap = new Map<string, { id: string; name: string; ids: string[] }>();
+  for (const r of open) {
+    if (!r.supplierId) continue;
+    const g = groupMap.get(r.supplierId) ?? { id: r.supplierId, name: r.supplierName ?? "", ids: [] };
+    g.ids.push(r.id);
+    groupMap.set(r.supplierId, g);
+  }
+  const groups = [...groupMap.values()].sort((a, b) => b.ids.length - a.ids.length);
 
   return (
     <div>
@@ -150,7 +148,7 @@ export function RequestsTable({ requests, suppliers }: { requests: OpenRequest[]
               <TableHead>Motivo</TableHead>
               <TableHead>Origem</TableHead>
               <TableHead className="hidden xl:table-cell">Fornecedor preferido</TableHead>
-              <TableHead className="hidden lg:table-cell">Observação</TableHead>
+              <TableHead className="hidden 2xl:table-cell">Observação</TableHead>
               <TableHead className="hidden lg:table-cell">Criada em</TableHead>
               <TableHead className="pr-5 text-right">
                 <span className="sr-only">Ações</span>
@@ -170,11 +168,12 @@ export function RequestsTable({ requests, suppliers }: { requests: OpenRequest[]
                       aria-label={`Selecionar ${r.productName}`}
                     />
                   </TableCell>
-                  <TableCell className="max-w-72">
+                  <TableCell className="max-w-72" title={r.notes ?? undefined}>
                     <Link href={`/admin/estoque/${r.productId}`} className="block truncate text-silver hover:text-frost">
                       {r.productName}
                     </Link>
-                    <span className="text-xs text-steel">{r.sku ?? "Sem SKU"}</span>
+                    <span className="block max-w-72 truncate text-xs text-steel 2xl:hidden">{r.notes ?? r.sku ?? "Sem SKU"}</span>
+                    <span className="hidden text-xs text-steel 2xl:inline">{r.sku ?? "Sem SKU"}</span>
                   </TableCell>
                   <TableCell className="text-right tabular-nums text-silver">{formatQty(r.quantity, r.unit)}</TableCell>
                   <TableCell>
@@ -184,7 +183,7 @@ export function RequestsTable({ requests, suppliers }: { requests: OpenRequest[]
                     <Origin r={r} />
                   </TableCell>
                   <TableCell className="hidden max-w-44 truncate text-steel xl:table-cell">{r.supplierName ?? "—"}</TableCell>
-                  <TableCell className="hidden max-w-64 truncate text-xs text-steel lg:table-cell" title={r.notes ?? undefined}>
+                  <TableCell className="hidden max-w-64 truncate text-xs text-steel 2xl:table-cell" title={r.notes ?? undefined}>
                     {r.notes ?? "—"}
                   </TableCell>
                   <TableCell className="hidden tabular-nums text-steel lg:table-cell">{formatDate(r.createdAt)}</TableCell>

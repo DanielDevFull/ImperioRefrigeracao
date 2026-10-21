@@ -90,7 +90,7 @@ export default async function MensalidadesPage() {
             items={[
               {
                 label: "Em aberto",
-                value: sum(open.map((r) => r.amount - r.discount)),
+                value: sum([...open, ...inReview].map((r) => r.amount - r.discount)),
                 format: "brl",
                 hint: inReview.length
                   ? `${inReview.length} comprovante${inReview.length === 1 ? "" : "s"} em análise`
@@ -134,7 +134,7 @@ export default async function MensalidadesPage() {
                           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
                             <ReceivableStatusBadge status={eff} />
                             <span className={cn("text-xs", eff === "vencido" ? "text-gauge-red" : "text-steel")}>
-                              {eff === "vencido" ? "Venceu em" : "Vence em"} {formatDate(r.dueDate)}
+                              {r.dueDate < today ? "Venceu em" : "Vence em"} {formatDate(r.dueDate)}
                             </span>
                           </div>
                         </div>
@@ -183,7 +183,7 @@ export default async function MensalidadesPage() {
                         key={r.id}
                         className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-4 py-3.5 sm:px-5 md:grid-cols-[minmax(0,1.6fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_7rem]"
                       >
-                        <div className="min-w-0">
+                        <div className="row-span-2 min-w-0 md:row-span-1">
                           <p className="truncate text-sm text-silver">{capitalize(receivableTitle(r))}</p>
                           <p className="mt-0.5 text-xs text-steel md:hidden">
                             {r.status === "pago" ? `Pago em ${formatDate(r.paidAt)}` : "Cancelada"}
@@ -198,12 +198,12 @@ export default async function MensalidadesPage() {
                             <ReceivableStatusBadge status="cancelado" />
                           )}
                         </span>
-                        <span className="readout row-span-2 text-right text-sm tabular-nums text-silver md:row-span-1">
+                        <span className="readout text-right text-sm tabular-nums text-silver">
                           {r.status === "pago" ? formatBRL(r.paidAmount ?? r.amount) : <span className="text-steel line-through">{formatBRL(r.amount)}</span>}
                         </span>
-                        <span className="col-span-2 md:col-span-1 md:text-right">
+                        <span className="text-right">
                           {r.status === "pago" && (
-                            <Button asChild variant="ghost" size="sm" className="-ml-2.5 text-frost md:ml-0">
+                            <Button asChild variant="ghost" size="sm" className="-mr-2.5 text-frost md:mr-0">
                               <Link href={`/portal/mensalidades/${r.id}/recibo`}>
                                 <Receipt /> Recibo
                               </Link>

@@ -7,9 +7,11 @@ import { PAGE_SIZE } from "@/lib/params";
 
 export type SupplierFilter = "ativos" | "inativos" | "todos";
 
-const productsCount = sql<number>`(select count(*) from ${products} where ${products.preferredSupplierId} = ${suppliers.id} and ${products.active})::int`;
-const openPayables = sql<number>`(select coalesce(sum(${payables.amount}), 0) from ${payables} where ${payables.supplierId} = ${suppliers.id} and ${payables.status} = 'aberto')::float8`;
-const ordersInProgress = sql<number>`(select count(*) from ${purchaseOrders} where ${purchaseOrders.supplierId} = ${suppliers.id} and ${purchaseOrders.status} in ('rascunho', 'enviado', 'recebido_parcial'))::int`;
+// Subconsultas correlacionadas com nomes qualificados à mão: numa consulta de uma tabela só,
+// o Drizzle escreve as colunas sem o nome da tabela, e "id" passaria a apontar para a tabela interna.
+const productsCount = sql<number>`(select count(*) from products p where p.preferred_supplier_id = "suppliers"."id" and p.active)::int`;
+const openPayables = sql<number>`(select coalesce(sum(pa.amount), 0) from payables pa where pa.supplier_id = "suppliers"."id" and pa.status = 'aberto')::float8`;
+const ordersInProgress = sql<number>`(select count(*) from purchase_orders po where po.supplier_id = "suppliers"."id" and po.status in ('rascunho', 'enviado', 'recebido_parcial'))::int`;
 
 export async function listSuppliers(opts: { q?: string; filter: SupplierFilter; page: number }) {
   const conds: (SQL | undefined)[] = [];

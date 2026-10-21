@@ -22,6 +22,7 @@ import { visitIntervalMonths } from "@/server/core/schedule";
 import { MonthStrip } from "../../planos/_components/month-strip";
 import { periodLabel, plural } from "../../planos/_lib/preview";
 import { createContract, loadCustomerEquipment } from "../actions";
+import { defaultPlanFor } from "../_lib/defaults";
 import { firstInvoice, invoicesGeneratedNow, monthlyForecast, visitsBetween, visitsGeneratedNow } from "../_lib/forecast";
 import type { CoverageEquipment, CustomerOption, PlanOption } from "../_lib/queries";
 import { CustomerPicker } from "./customer-picker";
@@ -31,10 +32,6 @@ type Draft = { selected: boolean; planId: string; anchorDate: string; anchorDirt
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const GENERATES = new Set(["ativo", "em_manutencao"]);
-
-function defaultPlanFor(e: CoverageEquipment, plans: PlanOption[]) {
-  return plans.find((p) => p.equipmentTypeId && p.equipmentTypeId === e.typeId) ?? plans[0] ?? null;
-}
 
 function equipmentLabel(e: CoverageEquipment) {
   const model = [e.brand, e.model].filter(Boolean).join(" ");
@@ -90,7 +87,7 @@ export function ContractForm({
     return (
       drafts[e.id] ?? {
         selected: false,
-        planId: defaultPlanFor(e, plans)?.id ?? "",
+        planId: defaultPlanFor(e.typeId, plans, customer?.personType === "pj")?.id ?? "",
         anchorDate: validStart,
         anchorDirty: false,
         technicianId: defaultTech,
@@ -410,7 +407,7 @@ export function ContractForm({
                             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                             className="overflow-hidden"
                           >
-                            <div className="grid gap-3 pt-3 pl-7 sm:grid-cols-3">
+                            <div className="grid gap-3 pt-3 pl-7 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)]">
                               <div className="min-w-0">
                                 <label className="mb-1 block text-xs text-steel" htmlFor={`plan-${e.id}`}>
                                   Plano de manutenção

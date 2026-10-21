@@ -124,8 +124,9 @@ async function ProductsSection({
   return (
     <Panel flush>
       <div className="flex flex-col gap-3 border-b border-rime p-4 xl:flex-row xl:items-center">
-        <SearchInput placeholder="Buscar por nome, SKU ou código de barras" className="xl:w-80" />
+        <SearchInput placeholder="Buscar por nome, SKU ou código de barras" className="xl:w-auto xl:min-w-56 xl:flex-1" />
         <FilterTabs
+          className="w-fit shrink-0"
           param="filtro"
           options={[
             { value: "", label: "Todos", count: counts.all },
@@ -133,9 +134,10 @@ async function ProductsSection({
             { value: "inativos", label: "Inativos", count: counts.inactive },
           ]}
         />
-        <div className="flex flex-col gap-3 sm:flex-row xl:ml-auto">
-          <ParamSelect param="categoria" label="Categoria" placeholder="Todas as categorias" options={categoryOptions} />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <ParamSelect param="categoria" label="Categoria" placeholder="Todas as categorias" options={categoryOptions} className="sm:w-44" />
           <ParamSelect
+            className="sm:w-44"
             param="local"
             label="Local"
             placeholder="Todos os locais"

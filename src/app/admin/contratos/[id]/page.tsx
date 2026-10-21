@@ -100,6 +100,8 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
       label: [e.typeName, [e.brand, e.model].filter(Boolean).join(" "), e.location].filter(Boolean).join(", "),
     }));
 
+  const defaultTechName = technicians.find((t) => t.id === c.customer.defaultTechnicianId)?.name ?? null;
+
   const contractInfo = {
     id: c.id,
     name: c.name,
@@ -179,7 +181,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
         ]}
       />
 
-      <div className="mb-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
+      <div className={closed ? "mb-6" : "mb-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"}>
         <Panel title="Dados do contrato">
           <DetailList
             items={[
@@ -206,6 +208,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
           )}
         </Panel>
 
+        {!closed && (
         <Panel
           title="Previsão de visitas"
           description={
@@ -222,6 +225,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
             }))}
           />
         </Panel>
+        )}
       </div>
 
       <Panel
@@ -237,6 +241,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
               technicians={technicians}
               defaultTechnicianId={c.customer.defaultTechnicianId}
               today={today}
+              preferPmoc={c.customer.personType === "pj"}
             />
           ) : undefined
         }
@@ -247,7 +252,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
             title={closed ? "Nenhum equipamento no contrato" : "Nenhum equipamento coberto"}
             description={
               closed
-                ? "Os equipamentos foram liberados quando o contrato foi encerrado."
+                ? `Os equipamentos foram liberados quando o contrato foi ${c.status === "cancelado" ? "cancelado" : "encerrado"}.`
                 : "Sem equipamentos o contrato só gera a mensalidade. Inclua os aparelhos do cliente para as OMs saírem sozinhas."
             }
           />
@@ -283,7 +288,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                     <Link href={`/admin/planos/${i.plan.id}`} className="text-silver hover:text-frost">
                       {i.plan.name}
                     </Link>
-                    {i.preferredTechnician ? `, ${i.preferredTechnician.name}` : ", sem técnico"}
+                    {i.preferredTechnician ? `, ${i.preferredTechnician.name}` : defaultTechName ? `, ${defaultTechName} (padrão do cliente)` : ", sem técnico"}
                   </p>
                   <p className="mt-1 text-xs text-steel">
                     Próxima visita: <span className="tabular-nums text-silver">{i.next ? formatDate(i.next) : "—"}</span>
@@ -334,7 +339,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                           {i.preferredTechnician.name}
                         </span>
                       ) : (
-                        <span className="text-steel">Padrão do cliente</span>
+                        <span className="text-steel">{defaultTechName ? `Padrão do cliente (${defaultTechName})` : "Sem técnico"}</span>
                       )}
                     </TableCell>
                     <TableCell className="tabular-nums text-silver">{i.next ? formatDate(i.next) : <span className="text-steel">—</span>}</TableCell>
@@ -414,17 +419,18 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm text-silver">
-                          <span className="tabular-nums text-steel">{formatOM(w.number)}</span>{" "}
-                          {[formatEquipmentCode(w.equipmentCode), w.equipmentLocation].filter(Boolean).join(", ")}
+                          {w.equipmentLocation ?? formatEquipmentCode(w.equipmentCode)}
+                          <span className="ml-1.5 text-xs tabular-nums text-steel">{formatEquipmentCode(w.equipmentCode)}</span>
                         </p>
-                        <p className="truncate text-xs text-steel">
+                        <p className="flex items-center gap-1.5 truncate text-xs text-steel">
+                          <span className="tabular-nums">{formatOM(w.number)}</span>
                           {w.technicianName ? (
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full" style={{ background: w.technicianColor ?? undefined }} aria-hidden />
-                              {w.technicianName}
-                            </span>
+                            <>
+                              <span className="ml-1 size-1.5 shrink-0 rounded-full" style={{ background: w.technicianColor ?? undefined }} aria-hidden />
+                              <span className="truncate">{w.technicianName}</span>
+                            </>
                           ) : (
-                            "Sem técnico"
+                            <span className="text-brass">sem técnico</span>
                           )}
                         </p>
                       </div>
@@ -464,7 +470,25 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
               }
             />
           ) : (
-            <Table>
+            <>
+            <ul className="divide-y divide-rime sm:hidden">
+              {recs.slice(0, 8).map((r) => {
+                const status = effectiveFinanceStatus(r.status, r.dueDate, today);
+                return (
+                  <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm text-silver">{r.competence ? capitalize(formatCompetence(r.competence)) : r.description}</p>
+                      <p className="text-xs tabular-nums text-steel">
+                        {formatBRL(r.amount - r.discount)}, vence {formatDate(r.dueDate)}
+                        {r.paidAt ? `, pago em ${formatDate(r.paidAt)}` : ""}
+                      </p>
+                    </div>
+                    <ReceivableStatusBadge status={status} />
+                  </li>
+                );
+              })}
+            </ul>
+            <Table className="hidden sm:table">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="pl-5">Competência</TableHead>
@@ -500,6 +524,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                 })}
               </TableBody>
             </Table>
+            </>
           )}
           {recs.length > 8 && (
             <p className="border-t border-rime px-5 py-3 text-xs text-steel">

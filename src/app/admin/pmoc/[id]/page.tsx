@@ -151,13 +151,15 @@ export default async function PmocDetailPage({ params, searchParams }: PageProps
           { label: "Equipamentos cobertos", value: covered.length, hint: totalBtu ? `${formatNumber(Math.round((totalBtu / 12000) * 10) / 10)} TR no total` : undefined },
           { label: "Visitas previstas até hoje", value: comp.evaluated, hint: "Pelo cronograma dos planos" },
           { label: "Realizadas", value: comp.done, tone: comp.done ? "mint" : undefined, hint: "Com OM concluída no mês" },
-          {
-            label: "Conformidade",
-            value: comp.rate ?? 0,
-            format: "percent",
-            tone: rateTone,
-            hint: comp.rate == null ? "Ainda sem visitas vencidas" : `${comp.nonConformities.length} não conformidade(s)`,
-          },
+          comp.rate == null
+            ? { label: "Não conformidades", value: 0, hint: "Ainda sem visitas vencidas para avaliar" }
+            : {
+                label: "Conformidade",
+                value: comp.rate,
+                format: "percent" as const,
+                tone: rateTone,
+                hint: `${comp.nonConformities.length} não conformidade(s)`,
+              },
         ]}
       />
 

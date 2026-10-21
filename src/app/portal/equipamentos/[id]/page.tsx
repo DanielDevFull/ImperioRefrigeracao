@@ -14,7 +14,6 @@ import { ToneBadge } from "@/components/system/tone-badge";
 import { Button } from "@/components/ui/button";
 import { requireCustomer } from "@/lib/auth/session";
 import { addressLine, formatBTU, formatDate, formatEquipmentCode, formatPhone, formatTime } from "@/lib/format";
-import { frequencyMonths } from "@/lib/labels";
 import { getSettings } from "@/server/settings";
 import { DateChip, EquipmentTile, HealthMeter } from "../../_components/bits";
 import { DownloadQrButton, PrintButton } from "../../_components/print-tools";
@@ -86,10 +85,45 @@ export default async function EquipamentoPage({ params }: PageProps<"/portal/equ
         }
       />
 
+      {/* Cobertura do plano e saúde */}
+      <section className="panel mb-6 flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:gap-8">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <span
+            className={
+              item.plan
+                ? "grid size-9 shrink-0 place-items-center rounded-full bg-mint/12 text-mint ring-1 ring-mint/30"
+                : "grid size-9 shrink-0 place-items-center rounded-full bg-steel/10 text-steel ring-1 ring-steel/25"
+            }
+          >
+            <ShieldCheck className="size-4" />
+          </span>
+          <div className="min-w-0">
+            {item.plan ? (
+              <>
+                <p className="text-sm font-medium text-silver">{item.plan.planName}</p>
+                <p className="text-xs text-steel">
+                  {item.plan.contractName}
+                  {item.plan.intervalMonths
+                    ? `. Uma visita a cada ${item.plan.intervalMonths === 1 ? "mês" : `${item.plan.intervalMonths} meses`}${item.plan.isPmoc ? ", dentro do PMOC" : ""}.`
+                    : ""}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-medium text-silver">Fora do plano de manutenção</p>
+                <p className="text-xs text-steel">Inclua este aparelho no seu plano para ter visitas programadas e histórico completo.</p>
+              </>
+            )}
+          </div>
+        </div>
+        <HealthMeter health={item.health} showHint className="sm:w-56 sm:shrink-0" />
+      </section>
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-6">
           <Panel title="Dados do equipamento">
             <DetailList
+              className="grid-cols-2"
               items={[
                 { label: "Tipo", value: e.type?.name ?? "—" },
                 { label: "Marca e modelo", value: name },
@@ -202,34 +236,6 @@ export default async function EquipamentoPage({ params }: PageProps<"/portal/equ
         </div>
 
         <aside className="space-y-6">
-          <Panel title="Plano de manutenção">
-            {item.plan ? (
-              <div className="space-y-3">
-                <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-mint" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-silver">{item.plan.planName}</p>
-                    <p className="text-xs text-steel">{item.plan.contractName}</p>
-                  </div>
-                </div>
-                {item.plan.intervalMonths && (
-                  <p className="text-sm text-steel">
-                    Visitas {(frequencyMonths[item.plan.intervalMonths] ?? `a cada ${item.plan.intervalMonths} meses`).toLowerCase()}
-                    {item.plan.isPmoc ? ", dentro do PMOC." : "."}
-                  </p>
-                )}
-                <div className="border-t border-rime pt-3">
-                  <HealthMeter health={item.health} showHint />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <HealthMeter health={item.health} showHint />
-                <p className="text-sm text-steel">Inclua este aparelho no seu plano para ter visitas programadas e histórico completo.</p>
-              </div>
-            )}
-          </Panel>
-
           <section className="panel p-5">
             <h2 className="text-[0.95rem] font-semibold text-silver">Etiqueta QR</h2>
             <p className="mt-0.5 text-xs text-steel">

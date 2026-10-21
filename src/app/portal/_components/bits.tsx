@@ -37,14 +37,14 @@ export function SectionTitle({
 }) {
   return (
     <div className={cn("mb-3 flex items-end justify-between gap-3", className)}>
-      <h2 className="font-display text-silver-brushed text-xl font-semibold tracking-[0.02em]">
+      <h2 className="font-display text-silver-brushed text-[1.15rem] font-semibold tracking-[0.02em] sm:text-xl">
         {children}
         {count != null && count > 0 && (
           <span className="readout ml-2 align-middle font-sans text-sm font-medium text-steel">{count}</span>
         )}
       </h2>
       {href && (
-        <Link href={href} className="inline-flex items-center gap-0.5 text-sm text-steel transition-colors hover:text-frost">
+        <Link href={href} className="inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap text-sm text-steel transition-colors hover:text-frost">
           {linkLabel ?? "Ver tudo"}
           <ChevronRight className="size-4" />
         </Link>

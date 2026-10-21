@@ -54,7 +54,7 @@ export function SetupSheet({
           Categorias e contas
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full gap-0 overflow-y-auto border-rime bg-night p-0 sm:max-w-lg">
+      <SheetContent className="w-full gap-0 overflow-y-auto border-rime bg-night p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-md">
         <SheetHeader className="border-b border-rime px-5 py-5">
           <SheetTitle className="font-display text-silver-brushed text-xl font-semibold">Categorias e contas</SheetTitle>
           <SheetDescription>
@@ -332,24 +332,29 @@ function AccountRow({ account }: { account: SetupAccount }) {
     );
 
   return (
-    <div className={cn("flex items-center gap-3 px-3 py-3", !account.active && "opacity-60")}>
-      <div className="min-w-0 flex-1">
-        <p className="flex items-center gap-2 truncate text-sm text-silver">
-          {account.name}
-          {!account.active && <ToneBadge tone="steel">Inativa</ToneBadge>}
-        </p>
-        <p className="mt-0.5 text-xs text-steel">Saldo inicial {formatBRL(account.initialBalance)}</p>
+    <div className={cn("px-3 py-3", !account.active && "opacity-60")}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm text-silver">{account.name}</p>
+          <p className="mt-0.5 text-xs text-steel">Saldo inicial {formatBRL(account.initialBalance)}</p>
+        </div>
+        <div className="shrink-0 text-right">
+          <p className={cn("readout text-base font-semibold", account.balance < 0 ? "text-gauge-red" : "text-silver")}>
+            {formatBRL(account.balance)}
+          </p>
+          <p className="text-xs text-steel">saldo atual</p>
+        </div>
       </div>
-      <div className="text-right">
-        <p className={cn("readout text-base font-semibold", account.balance < 0 ? "text-gauge-red" : "text-silver")}>
-          {formatBRL(account.balance)}
-        </p>
-        <p className="text-xs text-steel">saldo atual</p>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        {account.active ? <span className="text-xs text-steel">Ativa</span> : <ToneBadge tone="steel">Inativa</ToneBadge>}
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="text-steel" onClick={() => setEditing(true)}>
+            <Pencil />
+            Editar
+          </Button>
+          <ActiveSwitch active={account.active} label={account.name} onToggle={(v) => setBankAccountActive(account.id, v)} />
+        </div>
       </div>
-      <Button variant="ghost" size="icon-sm" className="text-steel" onClick={() => setEditing(true)} aria-label={`Editar ${account.name}`}>
-        <Pencil />
-      </Button>
-      <ActiveSwitch active={account.active} label={account.name} onToggle={(v) => setBankAccountActive(account.id, v)} />
     </div>
   );
 }

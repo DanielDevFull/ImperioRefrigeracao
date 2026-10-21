@@ -70,16 +70,16 @@ export function TaskEditor({
                   titleError ? "border-gauge-red/40" : "border-rime",
                 )}
               >
-                <div className="flex items-start gap-3">
+                <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2">
                   <motion.span
                     layout="position"
-                    className="mt-1.5 grid size-6 shrink-0 place-items-center rounded-full bg-ice/10 text-xs font-semibold tabular-nums text-ice ring-1 ring-ice/25"
+                    className="col-start-1 row-start-1 mt-0.5 grid size-6 sm:mt-1.5 shrink-0 place-items-center rounded-full bg-ice/10 text-xs font-semibold tabular-nums text-ice ring-1 ring-ice/25"
                     aria-hidden
                   >
                     {i + 1}
                   </motion.span>
 
-                  <div className="min-w-0 flex-1 space-y-2.5">
+                  <div className="col-span-3 row-start-2 min-w-0 space-y-2.5 sm:col-span-1 sm:col-start-2 sm:row-start-1">
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <div className="min-w-0 flex-1">
                         <Input
@@ -155,7 +155,7 @@ export function TaskEditor({
                     )}
                   </div>
 
-                  <div className="flex shrink-0 flex-col gap-0.5 sm:flex-row">
+                  <div className="col-start-3 row-start-1 flex shrink-0 gap-0.5">
                     <Button
                       type="button"
                       variant="ghost"

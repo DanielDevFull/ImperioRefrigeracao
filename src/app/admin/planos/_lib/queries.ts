@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { and, asc, eq, ilike, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { contractEquipment, contracts, customers, equipmentTypes, maintenancePlans, products } from "@/db/schema";
@@ -64,7 +65,8 @@ export async function listPlans({ filter, q }: { filter: PlanFilter; q?: string 
   };
 }
 
-export async function getPlanForEdit(id: string) {
+/** Deduplicado por requisição (metadata + página). */
+export const getPlanForEdit = cache(async (id: string) => {
   return db.query.maintenancePlans.findFirst({
     where: eq(maintenancePlans.id, id),
     with: {
@@ -72,7 +74,7 @@ export async function getPlanForEdit(id: string) {
       materials: { with: { product: { columns: { id: true, name: true, unit: true } } } },
     },
   });
-}
+});
 
 /** Contratos que usam o plano (para avisar antes de desativar). */
 export async function contractsUsingPlan(planId: string) {

@@ -53,9 +53,15 @@ export default async function PedidoPage({ params }: PageProps<"/admin/compras/p
     unitCost: i.unitCost,
     receivedQuantity: i.receivedQuantity,
   }));
-  const ordered = items.reduce((s, i) => s + i.quantity, 0);
-  const received = items.reduce((s, i) => s + Math.min(i.receivedQuantity, i.quantity), 0);
-  const receivedRatio = ordered > 0 ? received / ordered : 0;
+  // andamento do recebimento pelo valor (unidades diferentes não se somam)
+  const orderedValue = items.reduce((s, i) => s + i.quantity * i.unitCost, 0);
+  const receivedValue = items.reduce((s, i) => s + Math.min(i.receivedQuantity, i.quantity) * i.unitCost, 0);
+  const receivedRatio =
+    orderedValue > 0
+      ? receivedValue / orderedValue
+      : items.length && items.every((i) => i.receivedQuantity >= i.quantity)
+        ? 1
+        : 0;
   const anyReceived = items.some((i) => i.receivedQuantity > 0);
   const draft = order.status === "rascunho";
   const receivable = order.status === "enviado" || order.status === "recebido_parcial";
@@ -167,7 +173,7 @@ export default async function PedidoPage({ params }: PageProps<"/admin/compras/p
             value: receivedRatio,
             format: "percent",
             tone: receivedRatio >= 1 ? "mint" : receivedRatio > 0 ? "brass" : undefined,
-            hint: order.receivedAt ? `concluído em ${formatDate(order.receivedAt)}` : anyReceived ? "parcial" : "nada ainda",
+            hint: order.receivedAt ? `concluído em ${formatDate(order.receivedAt)}` : anyReceived ? "do valor, em parte" : "nada ainda",
           },
           {
             label: "Conta a pagar",

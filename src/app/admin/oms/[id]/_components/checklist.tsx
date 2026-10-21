@@ -3,7 +3,6 @@
 import { startTransition, useOptimistic, useState } from "react";
 import { Camera, Gauge, MessageSquareText } from "lucide-react";
 import { toast } from "sonner";
-import { EmptyState } from "@/components/system/empty-state";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -119,11 +118,9 @@ export function Checklist({ tasks, editable, lockedReason }: { tasks: TaskItem[]
 
   if (!tasks.length) {
     return (
-      <EmptyState
-        className="py-10"
-        title="Esta OM não tem checklist"
-        description="O checklist vem do plano de manutenção. OMs avulsas registram o serviço no diagnóstico e na solução."
-      />
+      <p className="px-5 py-4 text-sm text-steel">
+        Esta OM não tem checklist. O checklist vem do plano de manutenção; OMs avulsas registram o serviço no diagnóstico e na solução.
+      </p>
     );
   }
 

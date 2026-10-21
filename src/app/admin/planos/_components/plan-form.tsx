@@ -206,7 +206,7 @@ export function PlanForm({
                   id="visitReferenceValue"
                   name="visitReferenceValue"
                   mask="money"
-                  defaultValue={initial.visitReferenceValue}
+                  defaultValue={initial.visitReferenceValue || ""}
                   placeholder="0,00"
                   className="h-9 pl-9 tabular-nums"
                 />

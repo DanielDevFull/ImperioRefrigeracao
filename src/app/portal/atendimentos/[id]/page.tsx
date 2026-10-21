@@ -109,8 +109,36 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="min-w-0 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:grid-rows-[auto_auto_1fr]">
+        {done && (
+          <section id="avaliar" className="panel scroll-mt-24 p-5 lg:col-start-2 lg:row-start-1">
+            {wo.rating == null ? (
+              <>
+                <h2 className="font-display text-silver-brushed text-xl font-semibold">Como foi o atendimento?</h2>
+                <p className="mb-4 mt-1 text-sm text-steel">
+                  Sua nota ajuda {tech ?? "o técnico"} e a Imperium a melhorar. Leva só um instante.
+                </p>
+                <RatingForm workOrderId={wo.id} />
+              </>
+            ) : (
+              <>
+                <h2 className="font-display text-silver-brushed text-xl font-semibold">Sua avaliação</h2>
+                <div className="mt-3 flex items-center gap-3">
+                  <RatingDisplay value={wo.rating} className="[&_svg]:size-5" />
+                  <span className="text-sm text-frost">{RATING_LABELS[wo.rating]}</span>
+                </div>
+                {wo.ratingComment && (
+                  <blockquote className="mt-3 border-l-2 border-ice/40 pl-3 text-sm italic text-silver">
+                    {wo.ratingComment}
+                  </blockquote>
+                )}
+                <p className="mt-3 text-xs text-steel">Obrigado por avaliar.</p>
+              </>
+            )}
+          </section>
+        )}
+
+        <div className="min-w-0 space-y-6 lg:col-start-1 lg:row-span-3 lg:row-start-1">
           <Panel title="Resumo">
             <DetailList
               items={[
@@ -244,65 +272,34 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
           )}
         </div>
 
-        <aside className="space-y-6">
-          {done && (
-            <section id="avaliar" className="panel scroll-mt-24 p-5">
-              {wo.rating == null ? (
-                <>
-                  <h2 className="font-display text-silver-brushed text-xl font-semibold">Como foi o atendimento?</h2>
-                  <p className="mb-4 mt-1 text-sm text-steel">
-                    Sua nota ajuda {tech ?? "o técnico"} e a Imperium a melhorar. Leva só um instante.
-                  </p>
-                  <RatingForm workOrderId={wo.id} />
-                </>
-              ) : (
-                <>
-                  <h2 className="font-display text-silver-brushed text-xl font-semibold">Sua avaliação</h2>
-                  <div className="mt-3 flex items-center gap-3">
-                    <RatingDisplay value={wo.rating} className="[&_svg]:size-5" />
-                    <span className="text-sm text-frost">{RATING_LABELS[wo.rating]}</span>
-                  </div>
-                  {wo.ratingComment && (
-                    <blockquote className="mt-3 border-l-2 border-ice/40 pl-3 text-sm italic text-silver">
-                      {wo.ratingComment}
-                    </blockquote>
-                  )}
-                  <p className="mt-3 text-xs text-steel">Obrigado por avaliar.</p>
-                </>
-              )}
-            </section>
+        <Panel title="Linha do tempo" className={cn("lg:col-start-2", done ? "lg:row-start-2" : "lg:row-start-1")}>
+          {timeline.length === 0 ? (
+            <p className="text-sm text-steel">Os próximos passos aparecem aqui.</p>
+          ) : (
+            <ol className="relative space-y-5">
+              <span aria-hidden className="absolute bottom-2 left-[0.3rem] top-2 w-px bg-rime-strong" />
+              {timeline.map(({ e, l }, i) => {
+                const last = i === timeline.length - 1;
+                return (
+                  <li key={e.id} className="relative flex gap-3.5">
+                    <span
+                      className={cn(
+                        "relative mt-1.5 size-2.5 shrink-0 rounded-full ring-4 ring-night",
+                        toneBg[l.tone],
+                        last && "shadow-[0_0_10px_currentColor]",
+                        last && toneText[l.tone],
+                      )}
+                    />
+                    <div className="min-w-0">
+                      <p className={cn("text-sm", last ? "font-medium text-silver" : "text-silver/85")}>{l.title}</p>
+                      <p className="text-xs text-steel">{formatDateTime(e.createdAt)}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
           )}
-
-          <Panel title="Linha do tempo">
-            {timeline.length === 0 ? (
-              <p className="text-sm text-steel">Os próximos passos aparecem aqui.</p>
-            ) : (
-              <ol className="relative space-y-5">
-                <span aria-hidden className="absolute bottom-2 left-[0.3rem] top-2 w-px bg-rime-strong" />
-                {timeline.map(({ e, l }, i) => {
-                  const last = i === timeline.length - 1;
-                  return (
-                    <li key={e.id} className="relative flex gap-3.5">
-                      <span
-                        className={cn(
-                          "relative mt-1.5 size-2.5 shrink-0 rounded-full ring-4 ring-night",
-                          toneBg[l.tone],
-                          last && "shadow-[0_0_10px_currentColor]",
-                          last && toneText[l.tone],
-                        )}
-                      />
-                      <div className="min-w-0">
-                        <p className={cn("text-sm", last ? "font-medium text-silver" : "text-silver/85")}>{l.title}</p>
-                        <p className="text-xs text-steel">{formatDateTime(e.createdAt)}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            )}
-          </Panel>
-
-        </aside>
+        </Panel>
       </div>
     </div>
   );

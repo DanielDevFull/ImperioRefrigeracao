@@ -13,8 +13,9 @@ import { formatEquipmentCode } from "@/lib/format";
 import { visitIntervalMonths } from "@/server/core/schedule";
 import { periodLabel, plural } from "../../planos/_lib/preview";
 import { addContractItem, removeContractItem, updateContractItem } from "../actions";
+import { defaultPlanFor } from "../_lib/defaults";
 
-type PlanOpt = { id: string; name: string; equipmentTypeId: string | null; tasks: { frequencyMonths: number }[] };
+type PlanOpt = { id: string; name: string; equipmentTypeId: string | null; isPmoc: boolean; tasks: { frequencyMonths: number }[] };
 type TechOpt = { id: string; name: string };
 type FreeEquipment = { id: string; code: number; label: string; typeId: string | null; status: string };
 
@@ -31,6 +32,7 @@ export function AddItemButton({
   technicians,
   defaultTechnicianId,
   today,
+  preferPmoc,
   disabled,
 }: {
   contractId: string;
@@ -39,11 +41,21 @@ export function AddItemButton({
   technicians: TechOpt[];
   defaultTechnicianId: string | null;
   today: string;
+  preferPmoc: boolean;
   disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  // Lista congelada ao abrir: depois de incluir, o equipamento some da lista do servidor
+  // e o formulário precisa continuar montado para mostrar o resultado.
+  const [snapshot, setSnapshot] = useState(equipment);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (o) setSnapshot(equipment);
+        setOpen(o);
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={disabled}>
           <Plus />
@@ -58,18 +70,19 @@ export function AddItemButton({
           </DialogDescription>
         </DialogHeader>
         {open &&
-          (equipment.length === 0 ? (
+          (snapshot.length === 0 ? (
             <p className="rounded-lg border border-dashed border-rime-strong px-4 py-6 text-center text-sm text-steel">
               Todos os equipamentos deste cliente já estão em contrato. Cadastre um novo aparelho na ficha do cliente.
             </p>
           ) : (
             <AddItemForm
               contractId={contractId}
-              equipment={equipment}
+              equipment={snapshot}
               plans={plans}
               technicians={technicians}
               defaultTechnicianId={defaultTechnicianId}
               today={today}
+              preferPmoc={preferPmoc}
               onDone={() => setOpen(false)}
             />
           ))}
@@ -85,6 +98,7 @@ function AddItemForm({
   technicians,
   defaultTechnicianId,
   today,
+  preferPmoc,
   onDone,
 }: {
   contractId: string;
@@ -93,6 +107,7 @@ function AddItemForm({
   technicians: TechOpt[];
   defaultTechnicianId: string | null;
   today: string;
+  preferPmoc: boolean;
   onDone: () => void;
 }) {
   const [state, action] = useActionState(addContractItem.bind(null, contractId), initialActionState);
@@ -100,7 +115,7 @@ function AddItemForm({
   const fe = state.fieldErrors ?? {};
   const [equipmentId, setEquipmentId] = useState(equipment[0]?.id ?? "");
   const eq = equipment.find((e) => e.id === equipmentId);
-  const suggested = plans.find((p) => p.equipmentTypeId && p.equipmentTypeId === eq?.typeId) ?? plans[0];
+  const suggested = defaultPlanFor(eq?.typeId ?? null, plans, preferPmoc);
   const [planChoice, setPlanChoice] = useState<string | null>(null);
   const planId = planChoice ?? suggested?.id ?? "";
   return (

@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { requireStaff } from "@/lib/auth/session";
 import { formatDate } from "@/lib/format";
 import { PAGE_SIZE, pageFrom, param } from "@/lib/params";
+import { FlashToast } from "./_components/flash-toast";
 import { listPmocDocuments } from "./_lib/list";
 
 export const metadata: Metadata = { title: "PMOC" };
@@ -50,6 +51,7 @@ export default async function PmocListPage({ searchParams }: PageProps<"/admin/p
 
   return (
     <>
+      <FlashToast message={param(sp, "excluido") ? "PMOC excluído" : null} />
       <PageHeader
         title="PMOC"
         description="Planos de Manutenção, Operação e Controle exigidos pela Lei 13.589/2018 para ambientes climatizados de uso coletivo."

@@ -60,7 +60,7 @@ export function ConfirmPaymentDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden sm:max-w-lg">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-lg">
         {open && <ConfirmForm target={target} today={today} late={late} bankAccounts={bankAccounts} onDone={() => onOpenChange(false)} />}
       </DialogContent>
     </Dialog>
@@ -113,7 +113,7 @@ function ConfirmForm({
 
   if (confirmedAmount != null) {
     return (
-      <div className="relative grid min-h-64 place-items-center py-6 text-center">
+      <div className="relative grid min-h-72 place-items-center overflow-hidden py-6 text-center">
         <FrostBurst burstKey={burst} size={280} />
         <motion.div
           initial={{ scale: 0.85, opacity: 0 }}

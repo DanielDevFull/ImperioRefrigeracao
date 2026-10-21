@@ -304,6 +304,8 @@ export function DispatchBoard({
   const onBoard = optimistic.filter((i) => !needsDispatch(i, today) && i.technicianId && i.scheduledDate && dates.has(i.scheduledDate) && i.status !== "cancelada");
 
   const drop = (id: string, target: MoveTarget, fromDialog = false) => {
+    // O cartão arrastado muda de célula e o dragend pode não chegar: limpa aqui.
+    setDragging(null);
     const item = optimistic.find((i) => i.id === id);
     if (!item) return;
     if (LOCKED.has(item.status)) {

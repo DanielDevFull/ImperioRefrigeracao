@@ -87,7 +87,7 @@ function SuccessCard({ info, reportHref, onClose }: { info: SuccessInfo; reportH
       animate={{ y: 0, opacity: 1, scale: 1 }}
       exit={{ y: 30, opacity: 0 }}
       transition={reduce ? { duration: 0.15 } : { type: "spring", stiffness: 380, damping: 30, delay: 0.12 }}
-      className="glass frost-edge rounded-3xl p-5"
+      className="frost-edge rounded-3xl bg-gradient-to-b from-glacier to-night p-5 shadow-[0_-12px_48px_-12px_rgb(62_224_181/0.35),0_24px_48px_-20px_rgb(0_0_0/0.8)] ring-1 ring-mint/25"
     >
       <div className="flex items-center gap-4">
         <span className="relative grid size-14 shrink-0 place-items-center rounded-full bg-mint/15 ring-1 ring-mint/40">
@@ -166,7 +166,13 @@ export function ActionBar({
   const canPause = status === "em_execucao";
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-xl px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -top-8 bg-gradient-to-t from-abyss via-abyss/90 to-transparent" />
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0 bg-gradient-to-t from-abyss via-abyss/90 to-transparent transition-[top] duration-300",
+          success ? "-top-40" : "-top-8",
+        )}
+      />
       <AnimatePresence mode="wait" initial={false}>
         {success ? (
           <SuccessCard info={success} reportHref={reportHref} onClose={onCloseSuccess} />

@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { formatBRL, formatNumber } from "@/lib/format";
-import { productUnit } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { addMaterialAction, removeMaterialAction, type MaterialState } from "../../actions";
 
@@ -97,7 +96,7 @@ function AddMaterialForm({
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-[8rem_10rem_minmax(0,1fr)]">
-        <Field label={`Quantidade${product ? ` (${productUnit[product.unit] ?? product.unit})` : ""}`} htmlFor="mat-qty" error={fe.quantity} required>
+        <Field label={`Quantidade${product ? ` (${product.unit})` : ""}`} htmlFor="mat-qty" error={fe.quantity} required>
           <Input
             id="mat-qty"
             name="quantity"

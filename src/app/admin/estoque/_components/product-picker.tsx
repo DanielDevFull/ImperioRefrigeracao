@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -28,6 +28,7 @@ export function ProductPicker({
   placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const listId = useId();
   const selected = products.find((p) => p.id === value);
   return (
     <>
@@ -39,6 +40,7 @@ export function ProductPicker({
             id={id}
             role="combobox"
             aria-expanded={open}
+            aria-controls={listId}
             aria-invalid={invalid || undefined}
             className={cn(
               nativeSelectClass,
@@ -55,7 +57,7 @@ export function ProductPicker({
         <PopoverContent className="w-(--radix-popover-trigger-width) min-w-72 p-0" align="start">
           <Command>
             <CommandInput placeholder="Buscar por nome ou SKU" />
-            <CommandList>
+            <CommandList id={listId}>
               <CommandEmpty>Nenhum produto encontrado.</CommandEmpty>
               <CommandGroup>
                 {products.map((p) => (

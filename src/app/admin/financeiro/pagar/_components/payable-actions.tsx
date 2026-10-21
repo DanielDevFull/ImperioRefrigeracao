@@ -66,7 +66,7 @@ export function PayDialogProvider({
       {children}
       {row && (
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-lg">
             {open && <PayForm row={row} today={today} bankAccounts={bankAccounts} onDone={() => setOpen(false)} />}
           </DialogContent>
         </Dialog>
@@ -110,6 +110,7 @@ export function PayableActions({ row, compact = false }: { row: PayableActionRow
           <span className="sr-only">Cancelar conta</span>
         </ConfirmAction>
       )}
+      {isOpen && row.commissionPayoutId && !compact && <span className="size-7 shrink-0" aria-hidden />}
     </div>
   );
 }

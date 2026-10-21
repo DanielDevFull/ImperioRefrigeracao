@@ -5,7 +5,7 @@ import { technicianAbsences, technicians, workOrders } from "@/db/schema";
 import { ACTIVE_STATUSES } from "@/server/core/work-order-flow";
 import { DEFAULT_MINUTES, type BoardItem, type BoardTechnician } from "./board";
 
-const LOCKED_STATUSES = ["em_deslocamento", "em_execucao", "concluida", "cancelada"] as const;
+const LOCKED_STATUSES: ("em_deslocamento" | "em_execucao" | "concluida" | "cancelada")[] = ["em_deslocamento", "em_execucao", "concluida", "cancelada"];
 
 export async function loadBoard({ start, end, today }: { start: string; end: string; today: string }) {
   const [techs, absences, rows] = await Promise.all([

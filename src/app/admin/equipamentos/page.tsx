@@ -73,7 +73,7 @@ export default async function EquipamentosPage({ searchParams }: PageProps<"/adm
             options={types.map((t) => ({ value: t.id, label: t.name }))}
             className="sm:w-52"
           />
-          <SearchInput placeholder="Marca, modelo, série, ambiente ou cliente" className="sm:w-80" />
+          <SearchInput placeholder="Marca, modelo, série ou cliente" className="sm:w-80" />
         </div>
       </div>
 

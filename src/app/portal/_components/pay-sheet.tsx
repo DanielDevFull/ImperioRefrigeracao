@@ -51,7 +51,14 @@ export function PaySheet({
           {label}
         </Button>
       </DialogTrigger>
-      <DialogContent className={sheetClass}>
+      <DialogContent
+        className={sheetClass}
+        onOpenAutoFocus={(e) => {
+          // Foca a folha (não o campo do código), para leitores de tela começarem pelo título
+          e.preventDefault();
+          (e.currentTarget as HTMLElement | null)?.focus();
+        }}
+      >
         <SheetBody data={data} qr={qr} />
       </DialogContent>
     </Dialog>
@@ -83,7 +90,7 @@ function SheetBody({ data, qr }: { data: PayData; qr: React.ReactNode }) {
         <div className="mt-5">
           <p className="text-xs text-steel">{inReview ? "Valor informado" : late ? "Valor para pagar hoje" : "Valor"}</p>
           <p className="readout mt-1 text-[2.4rem] font-semibold leading-none text-silver">{formatBRL(data.total)}</p>
-          <p className={cn("mt-2 text-sm", late ? "text-gauge-red" : "text-steel")}>
+          <p className={cn("mt-2 text-sm", late && !inReview ? "text-gauge-red" : "text-steel")}>
             {late
               ? `Venceu em ${formatDate(data.dueDate)}, há ${data.daysLate} dia${data.daysLate === 1 ? "" : "s"}`
               : `Vence em ${formatDate(data.dueDate)}`}

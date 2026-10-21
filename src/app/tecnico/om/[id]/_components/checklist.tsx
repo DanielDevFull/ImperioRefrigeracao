@@ -170,8 +170,8 @@ function TaskRow({
           disabled={locked}
           onClick={toggle}
           className={cn(
-            "relative grid size-12 shrink-0 place-items-center rounded-xl ring-2 transition-colors disabled:opacity-40",
-            task.done ? "bg-mint text-abyss ring-mint" : "bg-abyss/40 text-transparent ring-steel/45 active:bg-ice/10",
+            "relative grid size-12 shrink-0 place-items-center rounded-xl ring-2 transition-colors",
+            task.done ? "bg-mint text-abyss ring-mint" : "bg-abyss/40 text-transparent ring-steel/45 active:bg-ice/10 disabled:opacity-50",
           )}
         >
           <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>

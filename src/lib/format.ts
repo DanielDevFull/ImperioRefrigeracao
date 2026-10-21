@@ -5,6 +5,7 @@ const brlCompact = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
   notation: "compact",
+  minimumFractionDigits: 0,
   maximumFractionDigits: 1,
 });
 const num = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 3 });

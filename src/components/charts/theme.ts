@@ -22,7 +22,7 @@ export function formatValue(v: number, f: ValueFormat = "number") {
     case "brl":
       return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     case "brl-compact":
-      return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 });
+      return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", notation: "compact", minimumFractionDigits: 0, maximumFractionDigits: 1 });
     case "integer":
       return Math.round(v).toLocaleString("pt-BR");
     case "percent":

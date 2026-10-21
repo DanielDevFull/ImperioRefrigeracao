@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, CalendarClock, Loader2, Receipt, Wrench } from "lucide-react";
+import { CalendarClock, Loader2, Receipt, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/system/empty-state";
 import { Field, nativeSelectClass } from "@/components/system/form";
@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { formatBRL, formatBTU, formatCompetence, formatContractCode, formatDate, formatDayMonth, formatEquipmentCode, onlyDigits } from "@/lib/format";
-import { addDays, addMonths, startOfMonth } from "@/lib/dates";
+import { addDays, addMonths } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { visitIntervalMonths } from "@/server/core/schedule";
 import { MonthStrip } from "../../planos/_components/month-strip";
@@ -511,24 +511,6 @@ export function ContractForm({
               </p>
             ) : (
               <p className="mt-1.5 text-sm text-steel">O término é antes do primeiro vencimento: nenhuma mensalidade será gerada.</p>
-            )}
-            {summary.first && summary.first.dueDate < validStart && (
-              <div className="mt-2 rounded-lg border border-brass/30 bg-brass/8 p-3 text-xs text-brass">
-                <p className="flex gap-1.5">
-                  <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-                  Vence antes do início do contrato e já nasce vencida. Para cobrar a partir do mês que vem, comece o
-                  contrato no dia 1º.
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 border-brass/40 text-brass hover:bg-brass/10 hover:text-brass"
-                  onClick={() => setStartDate(addMonths(startOfMonth(validStart), 1))}
-                >
-                  Começar em {formatDate(addMonths(startOfMonth(validStart), 1))}
-                </Button>
-              </div>
             )}
             <p className="mt-1.5 text-xs text-steel">
               {summary.invNow.length

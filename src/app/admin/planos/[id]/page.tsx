@@ -74,8 +74,9 @@ export default async function PlanoPage({ params }: PageProps<"/admin/planos/[id
 
       {!plan.active && (
         <div role="status" className="mb-6 rounded-xl border border-brass/30 bg-brass/10 px-4 py-3 text-sm text-brass">
-          Plano inativo: {equipmentUsing ? `os ${plural(equipmentUsing, "equipamento", "equipamentos")} que o usam não geram OMs.` : "não aparece ao montar contratos."}{" "}
-          Reative o plano ou troque-o nos contratos.
+          {equipmentUsing
+            ? `Plano inativo: ${equipmentUsing === 1 ? "o equipamento que o usa não gera" : `os ${equipmentUsing} equipamentos que o usam não geram`} OMs. Reative o plano ou troque-o nos contratos.`
+            : "Plano inativo: não aparece como opção ao montar contratos."}
         </div>
       )}
 

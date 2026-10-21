@@ -53,6 +53,18 @@ describe("competencesToBill", () => {
     expect(r.map((x) => x.competence)).toEqual(["2026-10"]);
   });
 
+  it("não cria mensalidade com vencimento antes do início do contrato", () => {
+    const r = competencesToBill({
+      startDate: "2026-10-21",
+      endDate: null,
+      billingDay: 10,
+      today: "2026-10-21",
+      leadDays: 25,
+      existing: new Set(),
+    });
+    expect(r).toEqual([{ competence: "2026-11", dueDate: "2026-11-10" }]);
+  });
+
   it("é idempotente com as existentes", () => {
     const r = competencesToBill({
       startDate: "2026-10-01",

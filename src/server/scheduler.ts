@@ -6,6 +6,7 @@ import { addDays, todayISO, type ISODate } from "@/lib/dates";
 import { formatEquipmentCode } from "@/lib/format";
 import { maxDaysOverdue } from "./core/billing";
 import {
+  GENERATOR_GRACE_DAYS,
   dueDatesToGenerate,
   isTechnicianAbsent,
   scheduleDateFor,
@@ -15,8 +16,6 @@ import {
 import { getSettings } from "./settings";
 import { createWorkOrder } from "./work-orders";
 
-/** Quantos dias para trás o gerador ainda cria OMs vencidas (ex.: rotina ficou parada). */
-const GRACE_DAYS = 15;
 
 export type GenerationSummary = {
   created: number;
@@ -36,7 +35,7 @@ export async function generateWorkOrders({
 }: { today?: ISODate; contractEquipmentIds?: string[] } = {}): Promise<GenerationSummary> {
   const settings = await getSettings();
   const until = addDays(today, settings.workOrderHorizonDays);
-  const notBefore = addDays(today, -GRACE_DAYS);
+  const notBefore = addDays(today, -GENERATOR_GRACE_DAYS);
   const summary: GenerationSummary = {
     created: 0,
     equipmentChecked: 0,

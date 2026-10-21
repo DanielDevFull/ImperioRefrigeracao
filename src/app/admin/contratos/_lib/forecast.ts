@@ -7,7 +7,8 @@ import { competencesToBill } from "@/server/core/billing";
 import { dueDatesToGenerate, tasksDueOn, visitIntervalMonths } from "@/server/core/schedule";
 
 /** Igual ao GRACE_DAYS de src/server/scheduler.ts: o gerador ainda cria OMs vencidas há até 15 dias. */
-export const GENERATOR_GRACE_DAYS = 15;
+export { GENERATOR_GRACE_DAYS } from "@/server/core/schedule";
+import { GENERATOR_GRACE_DAYS } from "@/server/core/schedule";
 
 export type ScheduleTask = { id?: string; frequencyMonths: number; position: number };
 export type ScheduleItem = { anchorDate: ISODate; tasks: ScheduleTask[] };

@@ -1,5 +1,8 @@
 import { addDays, addMonths, monthDiff, toWorkingDay, type ISODate } from "@/lib/dates";
 
+/** Quantos dias para trás o gerador ainda cria OMs vencidas (ex.: rotina ficou parada). */
+export const GENERATOR_GRACE_DAYS = 15;
+
 export type PlanTask = {
   id: string;
   title: string;

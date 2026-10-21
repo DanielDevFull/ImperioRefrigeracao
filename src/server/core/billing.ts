@@ -25,7 +25,7 @@ export function lateCharges({
 
 /**
  * Competências de mensalidade que devem existir hoje para um contrato:
- * a primeira é o mês de início; gera-se cada competência quando faltam
+ * a primeira é a do primeiro vencimento na data de início ou depois; gera-se cada competência quando faltam
  * `leadDays` dias (ou menos) para o vencimento. Não recria as já existentes
  * e não volta mais que 1 competência no passado.
  */
@@ -53,7 +53,8 @@ export function competencesToBill({
     const due = dueDateFor(comp, billingDay);
     if (due > horizon) break;
     if (endDate && due > endDate) break;
-    if (!existing.has(comp)) out.push({ competence: comp, dueDate: due });
+    // a primeira mensalidade é a do primeiro vencimento a partir do início do contrato
+    if (due >= startDate && !existing.has(comp)) out.push({ competence: comp, dueDate: due });
     comp = addCompetence(comp, 1);
   }
   return out;

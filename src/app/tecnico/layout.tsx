@@ -4,6 +4,7 @@ import { NotificationsBell } from "@/components/shell/notifications-bell";
 import { TechShell } from "@/components/shell/tech-shell";
 import { RegisterServiceWorker } from "@/components/pwa/register-sw";
 import { requireTechnician } from "@/lib/auth/session";
+import { OfflineLayer } from "./_components/offline-layer";
 
 export const metadata: Metadata = {
   title: { default: "App do técnico", template: "%s · Imperium" },
@@ -16,6 +17,7 @@ export default async function TechLayout({ children }: LayoutProps<"/tecnico">) 
   return (
     <TechShell topbar={<NotificationsBell {...notes} />}>
       <RegisterServiceWorker />
+      <OfflineLayer />
       {children}
     </TechShell>
   );

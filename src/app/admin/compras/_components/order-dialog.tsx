@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../estoque/_components/form-dialog";
 import { createOrder } from "../actions";
@@ -38,7 +38,7 @@ export function NewOrderDialog({
 }
 
 function OrderForm({ suppliers, supplierId }: { suppliers: { id: string; name: string; active: boolean }[]; supplierId?: string }) {
-  const [state, action] = useActionState(createOrder, initialActionState);
+  const [state, action, pending] = useActionState(createOrder, initialActionState);
   useActionToast(state);
   const e = state.fieldErrors ?? {};
   const active = suppliers.filter((s) => s.active);
@@ -52,7 +52,7 @@ function OrderForm({ suppliers, supplierId }: { suppliers: { id: string; name: s
       </p>
     );
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <Field label="Fornecedor" required error={e.supplierId} htmlFor="po-supplier">
         <select id="po-supplier" name="supplierId" defaultValue={supplierId ?? ""} className={nativeSelectClass}>
           <option value="" disabled>
@@ -72,8 +72,8 @@ function OrderForm({ suppliers, supplierId }: { suppliers: { id: string; name: s
         <Textarea id="po-notes" name="notes" rows={2} placeholder="Condição de pagamento, forma de entrega…" />
       </Field>
       <DialogActions>
-        <SubmitButton>Criar pedido</SubmitButton>
+        <FormSubmit>Criar pedido</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

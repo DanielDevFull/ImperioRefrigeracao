@@ -5,7 +5,7 @@ import { ArrowLeftRight, ClipboardCheck, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { initialActionState } from "@/lib/action";
 import { formatBRL } from "@/lib/format";
@@ -150,7 +150,7 @@ function QtyInput({ name, unit, value, onChange, invalid, id }: { name: string; 
 }
 
 function EntryForm({ data, fixedProductId, onDone }: { data: MovementData; fixedProductId?: string; onDone: () => void }) {
-  const [state, action] = useActionState(registerEntry, initialActionState);
+  const [state, action, pending] = useActionState(registerEntry, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const { productId, setProductId, product, total } = useProduct(data, fixedProductId);
   const [qty, setQty] = useState("");
@@ -161,7 +161,7 @@ function EntryForm({ data, fixedProductId, onDone }: { data: MovementData; fixed
   const c = cost ?? product?.costPrice ?? 0;
   const newCost = product ? weightedAverageCost(total, product.costPrice, q, c) : 0;
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <ProductField
         data={data}
         fixedProductId={fixedProductId}
@@ -225,14 +225,14 @@ function EntryForm({ data, fixedProductId, onDone }: { data: MovementData; fixed
         </span>
       </label>
       <DialogActions>
-        <SubmitButton>Registrar entrada</SubmitButton>
+        <FormSubmit>Registrar entrada</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }
 
 function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixedProductId?: string; onDone: () => void }) {
-  const [state, action] = useActionState(registerAdjustment, initialActionState);
+  const [state, action, pending] = useActionState(registerAdjustment, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const { productId, setProductId, product, levelsOf } = useProduct(data, fixedProductId);
   const [mode, setMode] = useState<"contagem" | "saida">("contagem");
@@ -246,7 +246,7 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
   const diff = countedN == null ? null : round3(countedN - current);
   const unit = product?.unit ?? "un";
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <ProductField data={data} fixedProductId={fixedProductId} value={productId} onChange={setProductId} error={e.productId} />
       <input type="hidden" name="mode" value={mode} />
       <div className="grid grid-cols-2 gap-1 rounded-xl bg-night/60 p-1 ring-1 ring-rime" role="radiogroup" aria-label="Tipo de ajuste">
@@ -328,14 +328,14 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
         <Input id="aj-reason" name="reason" className="h-9" aria-invalid={Boolean(e.reason) || undefined} />
       </Field>
       <DialogActions>
-        <SubmitButton>{mode === "contagem" ? "Registrar ajuste" : "Registrar saída"}</SubmitButton>
+        <FormSubmit>{mode === "contagem" ? "Registrar ajuste" : "Registrar saída"}</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }
 
 function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fixedProductId?: string; onDone: () => void }) {
-  const [state, action] = useActionState(registerTransfer, initialActionState);
+  const [state, action, pending] = useActionState(registerTransfer, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const { productId, setProductId, product, levelsOf } = useProduct(data, fixedProductId);
   const warehouse = defaultWarehouse(data.locations);
@@ -361,7 +361,7 @@ function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fi
       </p>
     );
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <ProductField
         data={{ ...data, products: pickerProducts }}
         fixedProductId={fixedProductId}
@@ -419,8 +419,8 @@ function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fi
         <Input id="tr-notes" name="notes" className="h-9" placeholder="Ex.: kit da semana" />
       </Field>
       <DialogActions>
-        <SubmitButton disabled={q != null && q > available}>Transferir</SubmitButton>
+        <FormSubmit disabled={q != null && q > available}>Transferir</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

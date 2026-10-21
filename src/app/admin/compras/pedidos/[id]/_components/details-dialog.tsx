@@ -5,7 +5,7 @@ import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../../../estoque/_components/form-dialog";
@@ -57,12 +57,12 @@ function DetailsForm({
   locations: PickerLocation[];
   onDone: () => void;
 }) {
-  const [state, action] = useActionState(updateOrderDetails, initialActionState);
+  const [state, action, pending] = useActionState(updateOrderDetails, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const e = state.fieldErrors ?? {};
   const draft = order.status === "rascunho";
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <input type="hidden" name="id" value={order.id} />
       <Field
         label="Fornecedor"
@@ -111,8 +111,8 @@ function DetailsForm({
         <Textarea id="od-notes" name="notes" rows={3} defaultValue={order.notes ?? ""} />
       </Field>
       <DialogActions>
-        <SubmitButton>Salvar pedido</SubmitButton>
+        <FormSubmit>Salvar pedido</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

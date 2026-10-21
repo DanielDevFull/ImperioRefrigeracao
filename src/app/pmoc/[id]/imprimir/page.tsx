@@ -71,7 +71,9 @@ const CSS = `
   .pmoc-paper { box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; max-width: none !important; width: auto !important; }
   .pmoc-paper .tbl-wrap { overflow: visible; }
 }
-@media (max-width: 640px) {
+@media screen and (max-width: 640px) {
+  .pmoc-paper table { min-width: 600px; }
+  .pmoc-paper table.sched { min-width: 720px; }
   .pmoc-paper dl.grid-kv { grid-template-columns: 1fr; }
   .pmoc-paper .sign { grid-template-columns: 1fr; gap: 44px; }
 }

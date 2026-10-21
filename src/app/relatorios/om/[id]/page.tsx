@@ -105,7 +105,9 @@ export default async function OmReportPage({ params }: PageProps<"/relatorios/om
       <style>{`
         @page { size: A4; margin: 12mm 12mm 14mm; }
         @media print {
-          html, body { background: #fff !important; }
+          :root { color-scheme: light !important; }
+          html, body { background: #fff !important; background-image: none !important; min-height: 0 !important; }
+          * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .report-paper { box-shadow: none !important; border: 0 !important; margin: 0 !important; padding: 0 !important; width: auto !important; max-width: none !important; border-radius: 0 !important; }
           .report-section, .report-row, tr, img { break-inside: avoid; }
           a { color: inherit !important; text-decoration: none !important; }

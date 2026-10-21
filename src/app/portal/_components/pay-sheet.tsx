@@ -180,45 +180,52 @@ function PixBlock({ code, qr, merchant }: { code: string; qr: React.ReactNode; m
   }
 
   return (
-    <div className="relative border-t border-rime px-5 py-5 sm:px-6">
-      <div className="flex flex-col items-center">
-        <div className="rounded-2xl bg-white p-2.5 shadow-[0_0_0_6px_rgb(56_168_255/0.08),0_20px_40px_-20px_rgb(56_168_255/0.45)]">{qr}</div>
-        <p className="mt-3 text-xs text-steel">Recebedor: {merchant}</p>
+    <div className="relative flex flex-col border-t border-rime px-5 py-5 sm:px-6">
+      {/* No celular o QR não tem como ser lido pelo próprio aparelho: o copia e cola vem primeiro */}
+      <div className="order-2 mt-6 flex flex-col items-center sm:order-1 sm:mt-0">
+        <div className="rounded-2xl bg-white p-2.5 shadow-[0_0_0_6px_rgb(56_168_255/0.08),0_20px_40px_-20px_rgb(56_168_255/0.45)] max-sm:[&>span]:size-40!">
+          {qr}
+        </div>
+        <p className="mt-3 text-xs text-steel">
+          <span className="sm:hidden">Ou leia o QR em outro aparelho. </span>Recebedor: {merchant}
+        </p>
       </div>
 
-      <label htmlFor="pix-code" className="mt-5 block text-xs text-steel">
-        Pix copia e cola
-      </label>
-      <div className="mt-1.5 flex items-stretch gap-2">
-        <input
-          id="pix-code"
-          ref={fieldRef}
-          readOnly
-          value={code}
-          onFocus={(e) => e.currentTarget.select()}
-          className="min-w-0 flex-1 truncate rounded-lg border border-input bg-abyss/50 px-3 font-mono text-xs text-frost outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-        />
-        <Button type="button" size="lg" onClick={copy} className="relative min-w-[8.5rem] overflow-hidden">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={copied ? "ok" : "copy"}
-              initial={{ y: 12, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -12, opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="inline-flex items-center gap-1.5"
-            >
-              {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-              {copied ? "Copiado" : "Copiar código Pix"}
-            </motion.span>
-          </AnimatePresence>
-        </Button>
+      <div className="order-1 sm:order-2 sm:mt-5">
+        <label htmlFor="pix-code" className="block text-xs text-steel">
+          Pix copia e cola
+        </label>
+        <div className="mt-1.5 flex items-stretch gap-2">
+          <input
+            id="pix-code"
+            ref={fieldRef}
+            readOnly
+            value={code}
+            onFocus={(e) => e.currentTarget.select()}
+            className="min-w-0 flex-1 truncate rounded-lg border border-input bg-abyss/50 px-3 font-mono text-xs text-frost outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          />
+          <Button type="button" size="lg" onClick={copy} className="relative min-w-[8.5rem] overflow-hidden">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={copied ? "ok" : "copy"}
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -12, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="inline-flex items-center gap-1.5"
+              >
+                {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                {copied ? "Copiado" : "Copiar código Pix"}
+              </motion.span>
+            </AnimatePresence>
+          </Button>
+        </div>
       </div>
 
-      <ol className="mt-5 space-y-2.5 text-sm text-steel">
+      <ol className="order-3 mt-5 space-y-2.5 text-sm text-steel">
         {[
           "Abra o app do seu banco e escolha Pix.",
-          "Leia o QR code ou use Pix copia e cola com o código acima.",
+          "Use Pix copia e cola com o código copiado, ou leia o QR code.",
           `Confira o valor e o recebedor (${merchant}) e confirme.`,
           "Depois, envie o comprovante aqui embaixo para darmos baixa mais rápido.",
         ].map((t, i) => (

@@ -209,22 +209,22 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
         </Panel>
 
         {!closed && (
-        <Panel
-          title="Previsão de visitas"
-          description={
-            isActive
-              ? `${plural(visitsYear, "visita preventiva prevista", "visitas preventivas previstas")} nos próximos 12 meses. A rotina gera as OMs com ${settings.workOrderHorizonDays} dias de antecedência.`
-              : "Contrato parado: nenhuma visita nova será gerada."
-          }
-        >
-          <MonthStrip
-            cells={forecast.map((m) => ({
-              month: m.month,
-              value: isActive ? m.dates.length : 0,
-              title: `${capitalize(formatCompetence(m.month.slice(0, 7)))}: ${plural(isActive ? m.dates.length : 0, "visita", "visitas")}`,
-            }))}
-          />
-        </Panel>
+          <Panel
+            title="Previsão de visitas"
+            description={
+              isActive
+                ? `${plural(visitsYear, "visita preventiva prevista", "visitas preventivas previstas")} nos próximos 12 meses. A rotina gera as OMs com ${settings.workOrderHorizonDays} dias de antecedência.`
+                : "Contrato parado: nenhuma visita nova será gerada."
+            }
+          >
+            <MonthStrip
+              cells={forecast.map((m) => ({
+                month: m.month,
+                value: isActive ? m.dates.length : 0,
+                title: `${capitalize(formatCompetence(m.month.slice(0, 7)))}: ${plural(isActive ? m.dates.length : 0, "visita", "visitas")}`,
+              }))}
+            />
+          </Panel>
         )}
       </div>
 
@@ -471,59 +471,59 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
             />
           ) : (
             <>
-            <ul className="divide-y divide-rime sm:hidden">
-              {recs.slice(0, 8).map((r) => {
-                const status = effectiveFinanceStatus(r.status, r.dueDate, today);
-                return (
-                  <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm text-silver">{r.competence ? capitalize(formatCompetence(r.competence)) : r.description}</p>
-                      <p className="text-xs tabular-nums text-steel">
-                        {formatBRL(r.amount - r.discount)}, vence {formatDate(r.dueDate)}
-                        {r.paidAt ? `, pago em ${formatDate(r.paidAt)}` : ""}
-                      </p>
-                    </div>
-                    <ReceivableStatusBadge status={status} />
-                  </li>
-                );
-              })}
-            </ul>
-            <Table className="hidden sm:table">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="pl-5">Competência</TableHead>
-                  <TableHead>Vencimento</TableHead>
-                  <TableHead className="text-right">Valor</TableHead>
-                  <TableHead className="text-right">Pago</TableHead>
-                  <TableHead className="pr-5">Situação</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+              <ul className="divide-y divide-rime sm:hidden">
                 {recs.slice(0, 8).map((r) => {
                   const status = effectiveFinanceStatus(r.status, r.dueDate, today);
                   return (
-                    <TableRow key={r.id}>
-                      <TableCell className="pl-5 text-silver">{r.competence ? capitalize(formatCompetence(r.competence)) : r.description}</TableCell>
-                      <TableCell className="tabular-nums text-steel">{formatDate(r.dueDate)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-silver">{formatBRL(r.amount - r.discount)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-steel">
-                        {r.paidAt ? (
-                          <>
-                            {formatBRL(r.paidAmount)}
-                            <span className="block text-[0.7rem]">{formatDate(r.paidAt)}</span>
-                          </>
-                        ) : (
-                          "—"
-                        )}
-                      </TableCell>
-                      <TableCell className="pr-5">
-                        <ReceivableStatusBadge status={status} />
-                      </TableCell>
-                    </TableRow>
+                    <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm text-silver">{r.competence ? capitalize(formatCompetence(r.competence)) : r.description}</p>
+                        <p className="text-xs tabular-nums text-steel">
+                          {formatBRL(r.amount - r.discount)}, vence {formatDate(r.dueDate)}
+                          {r.paidAt ? `, pago em ${formatDate(r.paidAt)}` : ""}
+                        </p>
+                      </div>
+                      <ReceivableStatusBadge status={status} />
+                    </li>
                   );
                 })}
-              </TableBody>
-            </Table>
+              </ul>
+              <Table className="hidden sm:table">
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="pl-5">Competência</TableHead>
+                    <TableHead>Vencimento</TableHead>
+                    <TableHead className="text-right">Valor</TableHead>
+                    <TableHead className="text-right">Pago</TableHead>
+                    <TableHead className="pr-5">Situação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recs.slice(0, 8).map((r) => {
+                    const status = effectiveFinanceStatus(r.status, r.dueDate, today);
+                    return (
+                      <TableRow key={r.id}>
+                        <TableCell className="pl-5 text-silver">{r.competence ? capitalize(formatCompetence(r.competence)) : r.description}</TableCell>
+                        <TableCell className="tabular-nums text-steel">{formatDate(r.dueDate)}</TableCell>
+                        <TableCell className="text-right tabular-nums text-silver">{formatBRL(r.amount - r.discount)}</TableCell>
+                        <TableCell className="text-right tabular-nums text-steel">
+                          {r.paidAt ? (
+                            <>
+                              {formatBRL(r.paidAmount)}
+                              <span className="block text-[0.7rem]">{formatDate(r.paidAt)}</span>
+                            </>
+                          ) : (
+                            "—"
+                          )}
+                        </TableCell>
+                        <TableCell className="pr-5">
+                          <ReceivableStatusBadge status={status} />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </>
           )}
           {recs.length > 8 && (

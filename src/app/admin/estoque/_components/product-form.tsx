@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { initialActionState } from "@/lib/action";
 import { formatPercent } from "@/lib/format";
@@ -47,7 +47,7 @@ export function ProductForm({
   onDone?: () => void;
   cancelHref?: string;
 }) {
-  const [state, action] = useActionState(saveProduct, initialActionState);
+  const [state, action, pending] = useActionState(saveProduct, initialActionState);
   useActionToast(state, { success: "Produto salvo", onSuccess: onDone });
   const e = state.fieldErrors ?? {};
   const [active, setActive] = useState(product?.active ?? true);
@@ -57,7 +57,7 @@ export function ProductForm({
   const isNew = !product;
 
   return (
-    <form action={action} className="space-y-6">
+    <ActionForm action={action} pending={pending} className="space-y-6">
       {product && <input type="hidden" name="id" value={product.id} />}
 
       <div className="grid gap-4 sm:grid-cols-[1fr_12rem]">
@@ -186,8 +186,8 @@ export function ProductForm({
             <Link href={cancelHref}>Cancelar</Link>
           </Button>
         )}
-        <SubmitButton className="h-9 px-4">{isNew ? "Cadastrar produto" : "Salvar produto"}</SubmitButton>
+        <FormSubmit className="h-9 px-4">{isNew ? "Cadastrar produto" : "Salvar produto"}</FormSubmit>
       </div>
-    </form>
+    </ActionForm>
   );
 }

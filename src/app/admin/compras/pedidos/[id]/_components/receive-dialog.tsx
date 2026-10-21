@@ -5,7 +5,7 @@ import { PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -80,7 +80,7 @@ function ReceiveForm({
   defaultDueDate: string;
   onDone: () => void;
 }) {
-  const [state, action] = useActionState(receiveOrder, initialActionState);
+  const [state, action, pending] = useActionState(receiveOrder, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const pending = items.filter((i) => i.receivedQuantity < i.quantity);
   const remainingOf = (i: ItemRow) => round3(i.quantity - i.receivedQuantity);
@@ -94,7 +94,7 @@ function ReceiveForm({
   const willComplete = pending.every((i) => (parseDecimal(values[i.id]) ?? 0) >= remainingOf(i));
 
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <input type="hidden" name="orderId" value={orderId} />
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-silver">
@@ -180,8 +180,8 @@ function ReceiveForm({
       </label>
 
       <DialogActions>
-        <SubmitButton>{willComplete ? "Receber e concluir pedido" : "Registrar recebimento parcial"}</SubmitButton>
+        <FormSubmit>{willComplete ? "Receber e concluir pedido" : "Registrar recebimento parcial"}</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

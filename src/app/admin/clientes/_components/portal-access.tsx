@@ -42,6 +42,14 @@ export function PortalAccess({
   initialPassword: string;
 }) {
   const [shared, setShared] = useState<{ email: string; password: string; kind: "novo" | "senha" } | null>(null);
+  // O formulário de criação some assim que o acesso existe (a página é revalidada no mesmo passo),
+  // por isso o estado dele fica aqui no pai, que continua montado.
+  const [email, setEmail] = useState(suggestedEmail ?? "");
+  const [password, setPassword] = useState(initialPassword);
+  const create = useFormSubmit(createPortalAccess.bind(null, customerId));
+  useActionToast(create.state, {
+    onSuccess: () => setShared({ email: email.trim().toLowerCase(), password, kind: "novo" }),
+  });
 
   return (
     <div className="space-y-5">
@@ -69,14 +77,15 @@ export function PortalAccess({
           customerId={customerId}
           access={access}
           appUrl={appUrl}
-          onReset={(password) => setShared({ email: access.email, password, kind: "senha" })}
+          onReset={(pwd) => setShared({ email: access.email, password: pwd, kind: "senha" })}
         />
       ) : (
         <CreateAccess
-          customerId={customerId}
-          suggestedEmail={suggestedEmail}
-          initialPassword={initialPassword}
-          onCreated={(email, password) => setShared({ email, password, kind: "novo" })}
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          form={create}
         />
       )}
     </div>
@@ -117,20 +126,19 @@ function PasswordInput({ value, onChange, error }: { value: string; onChange: (v
 }
 
 function CreateAccess({
-  customerId,
-  suggestedEmail,
-  initialPassword,
-  onCreated,
+  email,
+  setEmail,
+  password,
+  setPassword,
+  form,
 }: {
-  customerId: string;
-  suggestedEmail: string | null;
-  initialPassword: string;
-  onCreated: (email: string, password: string) => void;
+  email: string;
+  setEmail: (v: string) => void;
+  password: string;
+  setPassword: (v: string) => void;
+  form: ReturnType<typeof useFormSubmit>;
 }) {
-  const [email, setEmail] = useState(suggestedEmail ?? "");
-  const [password, setPassword] = useState(initialPassword);
-  const { state, onSubmit, pending } = useFormSubmit(createPortalAccess.bind(null, customerId));
-  useActionToast(state, { onSuccess: () => onCreated(email.trim().toLowerCase(), password) });
+  const { state, onSubmit, pending } = form;
   const fe = state.fieldErrors ?? {};
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">

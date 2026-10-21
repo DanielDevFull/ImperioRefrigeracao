@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { saveLocation } from "../actions";
 import { DialogActions, FormDialog } from "./form-dialog";
@@ -40,7 +40,7 @@ export function LocationDialog({ location, technicians }: { location?: Loc; tech
 }
 
 function LocationForm({ location, technicians, onDone }: { location?: Loc; technicians: Tech[]; onDone: () => void }) {
-  const [state, action] = useActionState(saveLocation, initialActionState);
+  const [state, action, pending] = useActionState(saveLocation, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const [type, setType] = useState<Loc["type"]>(location?.type ?? "veiculo");
   const [techId, setTechId] = useState(location?.technicianId ?? "");
@@ -56,7 +56,7 @@ function LocationForm({ location, technicians, onDone }: { location?: Loc; techn
   };
 
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       {location && <input type="hidden" name="id" value={location.id} />}
       <Field label="Tipo" required error={e.type} htmlFor="lc-type">
         <select
@@ -110,8 +110,8 @@ function LocationForm({ location, technicians, onDone }: { location?: Loc; techn
         />
       </Field>
       <DialogActions>
-        <SubmitButton>{location ? "Salvar local" : "Criar local"}</SubmitButton>
+        <FormSubmit>{location ? "Salvar local" : "Criar local"}</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

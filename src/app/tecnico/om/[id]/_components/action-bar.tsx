@@ -28,18 +28,18 @@ export function primaryFor(status: string, atSite: boolean, nextId: string | nul
   return { kind: "status", to: p.to, label: p.label };
 }
 
-function iconFor(p: NonNullable<Primary>) {
-  if (p.kind === "conclude") return CheckCheck;
-  if (p.kind === "next") return p.href === "/tecnico" ? Sun : ChevronRight;
-  if (p.to === "em_deslocamento") return Navigation;
-  return Play;
+function PrimaryIcon({ primary: p }: { primary: NonNullable<Primary> }) {
+  const cls = "size-5 shrink-0";
+  if (p.kind === "conclude") return <CheckCheck className={cls} />;
+  if (p.kind === "next") return p.href === "/tecnico" ? <Sun className={cls} /> : <ChevronRight className={cls} />;
+  if (p.to === "em_deslocamento") return <Navigation className={cls} />;
+  return <Play className={cls} />;
 }
 
 const PrimaryButton = forwardRef<
   HTMLButtonElement,
   { primary: NonNullable<Primary>; busy: boolean; onClick: () => void; hint?: string | null }
 >(function PrimaryButton({ primary, busy, onClick, hint }, ref) {
-  const Icon = iconFor(primary);
   const conclude = primary.kind === "conclude";
   return (
     <motion.button
@@ -65,7 +65,7 @@ const PrimaryButton = forwardRef<
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           className="flex min-w-0 items-center gap-2.5"
         >
-          {busy ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <Icon className="size-5 shrink-0" />}
+          {busy ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <PrimaryIcon primary={primary} />}
           <span className="truncate">{primary.label}</span>
           {hint && !busy && <span className="readout shrink-0 rounded-full bg-abyss/15 px-2 py-0.5 text-xs">{hint}</span>}
         </motion.span>

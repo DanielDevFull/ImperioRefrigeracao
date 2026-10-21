@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmAction } from "@/components/system/confirm-action";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { ToneBadge } from "@/components/system/tone-badge";
 import { initialActionState } from "@/lib/action";
 import { formatBRL, formatDate, formatOM, formatPO } from "@/lib/format";
@@ -246,7 +246,7 @@ function Origin({ r }: { r: OpenRequest }) {
 }
 
 function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppliers: SupplierOpt[] }) {
-  const [state, action] = useActionState(createOrderFromRequests, initialActionState);
+  const [state, action, pending] = useActionState(createOrderFromRequests, initialActionState);
   useActionToast(state);
   const e = state.fieldErrors ?? {};
   // fornecedor padrão: o preferido mais comum entre os itens
@@ -259,7 +259,7 @@ function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppli
   const active = suppliers.filter((s) => s.active);
 
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       {chosen.map((r) => (
         <input key={r.id} type="hidden" name="requestId" value={r.id} />
       ))}
@@ -314,8 +314,8 @@ function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppli
       </Field>
       {state.error && e.requestIds && <p className="text-sm text-gauge-red">{e.requestIds}</p>}
       <DialogActions>
-        <SubmitButton>Criar pedido</SubmitButton>
+        <FormSubmit>Criar pedido</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

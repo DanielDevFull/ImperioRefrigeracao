@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, SubmitButton, useActionToast } from "@/components/system/form";
+import { Field, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../estoque/_components/form-dialog";
 import { ProductPicker, type PickerOption } from "../../estoque/_components/product-picker";
@@ -53,13 +53,13 @@ function RequestForm({
   quantity?: number;
   onDone: () => void;
 }) {
-  const [state, action] = useActionState(createRequest, initialActionState);
+  const [state, action, pending] = useActionState(createRequest, initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const [productId, setProductId] = useState(presetId ?? "");
   const product = products.find((p) => p.id === productId);
   const e = state.fieldErrors ?? {};
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       <Field label="Produto" required error={e.productId} htmlFor="rq-product">
         <ProductPicker id="rq-product" products={products} value={productId} onChange={setProductId} invalid={Boolean(e.productId)} />
       </Field>
@@ -83,8 +83,8 @@ function RequestForm({
         <Input id="rq-notes" name="notes" className="h-9" />
       </Field>
       <DialogActions>
-        <SubmitButton>Criar solicitação</SubmitButton>
+        <FormSubmit>Criar solicitação</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

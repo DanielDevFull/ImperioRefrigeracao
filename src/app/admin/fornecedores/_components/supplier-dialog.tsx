@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, SubmitButton, useActionToast } from "@/components/system/form";
+import { Field, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../estoque/_components/form-dialog";
@@ -51,7 +51,7 @@ export function SupplierDialog({ supplier, variant }: { supplier?: SupplierValue
 
 function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone: () => void }) {
   const router = useRouter();
-  const [state, action] = useActionState(saveSupplier, initialActionState);
+  const [state, action, pending] = useActionState(saveSupplier, initialActionState);
   const [active, setActive] = useState(supplier?.active ?? true);
   useActionToast(state, {
     onSuccess: () => {
@@ -61,7 +61,7 @@ function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone:
   });
   const e = state.fieldErrors ?? {};
   return (
-    <form action={action} className="space-y-4">
+    <ActionForm action={action} pending={pending} className="space-y-4">
       {supplier && <input type="hidden" name="id" value={supplier.id} />}
       <Field label="Nome" required error={e.name} htmlFor="sp-name">
         <Input id="sp-name" name="name" defaultValue={supplier?.name} className="h-9" autoFocus={!supplier} placeholder="Ex.: Frigelar Distribuidora" />
@@ -96,8 +96,8 @@ function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone:
         </label>
       )}
       <DialogActions>
-        <SubmitButton>{supplier ? "Salvar fornecedor" : "Cadastrar fornecedor"}</SubmitButton>
+        <FormSubmit>{supplier ? "Salvar fornecedor" : "Cadastrar fornecedor"}</FormSubmit>
       </DialogActions>
-    </form>
+    </ActionForm>
   );
 }

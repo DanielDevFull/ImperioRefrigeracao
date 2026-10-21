@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { startTransition, useActionState, useState, useTransition } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Loader2, Trash2 } from "lucide-react";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MaskedInput } from "@/components/system/masked-input";
-import { SubmitButton, useActionToast } from "@/components/system/form";
+import { useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -169,7 +169,16 @@ function EditableRow({ item }: { item: ItemRow }) {
       className="border-b border-rime last:border-0"
     >
       <td className="py-2.5 pl-5">
-        <form id={formId} action={action}>
+        {/* formulário vazio: os campos da linha se ligam a ele pelo atributo form */}
+        <form
+          id={formId}
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            if (pending) return;
+            const fd = new FormData(ev.currentTarget);
+            startTransition(() => action(fd));
+          }}
+        >
           <input type="hidden" name="itemId" value={item.id} />
         </form>
         <ProductCell item={item} />
@@ -239,7 +248,7 @@ function EditableRow({ item }: { item: ItemRow }) {
 }
 
 function AddItemForm({ orderId, products }: { orderId: string; products: PickerProduct[] }) {
-  const [state, action] = useActionState(addOrderItem, initialActionState);
+  const [state, action, pending] = useActionState(addOrderItem, initialActionState);
   const [productId, setProductId] = useState("");
   const [round, setRound] = useState(0);
   useActionToast(state, {
@@ -251,9 +260,10 @@ function AddItemForm({ orderId, products }: { orderId: string; products: PickerP
   const product = products.find((p) => p.id === productId);
   const e = state.fieldErrors ?? {};
   return (
-    <form
+    <ActionForm
       key={round}
       action={action}
+      pending={pending}
       className="grid gap-3 border-t border-rime bg-night/40 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_8rem_8rem_auto] sm:items-end"
     >
       <input type="hidden" name="orderId" value={orderId} />
@@ -280,9 +290,9 @@ function AddItemForm({ orderId, products }: { orderId: string; products: PickerP
         </label>
         <MaskedInput key={productId} id="add-cost" name="unitCost" mask="money" defaultValue={product?.costPrice ?? 0} className="h-9 tabular-nums" />
       </div>
-      <SubmitButton variant="outline" className="h-9">
+      <FormSubmit variant="outline" className="h-9">
         Adicionar item
-      </SubmitButton>
-    </form>
+      </FormSubmit>
+    </ActionForm>
   );
 }

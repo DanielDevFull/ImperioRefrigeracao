@@ -257,47 +257,77 @@ export default async function PmocDetailPage({ params, searchParams }: PageProps
             }
           />
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="pl-5">Visita prevista</TableHead>
-                <TableHead>Equipamento</TableHead>
-                <TableHead>Situação</TableHead>
-                <TableHead className="pr-5 text-right">OM</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <>
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="pl-5">Visita prevista</TableHead>
+                    <TableHead>Equipamento</TableHead>
+                    <TableHead>Situação</TableHead>
+                    <TableHead className="pr-5 text-right">OM</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {comp.nonConformities.map((v) => {
+                    const c = eqById.get(v.equipmentId);
+                    const st = visitStatusLabel[v.status];
+                    return (
+                      <TableRow key={`${v.equipmentId}-${v.date}`}>
+                        <TableCell className="readout pl-5 text-sm text-silver">{formatDate(v.date)}</TableCell>
+                        <TableCell className="text-sm">
+                          <span className="text-silver">{c?.equipment.location ?? "Equipamento"}</span>
+                          <span className="block text-xs text-steel">
+                            {c?.equipment.type?.name ?? "Tipo não informado"}, {formatEquipmentCode(c?.equipment.code)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <ToneBadge tone={st.tone}>{st.label}</ToneBadge>
+                        </TableCell>
+                        <TableCell className="pr-5 text-right">
+                          {v.om ? (
+                            <Link href={`/admin/oms/${v.om.id}`} className="readout text-sm text-frost hover:text-ice hover:underline">
+                              {formatOM(v.om.number)}
+                            </Link>
+                          ) : (
+                            <Button asChild variant="outline" size="sm">
+                              <Link href={`/admin/oms/nova?customerId=${doc.customerId}&equipmentId=${v.equipmentId}`}>Abrir OM</Link>
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+            <ul className="divide-y divide-rime md:hidden">
               {comp.nonConformities.map((v) => {
                 const c = eqById.get(v.equipmentId);
                 const st = visitStatusLabel[v.status];
                 return (
-                  <TableRow key={`${v.equipmentId}-${v.date}`}>
-                    <TableCell className="readout pl-5 text-sm text-silver">{formatDate(v.date)}</TableCell>
-                    <TableCell className="text-sm">
-                      <span className="text-silver">{c?.equipment.location ?? "Equipamento"}</span>
-                      <span className="block text-xs text-steel">
-                        {c?.equipment.type?.name ?? "Tipo não informado"}, {formatEquipmentCode(c?.equipment.code)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <ToneBadge tone={st.tone}>{st.label}</ToneBadge>
-                    </TableCell>
-                    <TableCell className="pr-5 text-right">
-                      {v.om ? (
-                        <Link href={`/admin/oms/${v.om.id}`} className="readout text-sm text-frost hover:text-ice hover:underline">
-                          {formatOM(v.om.number)}
-                        </Link>
-                      ) : (
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/admin/oms/nova?customerId=${doc.customerId}&equipmentId=${v.equipmentId}`}>Abrir OM</Link>
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
+                  <li key={`m-${v.equipmentId}-${v.date}`} className="flex items-start justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="text-sm text-silver">{c?.equipment.location ?? "Equipamento"}</p>
+                      <p className="readout text-xs text-steel">Prevista para {formatDate(v.date)}</p>
+                      <div className="mt-1.5">
+                        <ToneBadge tone={st.tone}>{st.label}</ToneBadge>
+                      </div>
+                    </div>
+                    {v.om ? (
+                      <Link href={`/admin/oms/${v.om.id}`} className="readout shrink-0 text-sm text-frost hover:text-ice">
+                        {formatOM(v.om.number)}
+                      </Link>
+                    ) : (
+                      <Button asChild variant="outline" size="sm" className="shrink-0">
+                        <Link href={`/admin/oms/nova?customerId=${doc.customerId}&equipmentId=${v.equipmentId}`}>Abrir OM</Link>
+                      </Button>
+                    )}
+                  </li>
                 );
               })}
-            </TableBody>
-          </Table>
+            </ul>
+          </>
         )}
       </Panel>
 

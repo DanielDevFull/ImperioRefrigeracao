@@ -196,7 +196,7 @@ export default async function AccessesPage({ searchParams }: PageProps<"/admin/u
                   </div>
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-steel">
                     <LinkedRecord raw={raw} role={row.role} />
-                    <span>{lastSeen ? `Ativo ${formatRelative(lastSeen)}` : "Sem sessão aberta"}</span>
+                    <span>{lastSeen ? `Último acesso ${formatRelative(lastSeen)}` : "Sem sessão aberta"}</span>
                   </div>
                 </li>
               ))}

@@ -29,13 +29,20 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30,
     updateAge: 60 * 60 * 24,
-    cookieCache: { enabled: true, maxAge: 5 * 60 },
+    // cache curto: bloqueio de acesso vale em até 1 minuto
+    cookieCache: { enabled: true, maxAge: 60 },
   },
   trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL, process.env.BETTER_AUTH_URL].filter(
     (v): v is string => Boolean(v),
   ),
   plugins: [
-    admin({ ac, roles, adminRoles: ["admin", "gestor"], defaultRole: "cliente" }),
+    admin({
+      ac,
+      roles,
+      adminRoles: ["admin", "gestor"],
+      defaultRole: "cliente",
+      bannedUserMessage: "Seu acesso está bloqueado. Fale com a Imperium.",
+    }),
     nextCookies(),
   ],
 });

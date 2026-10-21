@@ -33,7 +33,7 @@ const CSS = `
   color: var(--ink); font-size: 10.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .pmoc-paper h2 { font-size: 11.5pt; font-weight: 600; display: flex; align-items: baseline; gap: 8px;
   padding-bottom: 5px; border-bottom: 1.5px solid var(--ink); margin: 0 0 10px; break-after: avoid; }
-.pmoc-paper h2 .n { font-family: var(--font-cinzel), Georgia, serif; font-weight: 700; color: var(--accent); min-width: 1.1em; }
+.pmoc-paper h2 .n { font-weight: 700; color: var(--accent); min-width: 1.1em; font-variant-numeric: tabular-nums; }
 .pmoc-paper h3 { font-size: 10.5pt; font-weight: 600; margin: 12px 0 6px; break-after: avoid; }
 .pmoc-paper section { margin-top: 22px; }
 .pmoc-paper .muted { color: var(--ink-2); }
@@ -584,12 +584,11 @@ export default async function PrintPmocPage({ params }: PageProps<"/pmoc/[id]/im
               {customer.document ? <span className="block num">{formatDocument(customer.document)}</span> : null}
             </div>
           </div>
+          <footer className="muted mt-8 border-t border-[var(--line)] pt-3 text-center text-[7.5pt]">
+            Documento gerado pelo sistema Imperium em {formatDateTime(new Date())}. Os dados de execução refletem as ordens de manutenção
+            registradas até esta data.
+          </footer>
         </section>
-
-        <footer className="muted mt-10 border-t border-[var(--line)] pt-3 text-center text-[7.5pt]">
-          Documento gerado pelo sistema Imperium em {formatDateTime(new Date())}. Os dados de execução refletem as ordens de manutenção
-          registradas até esta data.
-        </footer>
       </article>
     </div>
   );

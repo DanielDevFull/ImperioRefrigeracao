@@ -1,0 +1,284 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Imperium — tokens
+ * Paleta tirada do logo: o fundo abissal, o azul do ".TEC.", o prata do letreiro
+ * e o manifold (manômetro azul de baixa, vermelho de alta e o latão do corpo).
+ */
+:root {
+  --abyss: #040914;
+  --night: #0a1428;
+  --glacier: #0f1e3d;
+  --glacier-2: #152a52;
+  --ice: #38a8ff;
+  --ice-deep: #1677d6;
+  --frost: #b8e3ff;
+  --silver: #e6edf5;
+  --steel: #8da2bf;
+  --rime: rgb(148 190 255 / 0.12);
+  --rime-strong: rgb(148 190 255 / 0.22);
+  --gauge-red: #ff5a6e;
+  --brass: #e8b04b;
+  --mint: #3ee0b5;
+  --violet: #9b8cff;
+
+  --background: var(--abyss);
+  --foreground: var(--silver);
+  --card: var(--night);
+  --card-foreground: var(--silver);
+  --popover: #0c1934;
+  --popover-foreground: var(--silver);
+  --primary: var(--ice);
+  --primary-foreground: #031022;
+  --secondary: var(--glacier);
+  --secondary-foreground: var(--silver);
+  --muted: var(--night);
+  --muted-foreground: var(--steel);
+  --accent: var(--glacier-2);
+  --accent-foreground: var(--silver);
+  --destructive: var(--gauge-red);
+  --border: var(--rime);
+  --input: rgb(148 190 255 / 0.16);
+  --ring: var(--frost);
+  --success: var(--mint);
+  --warning: var(--brass);
+  --info: var(--ice);
+
+  --chart-1: #38a8ff;
+  --chart-2: #3ee0b5;
+  --chart-3: #e8b04b;
+  --chart-4: #9b8cff;
+  --chart-5: #ff5a6e;
+
+  --radius: 0.75rem;
+
+  --sidebar: rgb(8 16 34 / 0.72);
+  --sidebar-foreground: var(--silver);
+  --sidebar-primary: var(--ice);
+  --sidebar-primary-foreground: #031022;
+  --sidebar-accent: rgb(56 168 255 / 0.1);
+  --sidebar-accent-foreground: var(--silver);
+  --sidebar-border: var(--rime);
+  --sidebar-ring: var(--frost);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cinzel), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-cinzel), ui-serif, Georgia, serif;
+
+  --color-abyss: var(--abyss);
+  --color-night: var(--night);
+  --color-glacier: var(--glacier);
+  --color-glacier-2: var(--glacier-2);
+  --color-ice: var(--ice);
+  --color-ice-deep: var(--ice-deep);
+  --color-frost: var(--frost);
+  --color-silver: var(--silver);
+  --color-steel: var(--steel);
+  --color-rime: var(--rime);
+  --color-gauge-red: var(--gauge-red);
+  --color-brass: var(--brass);
+  --color-mint: var(--mint);
+  --color-violet: var(--violet);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.33);
+  --radius-2xl: calc(var(--radius) * 1.75);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-shimmer: shimmer 2.8s linear infinite;
+  --animate-breathe: breathe 3.2s ease-in-out infinite;
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 85% -10%, rgb(56 168 255 / 0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgb(22 119 214 / 0.10), transparent 60%);
+    background-attachment: fixed;
+    font-feature-settings: "ss01" on;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: rgb(56 168 255 / 0.35);
+    color: white;
+  }
+  :focus-visible {
+    outline: 2px solid var(--frost);
+    outline-offset: 2px;
+  }
+  /* Rolagem discreta */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 190 255 / 0.18) transparent;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+}
+
+@layer components {
+  /* Título em prata escovada, como o letreiro do logo */
+  .text-silver-brushed {
+    background: linear-gradient(180deg, #ffffff 0%, #dfe7f1 38%, #9fb2c9 62%, #e9eff6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Superfície de vidro gelado */
+  .glass {
+    background: linear-gradient(180deg, rgb(21 42 82 / 0.55), rgb(10 20 40 / 0.62));
+    border: 1px solid var(--rime);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 20px 40px -24px rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  /* Painel sólido (tabelas e formulários) */
+  .panel {
+    background: linear-gradient(180deg, rgb(15 30 61 / 0.7), rgb(10 20 40 / 0.85));
+    border: 1px solid var(--rime);
+    border-radius: var(--radius-xl);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  /* Borda de geada: brilho fino no topo do elemento */
+  .frost-edge {
+    position: relative;
+  }
+  .frost-edge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      rgb(184 227 255 / 0.55),
+      rgb(56 168 255 / 0.12) 30%,
+      transparent 60%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Display digital (o "18°C" do aparelho no logo) */
+  .readout {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .shimmer-ice {
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(184 227 255 / 0.18) 40%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: #0a1428 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -44,3 +44,5 @@ next-env.d.ts
 # uploads locais (dev)
 /public/uploads
 .shot*.mjs
+.*.tmp.mjs
+*.tmp.mjs

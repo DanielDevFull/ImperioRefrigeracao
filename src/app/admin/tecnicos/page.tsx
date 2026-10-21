@@ -185,23 +185,23 @@ function TeamItem({ t }: { t: TeamRow }) {
       <div className="order-1 flex min-w-0 items-center gap-3 lg:order-none">
         <TechAvatar name={t.name} color={t.color} muted={!t.active} />
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/admin/tecnicos/${t.id}`}
-              className={cn(
-                "truncate font-medium after:absolute after:inset-0 hover:text-frost focus-visible:outline-none",
-                t.active ? "text-silver" : "text-steel",
-              )}
-            >
-              {t.name}
-            </Link>
+          <Link
+            href={`/admin/tecnicos/${t.id}`}
+            className={cn(
+              "block truncate font-medium after:absolute after:inset-0 hover:text-frost",
+              t.active ? "text-silver" : "text-steel",
+            )}
+          >
+            {t.name}
+          </Link>
+          <div className="mt-1 flex flex-wrap items-center gap-1">
             {!t.active && <ToneBadge tone="steel">Inativo</ToneBadge>}
+            {t.skills.length ? (
+              <SkillChips skills={t.skills} max={3} />
+            ) : (
+              t.active && <p className="text-xs text-steel/70">Sem especialidades cadastradas</p>
+            )}
           </div>
-          {t.skills.length ? (
-            <SkillChips skills={t.skills} max={3} className="mt-1" />
-          ) : (
-            <p className="mt-0.5 text-xs text-steel/70">Sem especialidades cadastradas</p>
-          )}
         </div>
       </div>
 

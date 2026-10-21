@@ -49,15 +49,15 @@ export async function statement({
         status: commissionEntries.status,
         count: sql<number>`count(*)::int`,
         amount: sql<number>`coalesce(sum(${commissionEntries.amount}), 0)::float`,
+        inPayout: sql<number>`coalesce(sum(${commissionEntries.amount}) filter (where ${commissionEntries.payoutId} is not null), 0)::float`,
       })
       .from(commissionEntries)
       .where(where)
       .groupBy(commissionEntries.status),
   ]);
-  const totals = Object.fromEntries(byStatus.map((s) => [s.status, { count: s.count, amount: s.amount }])) as Record<
-    string,
-    { count: number; amount: number } | undefined
-  >;
+  const totals = Object.fromEntries(
+    byStatus.map((s) => [s.status, { count: s.count, amount: s.amount, inPayout: s.inPayout }]),
+  ) as Record<string, { count: number; amount: number; inPayout: number } | undefined>;
   return { rows, total, totals };
 }
 
@@ -123,7 +123,7 @@ export async function payoutList({ technicianId, page }: { technicianId?: string
         payableId: commissionPayouts.payableId,
         payableStatus: payables.status,
         payableDueDate: payables.dueDate,
-        entries: sql<number>`(select count(*)::int from ${commissionEntries} where ${commissionEntries.payoutId} = ${commissionPayouts.id})`,
+        entries: sql<number>`(select count(*)::int from commission_entries ce where ce.payout_id = commission_payouts.id)`,
       })
       .from(commissionPayouts)
       .innerJoin(technicians, eq(technicians.id, commissionPayouts.technicianId))
@@ -148,7 +148,8 @@ export async function rulesWithUsage() {
       rate: commissionRules.rate,
       priority: commissionRules.priority,
       active: commissionRules.active,
-      usage: sql<number>`(select count(*)::int from ${commissionEntries} where ${commissionEntries.ruleId} = ${commissionRules.id} and ${commissionEntries.status} <> 'cancelada')`,
+      // nomes explícitos: num select de uma tabela só o Drizzle não qualifica as colunas da subconsulta
+      usage: sql<number>`(select count(*)::int from commission_entries ce where ce.rule_id = commission_rules.id and ce.status <> 'cancelada')`,
     })
     .from(commissionRules)
     .orderBy(desc(commissionRules.active), asc(commissionRules.name));

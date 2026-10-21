@@ -105,6 +105,12 @@ export const commissionStatus: LabelMap = {
   cancelada: { label: "Cancelada", tone: "steel" },
 };
 
+export const payoutStatus: LabelMap = {
+  aberto: { label: "Aguardando pagamento", tone: "brass" },
+  pago: { label: "Pago", tone: "mint" },
+  cancelado: { label: "Cancelado", tone: "steel" },
+};
+
 export const commissionBasis: Record<string, { label: string; tone: Tone; hint: string }> = {
   percentual_mao_de_obra: {
     label: "% da mão de obra",

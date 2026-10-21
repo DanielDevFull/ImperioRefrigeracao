@@ -61,21 +61,17 @@ export async function Regras() {
           </p>
         </Panel>
 
-        <Panel
-          title="Quando a comissão é liberada"
-          actions={
-            <Link
-              href="/admin/configuracoes"
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-ice hover:bg-ice/10"
-            >
-              <Settings className="size-3.5" />
-              Alterar em Configurações
-            </Link>
-          }
-        >
+        <Panel title="Quando a comissão é liberada">
           <p className="text-xs text-steel">Gatilho atual</p>
           <p className="mt-0.5 text-base font-medium text-silver">{trigger.label}</p>
           <p className="mt-2 text-sm text-steel">{trigger.description}</p>
+          <Link
+            href="/admin/configuracoes"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-md text-sm text-ice hover:underline"
+          >
+            <Settings className="size-3.5" />
+            Alterar em Configurações
+          </Link>
         </Panel>
       </div>
 

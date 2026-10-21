@@ -3,6 +3,7 @@ import {
   contractStatus,
   equipmentStatus,
   labelOf,
+  payoutStatus,
   payableStatus,
   priority,
   purchaseOrderStatus,
@@ -67,5 +68,10 @@ export function PurchaseOrderStatusBadge({ status }: { status: string }) {
 
 export function PurchaseRequestStatusBadge({ status }: { status: string }) {
   const l = labelOf(purchaseRequestStatus, status);
+  return <ToneBadge tone={l.tone}>{l.label}</ToneBadge>;
+}
+
+export function CommissionPayoutStatusBadge({ status }: { status: string }) {
+  const l = labelOf(payoutStatus, status);
   return <ToneBadge tone={l.tone}>{l.label}</ToneBadge>;
 }

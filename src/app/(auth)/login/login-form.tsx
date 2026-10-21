@@ -23,10 +23,15 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
     startTransition(async () => {
       const { data, error } = await authClient.signIn.email({ email: email.trim(), password });
       if (error || !data) {
+        const banned = error?.code === "BANNED_USER" || /banned/i.test(error?.message ?? "");
         setError(
-          error?.status === 401 || error?.code === "INVALID_EMAIL_OR_PASSWORD"
-            ? "E-mail ou senha incorretos."
-            : (error?.message ?? "Não foi possível entrar. Tente novamente."),
+          banned
+            ? "Seu acesso está bloqueado. Fale com a Imperium."
+            : error?.status === 401 || error?.code === "INVALID_EMAIL_OR_PASSWORD"
+              ? "E-mail ou senha incorretos."
+              : error?.status === 429
+                ? "Muitas tentativas. Aguarde um minuto e tente de novo."
+                : "Não foi possível entrar. Verifique sua conexão e tente novamente.",
         );
         return;
       }

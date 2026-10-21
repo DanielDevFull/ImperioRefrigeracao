@@ -46,6 +46,8 @@ export function ReadoutBand({ items, className }: { items: Readout[]; className?
           i >= 2 && "border-t border-rime md:border-t-0",
           i > 0 && "md:border-l md:border-rime",
           it.href && "transition-colors hover:bg-ice/5",
+          // número ímpar de leituras: a última ocupa a linha inteira no celular
+          items.length % 2 === 1 && i === items.length - 1 && "col-span-2 md:col-span-1",
         );
         return it.href ? (
           <Link key={it.label} href={it.href} className={cls}>

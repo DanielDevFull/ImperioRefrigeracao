@@ -33,7 +33,7 @@ export async function Extrato({
     statement({ period, technicianId, page }),
     summaryByTechnician(period, technicianId),
   ]);
-  const t = (k: string) => totals[k] ?? { count: 0, amount: 0 };
+  const t = (k: string) => totals[k] ?? { count: 0, amount: 0, inPayout: 0 };
   const validCount = t("pendente").count + t("aprovada").count + t("paga").count;
   const validAmount = t("pendente").amount + t("aprovada").amount + t("paga").amount;
   const monthLabel = formatCompetence(period);
@@ -41,6 +41,7 @@ export async function Extrato({
   return (
     <div className="space-y-6">
       <ReadoutBand
+        className="[&>*:last-child]:col-span-2 md:[&>*:last-child]:col-span-1"
         items={[
           {
             label: "Total do período",
@@ -55,7 +56,16 @@ export async function Extrato({
             tone: "frost",
             hint: "aguardam o pagamento do cliente",
           },
-          { label: "Liberadas", value: t("aprovada").amount, format: "brl", tone: "ice", hint: "prontas para fechar" },
+          {
+            label: "Liberadas",
+            value: t("aprovada").amount,
+            format: "brl",
+            tone: "ice",
+            hint:
+              t("aprovada").inPayout > 0
+                ? `${formatBRL(t("aprovada").inPayout)} já em fechamento`
+                : "prontas para fechar",
+          },
           { label: "Pagas", value: t("paga").amount, format: "brl", tone: "mint", hint: `${t("paga").count} lançamentos` },
           {
             label: "Canceladas",
@@ -187,7 +197,7 @@ function SummaryRow({ s, period, current }: { s: TechSummary; period: string; cu
   ].join("");
 
   return (
-    <li className="grid gap-3 px-5 py-4 md:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,0.8fr))_minmax(0,1.3fr)_minmax(9.5rem,auto)] md:items-center md:gap-4">
+    <li className="grid gap-3 px-5 py-4 md:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,0.8fr))_minmax(0,1.3fr)_11.5rem] md:items-center md:gap-4">
       <div className="flex min-w-0 items-center gap-3">
         <TechAvatar name={s.name} color={s.color} size="sm" muted={!s.active} />
         <div className="min-w-0">
@@ -199,7 +209,7 @@ function SummaryRow({ s, period, current }: { s: TechSummary; period: string; cu
           </p>
         </div>
       </div>
-      <dl className="grid grid-cols-4 gap-3 md:contents">
+      <dl className="grid grid-cols-3 gap-3 md:contents">
         <div className="md:text-right">
           <dt className="text-[0.7rem] text-steel">Previstas</dt>
           <dd className="text-sm">
@@ -218,9 +228,9 @@ function SummaryRow({ s, period, current }: { s: TechSummary; period: string; cu
             <Money value={s.paid} />
           </dd>
         </div>
-        <div className="md:text-right">
+        <div className="col-span-3 flex items-baseline justify-between gap-3 rounded-lg bg-night/50 px-3 py-2 ring-1 ring-rime md:col-span-1 md:block md:bg-transparent md:p-0 md:text-right md:ring-0">
           <dt className="text-[0.7rem] text-steel">A fechar</dt>
-          <dd className="text-sm">
+          <dd className="text-right text-sm">
             <Money value={s.toClose} className={s.toClose ? "font-semibold text-ice" : undefined} />
             {s.toCloseEarlier > 0 && (
               <span className="block text-[0.7rem] text-steel">inclui {formatBRL(s.toCloseEarlier)} anteriores</span>
@@ -242,7 +252,7 @@ function SummaryRow({ s, period, current }: { s: TechSummary; period: string; cu
         ) : openPayout || paidPayout ? (
           <Link href="/admin/comissoes?tab=fechamentos" className="inline-flex">
             <ToneBadge tone={payoutStatus[(openPayout ?? paidPayout)!.status].tone}>
-              {openPayout ? "Fechada, aguardando pagamento" : "Fechada e paga"}
+              {openPayout ? "Aguardando pagamento" : "Fechada e paga"}
             </ToneBadge>
           </Link>
         ) : (

@@ -138,7 +138,7 @@ export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos
       </header>
 
       <ReadoutBand
-        className="mb-6"
+        className="mb-6 [&>*:last-child]:col-span-2 md:[&>*:last-child]:col-span-1"
         items={[
           { label: "OMs concluídas no mês", value: stats.doneMonth, tone: "mint" },
           {
@@ -274,8 +274,8 @@ export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="pl-5">Concluída em</TableHead>
-                    <TableHead>OM</TableHead>
+                    <TableHead className="hidden pl-5 sm:table-cell">Concluída em</TableHead>
+                    <TableHead className="pl-5 sm:pl-2">OM</TableHead>
                     <TableHead className="text-right">Duração</TableHead>
                     <TableHead className="text-right">Avaliação</TableHead>
                     <TableHead className="pr-5 text-right">Comissão</TableHead>
@@ -289,8 +289,10 @@ export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos
                         : null;
                     return (
                       <TableRow key={w.id}>
-                        <TableCell className="pl-5 tabular-nums text-steel">{formatDate(w.finishedAt)}</TableCell>
-                        <TableCell className="max-w-[20rem]">
+                        <TableCell className="hidden pl-5 tabular-nums text-steel sm:table-cell">
+                          {formatDate(w.finishedAt)}
+                        </TableCell>
+                        <TableCell className="max-w-[20rem] pl-5 sm:pl-2">
                           <Link href={`/admin/oms/${w.id}`} className="group block min-w-0">
                             <span className="flex items-center gap-2">
                               <span className="readout text-xs text-ice group-hover:underline">{formatOM(w.number)}</span>
@@ -298,7 +300,8 @@ export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos
                                 {labelOf(workOrderType, w.type).label}
                               </span>
                             </span>
-                            <span className="block truncate text-sm text-silver">{w.customerName}</span>
+                            <span className="block max-w-[11rem] truncate text-sm text-silver sm:max-w-none">{w.customerName}</span>
+                            <span className="block text-xs tabular-nums text-steel sm:hidden">{formatDate(w.finishedAt)}</span>
                           </Link>
                         </TableCell>
                         <TableCell className="text-right tabular-nums text-silver">{minutesLabel(minutes)}</TableCell>

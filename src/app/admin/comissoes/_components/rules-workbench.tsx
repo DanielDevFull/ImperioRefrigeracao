@@ -98,9 +98,9 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="pl-5">Regra</TableHead>
-                  <TableHead>Vale para</TableHead>
-                  <TableHead className="text-right">Cálculo</TableHead>
-                  <TableHead className="text-right">Prioridade</TableHead>
+                  <TableHead className="hidden sm:table-cell">Vale para</TableHead>
+                  <TableHead className="hidden text-right sm:table-cell">Cálculo</TableHead>
+                  <TableHead className="hidden text-right sm:table-cell">Prioridade</TableHead>
                   <TableHead className="text-center">Ativa</TableHead>
                   <TableHead className="pr-5 text-right">
                     <span className="sr-only">Ações</span>
@@ -114,7 +114,7 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
                   const isWinner = winner?.id === r.id;
                   return (
                     <TableRow key={r.id} className={cn(!r.active && "opacity-55")}>
-                      <TableCell className="relative max-w-[16rem] pl-5">
+                      <TableCell className="relative max-w-[13rem] pl-5 sm:max-w-[16rem]">
                         {isWinner && (
                           <motion.span
                             layoutId="sim-winner"
@@ -130,8 +130,15 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
                               ? `Usada em ${r.usage} comiss${r.usage > 1 ? "ões" : "ão"}`
                               : "Ainda não usada"}
                         </p>
+                        <p className="mt-1 whitespace-normal text-xs text-steel sm:hidden">
+                          {formatRate(r.basis, r.rate)} {r.basis === "fixo_por_om" ? "por OM" : (basis?.label.replace(/^%\s*/, "") ?? "")}
+                          {", "}
+                          {tech ? tech.name.split(" ")[0] : "todos os técnicos"}
+                          {", "}
+                          {r.workOrderType ? labelOf(workOrderType, r.workOrderType).label.toLowerCase() : "todos os tipos"}
+                        </p>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <div className="flex flex-col gap-1 text-sm">
                           <span className="flex items-center gap-1.5 text-silver">
                             {tech ? (
@@ -148,13 +155,13 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="hidden text-right sm:table-cell">
                         <span className="block font-medium tabular-nums text-silver">{formatRate(r.basis, r.rate)}</span>
                         <span className={cn("block whitespace-nowrap text-xs", toneText[basis?.tone ?? "steel"])}>
                           {basis?.label ?? r.basis}
                         </span>
                       </TableCell>
-                      <TableCell className="text-right tabular-nums text-steel">{r.priority}</TableCell>
+                      <TableCell className="hidden text-right tabular-nums text-steel sm:table-cell">{r.priority}</TableCell>
                       <TableCell className="text-center">
                         <RuleToggle id={r.id} active={r.active} name={r.name} />
                       </TableCell>

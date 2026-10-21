@@ -283,11 +283,11 @@ function ColorPicker({ value, onChange }: { value: string; onChange: (v: string)
   return (
     <fieldset>
       <legend className="sr-only">Cor do técnico</legend>
-      <div className="flex flex-wrap gap-2.5">
+      <div className="grid grid-cols-8 gap-2">
         {options.map((c) => {
           const checked = c.value.toLowerCase() === value.toLowerCase();
           return (
-            <label key={c.value} title={c.label} className="relative cursor-pointer">
+            <label key={c.value} title={c.label} className="relative block max-w-9 cursor-pointer">
               <input
                 type="radio"
                 name="color"
@@ -298,7 +298,7 @@ function ColorPicker({ value, onChange }: { value: string; onChange: (v: string)
               />
               <span
                 className={cn(
-                  "grid size-9 place-items-center rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-night transition-shadow peer-focus-visible:ring-frost",
+                  "grid aspect-square w-full place-items-center rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-night transition-shadow peer-focus-visible:ring-frost",
                   checked && "ring-silver/80",
                 )}
                 style={{ background: `radial-gradient(circle at 30% 25%, ${c.value}, ${c.value}aa)` }}
@@ -391,7 +391,7 @@ function SkillsInput({ initial }: { initial: string[] }) {
               add();
             }
           }}
-          placeholder="Outra especialidade (ex.: Chiller, NR-35)"
+          placeholder="Outra (ex.: Chiller)"
           aria-label="Outra especialidade"
           maxLength={40}
         />

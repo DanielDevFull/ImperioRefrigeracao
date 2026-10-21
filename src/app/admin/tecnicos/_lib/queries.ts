@@ -217,11 +217,12 @@ export async function listAbsences(technicianId: string) {
   const rows = await db
     .select({
       ...getTableColumns(technicianAbsences),
+      // subconsulta com nomes explícitos: num select de uma tabela só o Drizzle não qualifica as colunas
       scheduledInside: sql<number>`(
-        select count(*)::int from ${workOrders}
-        where ${workOrders.technicianId} = ${technicianAbsences.technicianId}
-          and ${workOrders.status} in ('aberta','agendada','em_deslocamento','em_execucao','pausada','aguardando_material')
-          and ${workOrders.scheduledDate} between ${technicianAbsences.startDate} and ${technicianAbsences.endDate}
+        select count(*)::int from work_orders wo
+        where wo.technician_id = technician_absences.technician_id
+          and wo.status in ('aberta','agendada','em_deslocamento','em_execucao','pausada','aguardando_material')
+          and wo.scheduled_date between technician_absences.start_date and technician_absences.end_date
       )`,
     })
     .from(technicianAbsences)

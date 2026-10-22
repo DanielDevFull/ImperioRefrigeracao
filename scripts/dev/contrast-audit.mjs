@@ -58,7 +58,6 @@ if (creds[who] && page.url().includes("/login")) {
 await page.waitForTimeout(Number(opt("--wait", "1500")));
 await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
 const result = await page.evaluate(async () => {
-  // eslint-disable-next-line no-undef
   const r = await axe.run(document, { runOnly: { type: "rule", values: ["color-contrast"] }, resultTypes: ["violations", "incomplete"] });
   const pick = (n) => ({
     target: n.target.join(" "),

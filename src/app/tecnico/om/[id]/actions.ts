@@ -9,7 +9,7 @@ import { runAction, zodFieldErrors } from "@/lib/action";
 import { assertRole } from "@/lib/auth/session";
 import { todayISO } from "@/lib/dates";
 import { formatOM } from "@/lib/format";
-import { dataUrlToBlob, MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { dataUrlToBlob, deleteStoredFile, MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
 import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import {
   addWorkOrderMaterial,
@@ -195,6 +195,7 @@ export async function removePhotoAction(photoId: string): Promise<TechState> {
       await tx.delete(workOrderPhotos).where(eq(workOrderPhotos.id, photo.id));
       await logEvent(tx, wo.id, { kind: "photo", message: "Foto removida.", actor: actorOf(user) });
     });
+    await deleteStoredFile(photo.url);
     refresh();
     return { ok: true, message: "Foto removida" };
   });

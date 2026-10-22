@@ -21,7 +21,7 @@ import {
 import { type ActionState, formValues, runAction, zodFieldErrors } from "@/lib/action";
 import { assertRole, type AppUser } from "@/lib/auth/session";
 import { formatNumber } from "@/lib/format";
-import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { deleteStoredFile, MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
 import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import type { WorkOrderStatus } from "@/server/core/work-order-flow";
 import {
@@ -544,10 +544,19 @@ export async function uploadPhotosAction(id: string, _prev: ActionState, fd: For
 
 export async function removePhotoAction(photoId: string): Promise<ActionState> {
   return runAction(async () => {
-    await assertRole([...STAFF]);
+    const user = await assertRole([...STAFF]);
     if (!isUuid(photoId)) return { ok: false, error: "Foto não encontrada." };
-    const [p] = await db.delete(workOrderPhotos).where(eq(workOrderPhotos.id, photoId)).returning({ workOrderId: workOrderPhotos.workOrderId });
-    if (p) revalidatePath(`/admin/oms/${p.workOrderId}`);
+    const p = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .delete(workOrderPhotos)
+        .where(eq(workOrderPhotos.id, photoId))
+        .returning({ workOrderId: workOrderPhotos.workOrderId, url: workOrderPhotos.url });
+      if (row) await logEvent(tx, row.workOrderId, { kind: "photo", message: "Foto removida pela central.", actor: actor(user) });
+      return row;
+    });
+    if (!p) return { ok: false, error: "Esta foto já foi removida." };
+    await deleteStoredFile(p.url);
+    revalidatePath(`/admin/oms/${p.workOrderId}`);
     return { ok: true, message: "Foto removida" };
   });
 }

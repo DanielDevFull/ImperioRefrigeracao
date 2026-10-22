@@ -10,7 +10,7 @@ import { assertRole } from "@/lib/auth/session";
 import { formValues, runAction, zodFieldErrors, type ActionState } from "@/lib/action";
 import { formatContractCode } from "@/lib/format";
 import { refrigerants } from "@/lib/labels";
-import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { deleteStoredFile, MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
 import { isUuid, sitesOf } from "./_lib/queries";
 
 const staff = () => assertRole(["admin", "gestor"]);
@@ -138,6 +138,8 @@ export async function saveEquipment(_prev: ActionState, fd: FormData): Promise<A
         .update(equipment)
         .set({ ...data, ...(photoUrl !== undefined ? { photoUrl } : {}) })
         .where(eq(equipment.id, existing.id));
+      // foto trocada ou removida: apaga o arquivo anterior
+      if (photoUrl !== undefined && existing.photoUrl && existing.photoUrl !== photoUrl) await deleteStoredFile(existing.photoUrl);
       revalidateEquipment(existing.id, data.customerId);
       return { ok: true, message: "Equipamento salvo", id: existing.id };
     }
@@ -212,7 +214,7 @@ export async function reactivateEquipment(id: string): Promise<ActionState> {
 export async function deleteEquipment(id: string): Promise<ActionState> {
   return runAction(async () => {
     await staff();
-    const item = await db.query.equipment.findFirst({ where: eq(equipment.id, id), columns: { id: true, customerId: true } });
+    const item = await db.query.equipment.findFirst({ where: eq(equipment.id, id), columns: { id: true, customerId: true, photoUrl: true } });
     if (!item) return { ok: false, error: "Equipamento não encontrado." };
     const [[wo], links] = await Promise.all([
       db.select({ n: count() }).from(workOrders).where(eq(workOrders.equipmentId, id)),
@@ -228,6 +230,7 @@ export async function deleteEquipment(id: string): Promise<ActionState> {
         error: `Este equipamento está no contrato ${formatContractCode(links[0].contract.code)}. Marque-o como removido em vez de excluir.`,
       };
     await db.delete(equipment).where(eq(equipment.id, id));
+    await deleteStoredFile(item.photoUrl);
     revalidatePath("/admin/equipamentos");
     revalidatePath(`/admin/clientes/${item.customerId}`);
     return { ok: true, message: "Equipamento excluído" };

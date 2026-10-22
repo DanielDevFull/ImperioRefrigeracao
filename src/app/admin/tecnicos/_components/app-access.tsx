@@ -53,7 +53,8 @@ export function AppAccess({
         </div>
         <div className="flex items-start justify-between gap-3">
           <dt className="text-steel">Último acesso</dt>
-          <dd className="text-right text-silver" title={lastLogin ? formatDateTime(lastLogin) : undefined}>
+          {/* tempo relativo muda entre o servidor e o navegador ("há 27" → "há 28 minutos") */}
+          <dd className="text-right text-silver" title={lastLogin ? formatDateTime(lastLogin) : undefined} suppressHydrationWarning>
             {lastLogin ? formatRelative(lastLogin) : "Ainda não entrou"}
           </dd>
         </div>

@@ -136,7 +136,11 @@ export function TechnicianForm({ technician }: { technician?: TechnicianFormValu
           <div className="mt-4 flex items-center gap-3 rounded-lg bg-night/60 px-3 py-2.5 ring-1 ring-rime">
             <TechAvatar name={name || "Novo técnico"} color={color} size="sm" />
             <span className="min-w-0 flex-1 truncate text-sm text-silver">{name || "Novo técnico"}</span>
-            <span className="h-5 w-1 rounded-full" style={{ background: color }} />
+            {/* no claro a faixa usa a cor mais funda (mesmo matiz), como o avatar */}
+            <span
+              className="h-5 w-1 rounded-full light:[background:oklch(from_var(--tc)_0.6_c_h)]"
+              style={{ background: color, ["--tc" as string]: color }}
+            />
           </div>
         </Panel>
 

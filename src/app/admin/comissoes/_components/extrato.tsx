@@ -54,6 +54,8 @@ export async function Extrato({
             value: t("pendente").amount,
             format: "brl",
             tone: "frost",
+            // no claro o frost fica mais escuro que o ice: previsto em tinta secundária, abaixo do liberado
+            valueClassName: "light:text-steel",
             hint: "aguardam o pagamento do cliente",
           },
           {

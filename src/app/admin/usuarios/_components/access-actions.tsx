@@ -198,13 +198,13 @@ export function AccessActions({ row, isSelf }: { row: AccessRow; isSelf: boolean
       <AlertDialog open={!!confirm} onOpenChange={(o) => !o && !pending && setConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-sans text-base font-semibold text-silver">{confirm?.title}</AlertDialogTitle>
+            <AlertDialogTitle>{confirm?.title}</AlertDialogTitle>
             <AlertDialogDescription>{confirm?.description}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={pending}>Voltar</AlertDialogCancel>
             <Button
-              variant={confirm?.destructive ? "destructive" : "default"}
+              className={confirm?.destructive ? "bg-gauge-red text-abyss hover:bg-gauge-red/90" : undefined}
               disabled={pending}
               onClick={() =>
                 start(async () => {
@@ -317,7 +317,7 @@ function BlockForm({ row, onDone }: { row: AccessRow; onDone: () => void }) {
         <Button type="button" variant="outline" onClick={onDone}>
           Voltar
         </Button>
-        <PendingButton pending={pending} variant="destructive">
+        <PendingButton pending={pending} className="bg-gauge-red text-abyss hover:bg-gauge-red/90">
           Bloquear acesso
         </PendingButton>
       </DialogFooter>

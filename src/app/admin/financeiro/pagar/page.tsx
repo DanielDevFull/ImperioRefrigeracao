@@ -208,7 +208,12 @@ function CategoryLabel({ name, color }: { name: string | null; color: string | n
   if (!name) return <span className="text-sm text-steel">Sem categoria</span>;
   return (
     <span className="inline-flex items-center gap-2 text-sm text-silver/90">
-      <span className="size-2 shrink-0 rounded-full light:ring-1 light:ring-rime" style={{ background: color ?? "var(--steel)" }} aria-hidden />
+      {/* no claro, cores claras (Geada, Prata) ganham contorno na tinta da própria cor */}
+      <span
+        className="size-2 shrink-0 rounded-full light:ring-1 light:ring-rime light:shadow-[inset_0_0_0_1px_oklch(from_var(--c)_0.55_c_h)]"
+        style={{ background: color ?? "var(--steel)", ["--c" as string]: color ?? "var(--steel)" }}
+        aria-hidden
+      />
       {name}
     </span>
   );

@@ -474,6 +474,13 @@ html [data-sonner-toaster][data-sonner-theme="light"] {
 }
 
 @media print {
+  /* papel branco mesmo no tema escuro (com "gráficos de fundo", a margem da página saía preta) */
+  :root {
+    color-scheme: light;
+  }
+  html {
+    background: white !important;
+  }
   body {
     background: white !important;
     color: #0a1428 !important;

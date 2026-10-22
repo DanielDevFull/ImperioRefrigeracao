@@ -10,6 +10,8 @@ export type Readout = {
   format?: "brl" | "brl-compact" | "number" | "percent" | "integer";
   hint?: string;
   tone?: Tone;
+  /** Ajuste fino do número (ex.: tom diferente só no claro). */
+  valueClassName?: string;
   href?: string;
 };
 
@@ -35,6 +37,7 @@ export function ReadoutBand({ items, className }: { items: Readout[]; className?
               className={cn(
                 "readout mt-1.5 block whitespace-nowrap text-xl font-semibold sm:text-2xl md:text-[1.7rem]",
                 it.tone ? toneText[it.tone] : "text-silver",
+                it.valueClassName,
               )}
             />
             {it.hint && <span className="mt-1 block text-xs text-steel/80 light:text-steel">{it.hint}</span>}

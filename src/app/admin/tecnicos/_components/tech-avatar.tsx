@@ -64,7 +64,7 @@ export function PlateTag({ plate, className }: { plate: string; className?: stri
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-[5px] border border-rime bg-night px-1.5 py-0.5 font-mono text-[0.72rem] font-medium tracking-[0.08em] text-silver",
+        "inline-flex shrink-0 items-center whitespace-nowrap rounded-[5px] border border-rime bg-night px-1.5 py-0.5 font-mono text-[0.72rem] font-medium tracking-[0.08em] text-silver",
         className,
       )}
     >

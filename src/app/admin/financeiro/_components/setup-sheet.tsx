@@ -228,7 +228,11 @@ function CategoryRow({ category }: { category: SetupCategory }) {
 
   return (
     <div className={cn("flex items-center gap-3 px-3 py-2.5", !category.active && "opacity-60")}>
-      <span className="size-2.5 shrink-0 rounded-full light:ring-1 light:ring-rime" style={{ background: category.color }} aria-hidden />
+      <span
+        className="size-2.5 shrink-0 rounded-full light:ring-1 light:ring-rime light:shadow-[inset_0_0_0_1px_oklch(from_var(--c)_0.55_c_h)]"
+        style={{ background: category.color, ["--c" as string]: category.color }}
+        aria-hidden
+      />
       <span className="min-w-0 flex-1 truncate text-sm text-silver">{category.name}</span>
       {!category.active && <ToneBadge tone="steel">Inativa</ToneBadge>}
       <Button variant="ghost" size="icon-sm" className="text-steel" onClick={() => setEditing(true)} aria-label={`Editar ${category.name}`}>

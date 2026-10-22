@@ -40,7 +40,15 @@ export function TrendChart({
               ))}
             </defs>
             <CartesianGrid vertical={false} stroke={CHART.grid} />
-            <XAxis dataKey={xKey} tickLine={false} axisLine={false} tick={{ fill: CHART.axis, fontSize: 12 }} tickMargin={8} />
+            {/* até 8 pontos mostra todos os meses (o padrão pulava um rótulo no meio) */}
+            <XAxis
+              dataKey={xKey}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: CHART.axis, fontSize: 12 }}
+              tickMargin={8}
+              interval={data.length <= 8 ? 0 : "preserveStartEnd"}
+            />
             <YAxis
               tickLine={false}
               axisLine={false}

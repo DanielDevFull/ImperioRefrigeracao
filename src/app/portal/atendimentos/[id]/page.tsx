@@ -69,7 +69,7 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
           <>
             <CustomerStatusBadge status={wo.status} />
             <span className="text-sm text-steel">{workOrderTypeForCustomer[wo.type] ?? wo.type}</span>
-            <span className="readout text-sm text-steel/80">{formatOM(wo.number)}</span>
+            <span className="readout text-sm text-steel/80 light:text-steel">{formatOM(wo.number)}</span>
           </>
         }
       />
@@ -190,7 +190,7 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
                         <Check className="size-3" strokeWidth={3} />
                       </span>
                     ) : (
-                      <Circle className="mt-0.5 size-5 shrink-0 text-steel/50" />
+                      <Circle className="mt-0.5 size-5 shrink-0 text-steel/50 light:text-steel/70" />
                     )}
                     <div className="min-w-0 flex-1">
                       <p className={cn("text-sm", t.done ? "text-silver" : "text-steel")}>{t.title}</p>
@@ -261,7 +261,7 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
                       <img
                         src={wo.signatureUrl}
                         alt={`Assinatura de ${wo.signedByName ?? "responsável"}`}
-                        className="mt-2 h-20 w-auto max-w-full rounded-lg bg-white/95 p-2"
+                        className="mt-2 h-20 w-auto max-w-full rounded-lg bg-white/95 p-2 light:ring-1 light:ring-rime"
                       />
                     )}
                     {wo.signedByName && <p className="mt-1.5 text-sm text-silver">{wo.signedByName}</p>}
@@ -286,7 +286,7 @@ export default async function AtendimentoPage({ params }: PageProps<"/portal/ate
                       className={cn(
                         "relative mt-1.5 size-2.5 shrink-0 rounded-full ring-4 ring-night",
                         toneBg[l.tone],
-                        last && "shadow-[0_0_10px_currentColor]",
+                        last && "shadow-[0_0_10px_currentColor] light:shadow-[0_0_8px_color-mix(in_srgb,currentColor_45%,transparent)]",
                         last && toneText[l.tone],
                       )}
                     />

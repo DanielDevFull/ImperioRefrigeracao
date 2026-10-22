@@ -19,7 +19,9 @@ import { submitProofAction } from "../mensalidades/actions";
 
 const sheetClass = cn(
   "frost-edge gap-0 overflow-y-auto p-0 sm:max-w-md",
-  "bg-[linear-gradient(180deg,rgb(21_42_82/0.97),rgb(8_16_34/0.98))] ring-1 ring-rime shadow-[0_30px_80px_-30px_rgb(0_0_0/0.8)]",
+  // Escuro: gelo profundo (do glacier ao quase abismo). Claro: folha branca que assenta no gelo da página.
+  "bg-[linear-gradient(180deg,rgb(21_42_82/0.97),rgb(8_16_34/0.98))] light:bg-[linear-gradient(180deg,var(--night)_40%,color-mix(in_srgb,var(--abyss)_65%,var(--night)))]",
+  "ring-1 ring-rime shadow-[0_30px_80px_-30px_var(--shade-strong)]",
   "max-h-[92dvh] max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none max-sm:rounded-t-3xl",
   "max-sm:pb-[env(safe-area-inset-bottom)]",
 );
@@ -77,7 +79,7 @@ function SheetBody({ data, qr }: { data: PayData; qr: React.ReactNode }) {
 
   return (
     <>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_50%_0%,rgb(56_168_255/0.22),transparent)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_50%_0%,var(--haze-ice),transparent)]" />
       <div className="relative px-5 pb-5 pt-6 sm:px-6">
         <span aria-hidden className="mx-auto mb-4 block h-1 w-10 rounded-full bg-steel/30 sm:hidden" />
         <DialogTitle className="font-display text-silver-brushed text-xl font-semibold tracking-[0.02em]">
@@ -85,7 +87,7 @@ function SheetBody({ data, qr }: { data: PayData; qr: React.ReactNode }) {
         </DialogTitle>
         <DialogDescription className="mt-1 text-sm text-steel">
           {data.title}
-          <span className="block text-xs text-steel/80">{data.description}</span>
+          <span className="block text-xs text-steel/80 light:text-steel">{data.description}</span>
         </DialogDescription>
 
         <div className="mt-5">
@@ -99,7 +101,7 @@ function SheetBody({ data, qr }: { data: PayData; qr: React.ReactNode }) {
         </div>
 
         {late && !inReview && (
-          <div className="mt-4 rounded-xl border border-brass/25 bg-brass/8 p-3.5 text-sm">
+          <div className="mt-4 rounded-xl border border-brass/25 bg-notice-brass p-3.5 text-sm">
             <dl className="space-y-1.5">
               <Row label="Valor da cobrança" value={formatBRL(data.base)} />
               <Row label={`Multa de ${fmtPct(data.finePercent)}`} value={formatBRL(data.fine)} />
@@ -184,7 +186,8 @@ function PixBlock({ code, qr, merchant }: { code: string; qr: React.ReactNode; m
     <div className="relative flex flex-col border-t border-rime px-5 py-5 sm:px-6">
       {/* No celular o QR não tem como ser lido pelo próprio aparelho: o copia e cola vem primeiro */}
       <div className="order-2 mt-6 flex flex-col items-center sm:order-1 sm:mt-0">
-        <div className="rounded-2xl bg-white p-2.5 shadow-[0_0_0_6px_rgb(56_168_255/0.08),0_20px_40px_-20px_rgb(56_168_255/0.45)] max-sm:[&>span]:size-40!">
+        {/* QR sempre em branco; no claro, filete e sombra azul-marinho para destacar da folha branca */}
+        <div className="rounded-2xl bg-white p-2.5 shadow-[0_0_0_6px_color-mix(in_srgb,var(--ice)_8%,transparent),0_20px_40px_-20px_color-mix(in_srgb,var(--ice)_45%,transparent)] light:shadow-[0_0_0_1px_var(--rime),0_0_0_6px_color-mix(in_srgb,var(--ice)_6%,transparent),0_18px_36px_-20px_var(--shade-strong)] max-sm:[&>span]:size-40!">
           {qr}
         </div>
         <p className="mt-3 text-center text-xs text-steel">

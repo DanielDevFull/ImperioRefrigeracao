@@ -45,7 +45,9 @@ export function RatingForm({ workOrderId }: { workOrderId: string }) {
                 transition={{ type: "spring", stiffness: 420, damping: 16, delay: value === n && !hover ? 0 : (n - 1) * 0.025 }}
                 className={cn(
                   "grid size-11 place-items-center rounded-full transition-colors",
-                  on ? "text-ice drop-shadow-[0_0_10px_rgb(56_168_255/0.65)]" : "text-steel/45 hover:text-steel",
+                  on
+                    ? "text-ice drop-shadow-[0_0_10px_color-mix(in_srgb,var(--ice)_65%,transparent)] light:drop-shadow-[0_0_5px_var(--glow-ice)]"
+                    : "text-steel/45 hover:text-steel light:text-steel/65 light:hover:text-steel",
                 )}
               >
                 <Snowflake className="size-7" strokeWidth={on ? 2.2 : 1.6} />
@@ -90,7 +92,11 @@ export function RatingDisplay({ value, className }: { value: number; className?:
         <Snowflake
           key={n}
           aria-hidden
-          className={cn("size-4", n <= value ? "text-ice drop-shadow-[0_0_6px_rgb(56_168_255/0.5)]" : "text-steel/30")}
+          className={cn(
+            "size-4",
+            // no claro o brilho borra o floco pequeno: fica só o traço nítido
+            n <= value ? "text-ice drop-shadow-[0_0_6px_color-mix(in_srgb,var(--ice)_50%,transparent)] light:drop-shadow-none" : "text-steel/30",
+          )}
         />
       ))}
     </span>

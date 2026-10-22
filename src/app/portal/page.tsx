@@ -215,9 +215,10 @@ export default async function PortalHome() {
     <div className="space-y-10">
       {/* Faixa de marca */}
       <section className="glass frost-edge relative overflow-hidden rounded-3xl">
+        {/* Névoa gelo nos cantos; no claro, o mesmo azul do logo mais suave (céu claro sobre a neve) */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(70%_90%_at_92%_-10%,rgb(56_168_255/0.26),transparent_65%),radial-gradient(55%_70%_at_0%_115%,rgb(22_119_214/0.22),transparent_70%)]"
+          className="absolute inset-0 bg-[radial-gradient(70%_90%_at_92%_-10%,color-mix(in_srgb,var(--ice)_26%,transparent),transparent_65%),radial-gradient(55%_70%_at_0%_115%,color-mix(in_srgb,var(--ice-deep)_22%,transparent),transparent_70%)] light:opacity-80"
         />
         <SnowField density="calm" interactive={false} />
         <div className="relative grid gap-7 px-5 py-7 sm:px-8 md:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] md:items-end md:gap-10 md:px-10 md:py-10">
@@ -258,7 +259,7 @@ export default async function PortalHome() {
           </div>
 
           {hasPlan ? (
-            <div className="rounded-2xl bg-abyss/45 p-5 ring-1 ring-rime backdrop-blur-sm">
+            <div className="rounded-2xl bg-abyss/45 p-5 ring-1 ring-rime backdrop-blur-sm light:bg-night/85 light:shadow-[0_1px_2px_var(--shade),0_14px_30px_-20px_var(--shade-strong)]">
               {next ? (
                 <>
                   <div className="flex items-center justify-between gap-3">
@@ -294,7 +295,7 @@ export default async function PortalHome() {
               )}
             </div>
           ) : (
-            <div className="rounded-2xl bg-abyss/45 p-5 ring-1 ring-ice/20 backdrop-blur-sm">
+            <div className="rounded-2xl bg-abyss/45 p-5 ring-1 ring-ice/20 backdrop-blur-sm light:bg-night/85 light:shadow-[0_1px_2px_var(--shade),0_14px_30px_-20px_var(--shade-strong)]">
               <p className="font-display text-silver-brushed text-xl font-semibold">Plano de manutenção</p>
               <p className="mt-2 text-sm text-steel">
                 Com um plano, a Imperium agenda as visitas, cuida da limpeza e das medições e você acompanha tudo por aqui,
@@ -420,7 +421,7 @@ export default async function PortalHome() {
                         <p className="truncate text-sm font-medium text-silver">{workOrderTypeForCustomer[w.type] ?? w.type}</p>
                         <p className="truncate text-xs text-steel">{eqLabel(w.equipment) ?? w.title}</p>
                         {firstName(w.technician?.name) && (
-                          <p className="text-xs text-steel/80">Técnico {firstName(w.technician?.name)}</p>
+                          <p className="text-xs text-steel/80 light:text-steel">Técnico {firstName(w.technician?.name)}</p>
                         )}
                         <div className="mt-1.5 sm:hidden">
                           {w.rating != null ? <RatingDisplay value={w.rating} /> : <span className="text-xs text-ice">Avalie o atendimento</span>}

@@ -91,7 +91,7 @@ function Success({
       </h1>
       <p className="mx-auto mt-3 max-w-md text-sm text-steel">{wo.title}</p>
       {wo.priority === "urgente" && (
-        <p className="mx-auto mt-3 max-w-md rounded-xl border border-gauge-red/30 bg-gauge-red/8 px-4 py-2.5 text-sm text-silver">
+        <p className="mx-auto mt-3 max-w-md rounded-xl border border-gauge-red/30 bg-notice-red px-4 py-2.5 text-sm text-silver">
           Marcado como urgente. Se o equipamento estiver em um local crítico, chame também no WhatsApp.
         </p>
       )}

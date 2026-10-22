@@ -15,7 +15,11 @@ export function SuccessMark() {
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
       />
       <motion.span
-        className="grid size-20 place-items-center rounded-full bg-gradient-to-br from-mint/25 to-ice/15 text-mint ring-1 ring-mint/35 shadow-[0_0_40px_rgb(62_224_181/0.25)]"
+        className={
+          "grid size-20 place-items-center rounded-full bg-gradient-to-br from-mint/25 to-ice/15 text-mint ring-1 ring-mint/35 shadow-[0_0_40px_color-mix(in_srgb,var(--mint)_25%,transparent)] " +
+          // no claro: disco de menta clara (não acinzentado) com halo leve e sombra azul-marinho
+          "light:bg-night light:from-mint/14 light:to-ice/8 light:ring-mint/30 light:shadow-[0_0_0_6px_var(--haze-mint),0_16px_32px_-16px_var(--glow-mint)]"
+        }
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 18 }}

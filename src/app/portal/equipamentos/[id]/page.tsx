@@ -73,7 +73,7 @@ export default async function EquipamentoPage({ params }: PageProps<"/portal/equ
             <EquipmentStatusBadge status={e.status} />
             {e.type?.name && <span className="text-sm text-steel">{e.type.name}</span>}
             {e.location && <span className="text-sm text-steel">{e.location}</span>}
-            <span className="readout text-sm text-steel/80">{code}</span>
+            <span className="readout text-sm text-steel/80 light:text-steel">{code}</span>
           </>
         }
         actions={
@@ -241,9 +241,11 @@ export default async function EquipamentoPage({ params }: PageProps<"/portal/equ
             <p className="mt-0.5 text-xs text-steel">
               Cole no aparelho. Quem escanear vê os dados e o histórico de manutenção dele.
             </p>
+            {/* Etiqueta é papel: branca com tinta escura nos dois temas (e na impressão). No claro, filete e
+                sombra azul-marinho para a etiqueta não sumir no painel branco. */}
             <div
               id="etiqueta"
-              className="mx-auto mt-4 w-full max-w-[15rem] rounded-2xl bg-white p-4 text-center text-[#0a1428] shadow-[0_20px_40px_-24px_rgb(56_168_255/0.6)]"
+              className="mx-auto mt-4 w-full max-w-[15rem] rounded-2xl bg-white p-4 text-center text-[#0a1428] shadow-[0_20px_40px_-24px_color-mix(in_srgb,var(--ice)_60%,transparent)] light:shadow-[0_0_0_1px_var(--rime),0_1px_2px_var(--shade),0_16px_32px_-18px_var(--shade-strong)]"
             >
               <div id="etiqueta-qr" className="flex justify-center">
                 <QrCode value={equipmentQrUrl(e.qrToken)} size={176} />

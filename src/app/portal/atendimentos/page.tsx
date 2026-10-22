@@ -150,7 +150,7 @@ export default async function AtendimentosPage({ searchParams }: PageProps<"/por
                           </div>
                           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-steel">
                             <span>{workOrderTypeForCustomer[w.type] ?? w.type}</span>
-                            <span className="readout text-steel/80">{formatOM(w.number)}</span>
+                            <span className="readout text-steel/80 light:text-steel">{formatOM(w.number)}</span>
                             {eqName && (
                               <span className="inline-flex items-center gap-1">
                                 <EquipmentIcon icon={w.equipment?.type?.icon} className="size-3.5" />

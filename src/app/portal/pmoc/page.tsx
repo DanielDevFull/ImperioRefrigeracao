@@ -104,7 +104,7 @@ export default async function PmocPage() {
         </div>
       ) : (
         <section className="panel relative overflow-hidden">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_100%_0%,rgb(62_224_181/0.10),transparent_70%)]" />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_100%_0%,var(--haze-mint),transparent_70%)]" />
           <div className="relative grid gap-8 p-6 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:p-8">
             <div>
               <span className="grid size-12 place-items-center rounded-2xl bg-mint/10 text-mint ring-1 ring-mint/25">

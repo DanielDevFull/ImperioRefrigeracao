@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { cn } from "@/lib/utils";
 
 /** Abas por link (?aba=), com destaque que desliza para a aba escolhida. */
@@ -45,7 +46,7 @@ export function PortalTabs({
               <span className="relative">
                 {t.label}
                 {t.count != null && (
-                  <span className={cn("readout ml-1.5 text-xs", on ? "text-ice" : "text-steel/70")}>{t.count}</span>
+                  <span className={cn("readout ml-1.5 text-xs", on ? toneOnTint.ice : "text-steel/70 light:text-steel")}>{t.count}</span>
                 )}
               </span>
             </Link>

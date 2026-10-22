@@ -55,9 +55,11 @@ export default async function ReciboPage({ params }: PageProps<"/portal/mensalid
         actions={<PrintButton label="Imprimir recibo" variant="default" className="h-10 px-4" />}
       />
 
+      {/* Recibo é papel: branco com tinta escura nos dois temas e na impressão. Só a sombra acompanha o
+          tema (brilho gelo no escuro; filete e sombra azul-marinho suave no claro). */}
       <article
         id="recibo"
-        className="rounded-2xl bg-white px-6 py-8 text-[#0a1428] shadow-[0_30px_60px_-30px_rgb(56_168_255/0.5)] sm:px-10 sm:py-10"
+        className="rounded-2xl bg-white px-6 py-8 text-[#0a1428] shadow-[0_30px_60px_-30px_color-mix(in_srgb,var(--ice)_50%,transparent)] light:shadow-[0_0_0_1px_var(--rime),0_1px_3px_var(--shade),0_30px_60px_-34px_var(--shade-strong)] sm:px-10 sm:py-10"
       >
         <header className="flex flex-col-reverse gap-5 border-b border-[#d8e1ee] pb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="flex items-center gap-3">

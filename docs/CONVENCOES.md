@@ -103,7 +103,8 @@ texto `silver`, secundário `steel`, bordas `rime`. Estados: `mint` (ok), `brass
 
 O sistema tem três opções por usuário: **Claro**, **Escuro** e **Automático** (segue o aparelho). A escolha fica
 na conta (`user.theme`) e no aparelho (cookie `tema`); o servidor já entrega `<html class="light|dark|theme-system">`.
-Seletor: menu do usuário (admin e portal) e Perfil do técnico (`src/components/theme`).
+Seletor: menu do usuário (admin e portal) e Perfil do técnico (`src/components/theme`). A troca é gravada por
+`POST /api/tema` (rota, não Server Action: a action que grava cookie atualiza a página e cortava a transição).
 
 - **Os tokens são papéis, não cores.** `text-silver` é "texto principal" (prata no escuro, azul-marinho no claro),
   `bg-abyss` é "fundo da página", `bg-night` é "cartão". Use sempre os tokens e as opacidades deles

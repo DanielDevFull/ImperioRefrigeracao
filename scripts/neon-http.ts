@@ -51,7 +51,7 @@ function splitStatements(text: string) {
   let inStr = false;
   for (const line of text.split("\n")) {
     if (!inStr && (line.startsWith("--") || line.trim() === "")) continue;
-    if (!inStr && /^(SET|SELECT pg_catalog\.set_config)/.test(line)) continue;
+    if (!inStr && /^(SET|SELECT pg_catalog\.set_config|\\)/.test(line)) continue;
     cur += line + "\n";
     for (const ch of line) if (ch === "'") inStr = !inStr;
     if (!inStr && line.trimEnd().endsWith(";")) {

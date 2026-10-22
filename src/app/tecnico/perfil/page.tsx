@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bell, ChevronRight, Package, Smartphone } from "lucide-react";
+import { Bell, ChevronRight, Package, Smartphone, SunMoon } from "lucide-react";
 import { getNotifications } from "@/components/shell/data";
+import { ThemeSegmented } from "@/components/theme/theme-switcher";
 import { requireTechnician } from "@/lib/auth/session";
 import { formatNumber, formatPhone, formatRelative, initials } from "@/lib/format";
 import { productCategory } from "@/lib/labels";
@@ -122,6 +123,17 @@ export default async function TechProfilePage() {
           </ul>
         )}
         <p className="text-xs text-steel">A lista completa fica no sino, no topo da tela.</p>
+      </section>
+
+      <section aria-labelledby="p-tema" className="panel space-y-3 p-4">
+        <div>
+          <h2 id="p-tema" className="flex items-center gap-2 text-[0.95rem] font-semibold text-silver">
+            <SunMoon className="size-4 text-ice" />
+            Aparência
+          </h2>
+          <p className="mt-1 text-xs text-steel">No sol forte, o tema claro fica mais fácil de ler. Automático segue o celular.</p>
+        </div>
+        <ThemeSegmented />
       </section>
 
       <section aria-labelledby="p-app" className="panel space-y-3 p-4">

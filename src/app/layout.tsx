@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, IBM_Plex_Sans } from "next/font/google";
 import { MotionProvider } from "@/components/brand/motion-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { themeClass, themeColors } from "@/lib/theme";
+import { getThemePreference } from "@/lib/theme-server";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -30,22 +33,33 @@ export const metadata: Metadata = {
   icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#040914",
-  colorScheme: "dark",
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-};
+export async function generateViewport(): Promise<Viewport> {
+  const pref = await getThemePreference();
+  const colors = themeColors(pref);
+  return {
+    // sempre as duas metas: o tema-provider só troca as cores, sem criar/remover nós
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: colors.light },
+      { media: "(prefers-color-scheme: dark)", color: colors.dark },
+    ],
+    colorScheme: pref === "system" ? "light dark" : pref,
+    width: "device-width",
+    initialScale: 1,
+    viewportFit: "cover",
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const pref = await getThemePreference();
   return (
-    <html lang="pt-BR" className={`dark ${cinzel.variable} ${plex.variable} h-full`}>
+    <html lang="pt-BR" className={`${themeClass(pref)} ${cinzel.variable} ${plex.variable} h-full`}>
       <body className="min-h-full">
-        <MotionProvider>
-          <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
-        </MotionProvider>
-        <Toaster position="top-center" richColors closeButton />
+        <ThemeProvider initial={pref}>
+          <MotionProvider>
+            <TooltipProvider delayDuration={250}>{children}</TooltipProvider>
+          </MotionProvider>
+          <Toaster position="top-center" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

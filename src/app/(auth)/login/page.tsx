@@ -19,8 +19,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
   return (
     <main className="relative grid min-h-dvh overflow-hidden lg:grid-cols-[1.15fr_1fr]">
-      {/* Lado da marca */}
-      <section className="relative hidden overflow-hidden lg:block">
+      {/* Painel de marca: escuro nos dois temas (o emblema é um medalhão azul-noite) */}
+      <section className="force-dark relative hidden overflow-hidden lg:block">
         <div
           aria-hidden
           className="absolute inset-0"

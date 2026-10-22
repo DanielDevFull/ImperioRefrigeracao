@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTheme } from "@/components/theme/theme-provider";
 import { cn } from "@/lib/utils";
 
 type Density = "whisper" | "calm" | "blizzard";
@@ -33,17 +34,32 @@ const LAYER = [
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
+/** Cores da neve vêm do CSS (--snow-*), que muda com o tema (e nas ilhas .force-dark). */
+type SnowColors = { core: string; mid: string; fade: string; crystal: string; glow: string };
+
+function readSnowColors(el: Element): SnowColors {
+  const css = getComputedStyle(el);
+  const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
+  return {
+    core: v("--snow-core", "rgba(240, 249, 255, 1)"),
+    mid: v("--snow-mid", "rgba(200, 232, 255, 0.85)"),
+    fade: v("--snow-fade", "rgba(120, 190, 255, 0)"),
+    crystal: v("--snow-crystal", "rgba(225, 242, 255, 0.95)"),
+    glow: v("--snow-glow", "rgba(120, 200, 255, 0.9)"),
+  };
+}
+
 /** Sprite de cristal de gelo (seis braços com ramificações) desenhado uma vez. */
-function makeCrystalSprite(size: number) {
+function makeCrystalSprite(size: number, colors: SnowColors) {
   const c = document.createElement("canvas");
   c.width = c.height = size;
   const g = c.getContext("2d")!;
   const mid = size / 2;
   const arm = size * 0.42;
   g.translate(mid, mid);
-  g.strokeStyle = "rgba(225, 242, 255, 0.95)";
+  g.strokeStyle = colors.crystal;
   g.lineCap = "round";
-  g.shadowColor = "rgba(120, 200, 255, 0.9)";
+  g.shadowColor = colors.glow;
   g.shadowBlur = size * 0.12;
   for (let i = 0; i < 6; i++) {
     g.save();
@@ -69,14 +85,14 @@ function makeCrystalSprite(size: number) {
 }
 
 /** Sprite de floco macio (ponto com brilho). */
-function makeDotSprite(size: number) {
+function makeDotSprite(size: number, colors: SnowColors) {
   const c = document.createElement("canvas");
   c.width = c.height = size;
   const g = c.getContext("2d")!;
   const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, "rgba(240, 249, 255, 1)");
-  grad.addColorStop(0.35, "rgba(200, 232, 255, 0.85)");
-  grad.addColorStop(1, "rgba(120, 190, 255, 0)");
+  grad.addColorStop(0, colors.core);
+  grad.addColorStop(0.35, colors.mid);
+  grad.addColorStop(1, colors.fade);
   g.fillStyle = grad;
   g.fillRect(0, 0, size, size);
   return c;
@@ -99,6 +115,17 @@ export function SnowField({
   className?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { resolved } = useTheme();
+  // troca só os sprites quando o tema muda, sem reiniciar a neve que já está caindo
+  const spritesRef = useRef<{ crystal: HTMLCanvasElement; dot: HTMLCanvasElement } | null>(null);
+  const redrawRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (!spritesRef.current || !canvasRef.current) return;
+    const colors = readSnowColors(canvasRef.current);
+    spritesRef.current = { crystal: makeCrystalSprite(64, colors), dot: makeDotSprite(32, colors) };
+    redrawRef.current?.();
+  }, [resolved]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -113,8 +140,8 @@ export function SnowField({
       Boolean(conn?.saveData) ||
       (navigator.hardwareConcurrency ?? 8) <= 2;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const crystalSprite = makeCrystalSprite(64);
-    const dotSprite = makeDotSprite(32);
+    const colors = readSnowColors(canvas);
+    spritesRef.current = { crystal: makeCrystalSprite(64, colors), dot: makeDotSprite(32, colors) };
 
     let width = 0;
     let height = 0;
@@ -160,6 +187,7 @@ export function SnowField({
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+      const { crystal: crystalSprite, dot: dotSprite } = spritesRef.current!;
       for (const f of flakes) {
         ctx.globalAlpha = f.alpha;
         if (f.crystal) {
@@ -253,6 +281,10 @@ export function SnowField({
     resize();
     if (reduced) draw();
     else start();
+    // neve parada (reduzir movimento) precisa ser redesenhada quando o tema muda
+    redrawRef.current = () => {
+      if (reduced) draw();
+    };
 
     if (interactive && !reduced) {
       window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -267,6 +299,7 @@ export function SnowField({
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
+      redrawRef.current = null;
     };
   }, [density, interactive, crystals]);
 

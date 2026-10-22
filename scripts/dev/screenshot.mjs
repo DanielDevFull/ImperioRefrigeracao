@@ -1,6 +1,8 @@
 /**
  * Screenshot de uma página logada (desenvolvimento).
  * node scripts/dev/screenshot.mjs <caminho> <saida.png> [--as admin|financeiro|tecnico|cliente] [--mobile] [--full] [--wait ms]
+ *   [--scheme light|dark]
+ * --scheme emula o tema do aparelho; vale para contas com tema "Automático" (o padrão da demo).
  * Requer `pnpm dev` rodando em http://localhost:3000.
  */
 import { chromium } from "@playwright/test";
@@ -32,9 +34,13 @@ const browser = await chromium.launch({
     : undefined,
 });
 const mobile = flag("--mobile");
-const ctxOpts = mobile
-  ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
-  : { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 };
+const scheme = opt("--scheme", "dark");
+const ctxOpts = {
+  ...(mobile
+    ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
+    : { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 }),
+  colorScheme: scheme === "light" ? "light" : "dark",
+};
 
 async function newContext() {
   if (creds[who] && existsSync(statePath)) return browser.newContext({ ...ctxOpts, storageState: statePath });
@@ -42,6 +48,8 @@ async function newContext() {
 }
 let ctx = await newContext();
 let page = await ctx.newPage();
+const errors = [];
+page.on("pageerror", (e) => errors.push(e.message));
 await page.goto(base + route, { waitUntil: "networkidle" });
 if (creds[who] && page.url().includes("/login")) {
   await page.fill("#email", creds[who][0]);
@@ -53,7 +61,6 @@ if (creds[who] && page.url().includes("/login")) {
 }
 await page.waitForTimeout(Number(opt("--wait", "1200")));
 await page.screenshot({ path: out, fullPage: flag("--full") });
-const errors = [];
-page.on("pageerror", (e) => errors.push(e.message));
 console.log(`ok ${page.url()} -> ${out}`);
+if (errors.length) console.log(`erros na página:\n- ${errors.join("\n- ")}`);
 await browser.close();

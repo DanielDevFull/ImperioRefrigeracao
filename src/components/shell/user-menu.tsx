@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeMenuItems } from "@/components/theme/theme-switcher";
 import { authClient } from "@/lib/auth/client";
 import { initials } from "@/lib/format";
 import { roleLabel } from "@/lib/labels";
@@ -37,6 +38,8 @@ export function UserMenu({ name, email, role, extra }: { name: string; email: st
           <span className="block text-sm text-silver">{name}</span>
           <span className="block truncate text-xs text-steel">{email}</span>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <ThemeMenuItems />
         <DropdownMenuSeparator />
         {extra}
         <DropdownMenuItem onSelect={signOut}>

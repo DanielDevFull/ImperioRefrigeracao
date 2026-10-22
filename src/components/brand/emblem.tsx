@@ -25,7 +25,7 @@ export function Emblem({
           className="absolute -inset-[18%] rounded-full animate-breathe"
           style={{
             background:
-              "radial-gradient(closest-side, rgb(56 168 255 / 0.45), rgb(56 168 255 / 0.12) 60%, transparent 75%)",
+              "radial-gradient(closest-side, var(--halo-core), var(--halo-rim) 60%, transparent 75%)",
           }}
         />
       )}

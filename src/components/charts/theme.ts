@@ -1,18 +1,22 @@
 /**
- * Paleta categórica dos gráficos — validada (scripts do skill dataviz) no fundo #0a1428:
- * faixa de luminosidade, croma, separação para daltonismo (ΔE ≥ 13) e contraste ≥ 3:1.
+ * Paleta categórica dos gráficos — validada (scripts do skill dataviz) no cartão de cada tema:
+ * escuro #0a1428 (#2e8fe6 #199e70 #9085e9 #c98500 #d55181) e claro #ffffff
+ * (#2a78d6 #16956b #6250d6 #b57a00 #d14f86): faixa de luminosidade, croma, separação para
+ * daltonismo (ΔE ≥ 12) e contraste ≥ 3:1. Os valores ficam em CSS (--series-n, globals.css),
+ * então o gráfico acompanha o tema sem JavaScript.
  * A ordem é o mecanismo de segurança: atribua sempre nesta ordem, nunca cicle.
  * Cores de status (mint/brass/gauge-red) são reservadas para estados, não para séries.
  */
-export const SERIES = ["#2e8fe6", "#199e70", "#9085e9", "#c98500", "#d55181"] as const;
+export const SERIES = ["var(--series-1)", "var(--series-2)", "var(--series-3)", "var(--series-4)", "var(--series-5)"] as const;
 
 export const CHART = {
-  grid: "rgb(148 190 255 / 0.08)",
-  axis: "#8da2bf",
-  surface: "#0a1428",
-  cursor: "rgb(184 227 255 / 0.35)",
-  textPrimary: "#e6edf5",
-  textSecondary: "#8da2bf",
+  grid: "var(--chart-grid)",
+  axis: "var(--steel)",
+  surface: "var(--night)",
+  cursor: "var(--chart-cursor)",
+  band: "var(--chart-band)",
+  textPrimary: "var(--silver)",
+  textSecondary: "var(--steel)",
 };
 
 export type ValueFormat = "brl" | "brl-compact" | "integer" | "percent" | "number";

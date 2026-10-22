@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { formatValue, type ValueFormat } from "./theme";
+import { SERIES, formatValue, type ValueFormat } from "./theme";
 
 /**
  * Lista de barras horizontais para comparar categorias (melhor que pizza).
@@ -10,7 +10,7 @@ import { formatValue, type ValueFormat } from "./theme";
 export function BarList({
   items,
   format = "number",
-  color = "#2e8fe6",
+  color = SERIES[0],
 }: {
   items: { label: string; value: number; hint?: string; color?: string }[];
   format?: ValueFormat;

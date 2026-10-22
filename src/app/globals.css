@@ -2,14 +2,48 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/*
+ * Tema: <html class="dark | light | theme-system">. "theme-system" segue o aparelho só com CSS,
+ * então o servidor já entrega a página no tema certo (sem piscar). Use as variantes dark: e light:
+ * só para exceções; o normal é cada token já ter o valor do tema (abaixo).
+ */
+@custom-variant dark {
+  &:is(.dark, .dark *, .force-dark, .force-dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:is(.theme-system, .theme-system *) {
+      @slot;
+    }
+  }
+}
+@custom-variant light {
+  &:is(.light, .light *):not(.force-dark, .force-dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: light) {
+    &:is(.theme-system, .theme-system *):not(.force-dark, .force-dark *) {
+      @slot;
+    }
+  }
+}
 
 /*
  * Imperium — tokens
  * Paleta tirada do logo: o fundo abissal, o azul do ".TEC.", o prata do letreiro
  * e o manifold (manômetro azul de baixa, vermelho de alta e o latão do corpo).
+ *
+ * Os nomes são PAPÉIS, não cores fixas: abyss = fundo da página, night = cartão,
+ * glacier/glacier-2 = superfícies elevadas e hover, silver = texto principal,
+ * steel = texto secundário, frost = texto de destaque, ice = ação principal,
+ * rime = borda. No tema claro cada papel recebe o valor certo (bloco "light" abaixo),
+ * por isso text-silver vira tinta azul-marinho e bg-abyss vira branco gelo.
+ *
+ * .force-dark: ilha que fica escura nos dois temas (painel de marca do login). Reaplica os
+ * tokens escuros no elemento; use só em momentos de marca, nunca em telas de trabalho.
  */
-:root {
+:root,
+.force-dark {
   --abyss: #040914;
   --night: #0a1428;
   --glacier: #0f1e3d;
@@ -65,7 +99,125 @@
   --sidebar-border: var(--rime);
   --sidebar-ring: var(--frost);
 
+  /* Gráficos — validados (skill dataviz) no cartão de cada tema; ordem fixa, nunca ciclar */
+  --series-1: #2e8fe6;
+  --series-2: #199e70;
+  --series-3: #9085e9;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --chart-grid: rgb(148 190 255 / 0.08);
+  --chart-cursor: rgb(184 227 255 / 0.35);
+  --chart-band: rgb(56 168 255 / 0.06);
+
+  /* Efeitos: use estes em vez de rgb() fixo (ex.: shadow-[0_20px_40px_-12px_var(--shade)]) */
+  --shade: rgb(0 0 0 / 0.7);
+  --shade-strong: rgb(0 0 0 / 0.8);
+  --glow-ice: rgb(56 168 255 / 0.7);
+  --glow-mint: rgb(62 224 181 / 0.6);
+  --haze-ice: rgb(56 168 255 / 0.22);
+  --haze-deep: rgb(22 119 214 / 0.3);
+  --haze-mint: rgb(62 224 181 / 0.1);
+  --haze-brass: rgb(232 176 75 / 0.13);
+  --page-haze-1: rgb(56 168 255 / 0.1);
+  --page-haze-2: rgb(22 119 214 / 0.1);
+  --selection-bg: rgb(56 168 255 / 0.35);
+  --selection-fg: #ffffff;
+  --scrollbar: rgb(148 190 255 / 0.18);
+  --picker-filter: invert(0.8);
+  --brushed: linear-gradient(180deg, #ffffff 0%, #dfe7f1 38%, #9fb2c9 62%, #e9eff6 100%);
+  --glass-bg: linear-gradient(180deg, rgb(21 42 82 / 0.55), rgb(10 20 40 / 0.62));
+  --glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 20px 40px -24px rgb(0 0 0 / 0.6);
+  --panel-bg: linear-gradient(180deg, rgb(15 30 61 / 0.7), rgb(10 20 40 / 0.85));
+  --panel-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --edge: linear-gradient(160deg, rgb(184 227 255 / 0.55), rgb(56 168 255 / 0.12) 30%, transparent 60%);
+  --shimmer: rgb(184 227 255 / 0.18);
+  --halo-core: rgb(56 168 255 / 0.45);
+  --halo-rim: rgb(56 168 255 / 0.12);
+  /* Neve (canvas): núcleo, meio e borda do floco; traço e brilho do cristal */
+  --snow-core: rgba(240, 249, 255, 1);
+  --snow-mid: rgba(200, 232, 255, 0.85);
+  --snow-fade: rgba(120, 190, 255, 0);
+  --snow-crystal: rgba(225, 242, 255, 0.95);
+  --snow-glow: rgba(120, 200, 255, 0.9);
+
   color-scheme: dark;
+}
+
+:root {
+  /*
+   * Tema claro "neve ao meio-dia": branco gelo, tinta azul-marinho e o mesmo azul do logo,
+   * mais fundo. Contraste conferido (WCAG): textos ≥ 4,5:1 em página, cartão e glacier.
+   */
+  @variant light {
+    --abyss: #f2f6fb;
+    --night: #ffffff;
+    --glacier: #e9f0f8;
+    --glacier-2: #dde7f3;
+    --ice: #1769c9;
+    --ice-deep: #0f56a8;
+    --frost: #0b4a91;
+    --silver: #0c1a33;
+    --steel: #4c5f7b;
+    --rime: rgb(20 50 100 / 0.12);
+    --rime-strong: rgb(20 50 100 / 0.2);
+    --gauge-red: #c42b42;
+    --brass: #956000;
+    --mint: #077b5c;
+    --violet: #5644c6;
+
+    --popover: #ffffff;
+    --primary-foreground: #ffffff;
+    --input: rgb(20 50 100 / 0.2);
+    --sidebar: rgb(255 255 255 / 0.8);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgb(23 105 201 / 0.08);
+
+    --chart-1: #2a78d6;
+    --chart-2: #16956b;
+    --chart-3: #6250d6;
+    --chart-4: #b57a00;
+    --chart-5: #d14f86;
+    --series-1: #2a78d6;
+    --series-2: #16956b;
+    --series-3: #6250d6;
+    --series-4: #b57a00;
+    --series-5: #d14f86;
+    --chart-grid: rgb(20 50 100 / 0.08);
+    --chart-cursor: rgb(23 105 201 / 0.28);
+    --chart-band: rgb(23 105 201 / 0.06);
+
+    --shade: rgb(16 38 78 / 0.16);
+    --shade-strong: rgb(16 38 78 / 0.24);
+    --glow-ice: rgb(23 105 201 / 0.32);
+    --glow-mint: rgb(7 123 92 / 0.28);
+    --haze-ice: rgb(23 105 201 / 0.1);
+    --haze-deep: rgb(23 105 201 / 0.12);
+    --haze-mint: rgb(7 123 92 / 0.08);
+    --haze-brass: rgb(149 96 0 / 0.09);
+    --page-haze-1: rgb(23 105 201 / 0.07);
+    --page-haze-2: rgb(23 105 201 / 0.05);
+    --selection-bg: rgb(23 105 201 / 0.2);
+    --selection-fg: #0c1a33;
+    --scrollbar: rgb(20 50 100 / 0.22);
+    --picker-filter: none;
+    --brushed: linear-gradient(180deg, #2a4470 0%, #0c1a33 42%, #46607f 66%, #13284c 100%);
+    --glass-bg: linear-gradient(180deg, rgb(255 255 255 / 0.82), rgb(246 250 254 / 0.9));
+    --glass-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(16 38 78 / 0.05), 0 20px 40px -24px rgb(16 38 78 / 0.22);
+    --panel-bg: linear-gradient(180deg, #ffffff, #fafcff);
+    --panel-shadow: 0 1px 2px rgb(16 38 78 / 0.05), 0 12px 32px -20px rgb(16 38 78 / 0.18);
+    --edge: linear-gradient(160deg, rgb(23 105 201 / 0.38), rgb(23 105 201 / 0.08) 30%, transparent 60%);
+    --shimmer: rgb(23 105 201 / 0.1);
+    --halo-core: rgb(23 105 201 / 0.28);
+    --halo-rim: rgb(23 105 201 / 0.08);
+    --snow-core: rgba(64, 130, 210, 0.9);
+    --snow-mid: rgba(110, 165, 230, 0.6);
+    --snow-fade: rgba(150, 195, 245, 0);
+    --snow-crystal: rgba(52, 118, 200, 0.85);
+    --snow-glow: rgba(120, 175, 235, 0.6);
+
+    color-scheme: light;
+  }
 }
 
 @theme inline {
@@ -154,6 +306,9 @@
 }
 
 @layer base {
+  .force-dark {
+    color: var(--foreground);
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -164,8 +319,8 @@
   body {
     @apply bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(1200px 600px at 85% -10%, rgb(56 168 255 / 0.10), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, rgb(22 119 214 / 0.10), transparent 60%);
+      radial-gradient(1200px 600px at 85% -10%, var(--page-haze-1), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, var(--page-haze-2), transparent 60%);
     background-attachment: fixed;
     font-feature-settings: "ss01" on;
   }
@@ -174,8 +329,8 @@
     cursor: pointer;
   }
   ::selection {
-    background: rgb(56 168 255 / 0.35);
-    color: white;
+    background: var(--selection-bg);
+    color: var(--selection-fg);
   }
   :focus-visible {
     outline: 2px solid var(--frost);
@@ -184,18 +339,18 @@
   /* Rolagem discreta */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(148 190 255 / 0.18) transparent;
+    scrollbar-color: var(--scrollbar) transparent;
   }
   input[type="date"]::-webkit-calendar-picker-indicator,
   input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
+    filter: var(--picker-filter);
   }
 }
 
 @layer components {
   /* Título em prata escovada, como o letreiro do logo */
   .text-silver-brushed {
-    background: linear-gradient(180deg, #ffffff 0%, #dfe7f1 38%, #9fb2c9 62%, #e9eff6 100%);
+    background: var(--brushed);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -203,21 +358,19 @@
 
   /* Superfície de vidro gelado */
   .glass {
-    background: linear-gradient(180deg, rgb(21 42 82 / 0.55), rgb(10 20 40 / 0.62));
+    background: var(--glass-bg);
     border: 1px solid var(--rime);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.05),
-      0 20px 40px -24px rgb(0 0 0 / 0.6);
+    box-shadow: var(--glass-shadow);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
   }
 
   /* Painel sólido (tabelas e formulários) */
   .panel {
-    background: linear-gradient(180deg, rgb(15 30 61 / 0.7), rgb(10 20 40 / 0.85));
+    background: var(--panel-bg);
     border: 1px solid var(--rime);
     border-radius: var(--radius-xl);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+    box-shadow: var(--panel-shadow);
   }
 
   /* Borda de geada: brilho fino no topo do elemento */
@@ -230,12 +383,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      160deg,
-      rgb(184 227 255 / 0.55),
-      rgb(56 168 255 / 0.12) 30%,
-      transparent 60%
-    );
+    background: var(--edge);
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
@@ -254,12 +402,28 @@
     background: linear-gradient(
       100deg,
       transparent 20%,
-      rgb(184 227 255 / 0.18) 40%,
+      var(--shimmer) 40%,
       transparent 60%
     );
     background-size: 200% 100%;
     animation: var(--animate-shimmer);
   }
+}
+
+/*
+ * Troca de tema (theme-provider): a página no tema novo se revela num círculo que nasce no
+ * seletor. Durante a troca as transições de cor ficam desligadas para a foto do estado novo
+ * já sair com as cores finais.
+ */
+:root.theme-switching *,
+:root.theme-switching *::before,
+:root.theme-switching *::after {
+  transition: none !important;
+}
+:root.theme-switching::view-transition-old(root),
+:root.theme-switching::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {

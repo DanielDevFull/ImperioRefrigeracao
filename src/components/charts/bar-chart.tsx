@@ -36,7 +36,7 @@ export function BarChart({
               tick={{ fill: CHART.axis, fontSize: 12 }}
               tickFormatter={(v: number) => formatValue(v, format === "brl" ? "brl-compact" : format)}
             />
-            <Tooltip cursor={{ fill: "rgb(56 168 255 / 0.06)" }} content={<ChartTooltip format={format} />} />
+            <Tooltip cursor={{ fill: CHART.band }} content={<ChartTooltip format={format} />} />
             {series.map((s, i) => (
               <Bar
                 key={s.key}

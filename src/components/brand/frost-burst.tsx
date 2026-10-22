@@ -24,7 +24,7 @@ export function FrostBurst({ burstKey, size = 220 }: { burstKey: number; size?: 
             initial={{ scale: 0.15, opacity: 0.9 }}
             animate={{ scale: 1, opacity: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            style={{ boxShadow: "0 0 24px rgb(184 227 255 / 0.55) inset" }}
+            style={{ boxShadow: "0 0 24px var(--glow-ice) inset" }}
           />
           {Array.from({ length: SHARDS }).map((_, i) => {
             const angle = (i / SHARDS) * Math.PI * 2;
@@ -43,7 +43,7 @@ export function FrostBurst({ burstKey, size = 220 }: { burstKey: number; size?: 
                 }}
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: (i % 4) * 0.02 }}
               >
-                <IceCrystalIcon className="-ml-1.5 -mt-1.5 size-3 drop-shadow-[0_0_6px_rgba(120,200,255,0.9)]" />
+                <IceCrystalIcon className="-ml-1.5 -mt-1.5 size-3 drop-shadow-[0_0_6px_var(--glow-ice)]" />
               </motion.span>
             );
           })}

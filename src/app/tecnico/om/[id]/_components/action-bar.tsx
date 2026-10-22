@@ -38,8 +38,8 @@ function PrimaryIcon({ primary: p }: { primary: NonNullable<Primary> }) {
 
 const PrimaryButton = forwardRef<
   HTMLButtonElement,
-  { primary: NonNullable<Primary>; busy: boolean; onClick: () => void; hint?: string | null }
->(function PrimaryButton({ primary, busy, onClick, hint }, ref) {
+  { primary: NonNullable<Primary>; busy: boolean; onClick: () => void }
+>(function PrimaryButton({ primary, busy, onClick }, ref) {
   const conclude = primary.kind === "conclude";
   return (
     <motion.button
@@ -50,7 +50,7 @@ const PrimaryButton = forwardRef<
       disabled={busy}
       transition={{ type: "spring", stiffness: 420, damping: 36 }}
       className={cn(
-        "relative flex h-14 min-w-0 flex-1 items-center justify-center overflow-hidden rounded-2xl px-4 text-[1.02rem] font-semibold text-abyss outline-offset-4 transition-[filter] active:brightness-110 disabled:opacity-80",
+        "relative flex h-14 min-w-0 flex-1 items-center justify-center overflow-hidden rounded-2xl px-3.5 text-base font-semibold tracking-[-0.005em] text-abyss outline-offset-4 transition-[filter] active:brightness-110 disabled:opacity-80",
         conclude
           ? "bg-gradient-to-b from-mint to-[#22b98f] shadow-[0_10px_30px_-10px_rgb(62_224_181/0.65)]"
           : "bg-gradient-to-b from-ice to-ice-deep shadow-[0_10px_30px_-10px_rgb(56_168_255/0.75)]",
@@ -67,7 +67,6 @@ const PrimaryButton = forwardRef<
         >
           {busy ? <Loader2 className="size-5 shrink-0 animate-spin" /> : <PrimaryIcon primary={primary} />}
           <span className="truncate">{primary.label}</span>
-          {hint && !busy && <span className="readout shrink-0 rounded-full bg-abyss/15 px-2 py-0.5 text-xs">{hint}</span>}
         </motion.span>
       </AnimatePresence>
     </motion.button>
@@ -140,7 +139,6 @@ export function ActionBar({
   status,
   primary,
   busy,
-  progressHint,
   primaryRef,
   onPrimary,
   onPause,
@@ -153,7 +151,6 @@ export function ActionBar({
   status: string;
   primary: Primary;
   busy: boolean;
-  progressHint: string | null;
   primaryRef: React.Ref<HTMLButtonElement>;
   onPrimary: () => void;
   onPause: () => void;
@@ -225,7 +222,7 @@ export function ActionBar({
               )}
             </AnimatePresence>
             {primary ? (
-              <PrimaryButton ref={primaryRef} primary={primary} busy={busy} onClick={onPrimary} hint={progressHint} />
+              <PrimaryButton ref={primaryRef} primary={primary} busy={busy} onClick={onPrimary} />
             ) : (
               <p className="flex h-14 flex-1 items-center justify-center rounded-2xl bg-night/80 px-4 text-sm text-steel ring-1 ring-rime">
                 {status === "cancelada" ? "OM cancelada pelo escritório" : "Nenhuma ação disponível"}

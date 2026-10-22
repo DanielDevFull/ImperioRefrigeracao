@@ -323,7 +323,7 @@ export function Checklist({
           {lockedReason}
         </p>
       )}
-      <ol className={cn("space-y-2.5", locked && "opacity-70")}>
+      <ol className={cn("space-y-2.5", locked && lockedReason && "opacity-70")}>
         {tasks.map((t, i) => (
           <TaskRow
             key={t.id}

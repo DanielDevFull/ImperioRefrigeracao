@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PackagePlus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmAction } from "@/components/system/confirm-action";
 import { EmptyState } from "@/components/system/empty-state";
-import { Field, SubmitButton, nativeSelectClass } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, nativeSelectClass } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,6 @@ function AddMaterialForm({
   chargeByDefault: boolean;
   onDone: () => void;
 }) {
-  const formRef = useRef<HTMLFormElement>(null);
   const [productId, setProductId] = useState("");
   const [locationId, setLocationId] = useState(defaultLocationId ?? options.locations[0]?.id ?? "");
   const [qty, setQty] = useState("");
@@ -57,12 +56,11 @@ function AddMaterialForm({
   const qtyNum = Number(qty.replace(",", "."));
   const short = available != null && Number.isFinite(qtyNum) && qtyNum > 0 && qtyNum > available;
 
-  const [state, action] = useActionState(async (prev: MaterialState, fd: FormData) => {
+  const [state, action, pending] = useActionState(async (prev: MaterialState, fd: FormData) => {
     const r = await addMaterialAction(id, prev, fd);
     if (r.ok) {
       toast.success(r.message ?? "Material lançado");
       if (r.warning) toast.warning(r.warning, { duration: 9000 });
-      formRef.current?.reset();
       setProductId("");
       setQty("");
     } else if (r.error) toast.error(r.error);
@@ -71,7 +69,7 @@ function AddMaterialForm({
   const fe = state.fieldErrors ?? {};
 
   return (
-    <form ref={formRef} action={action} className="space-y-4 border-t border-rime bg-night/30 px-5 py-4">
+    <ActionForm action={action} pending={pending} className="space-y-4 border-t border-rime bg-night/30 px-5 py-4">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Field label="Produto" htmlFor="mat-product" error={fe.productId} required>
           <select id="mat-product" name="productId" className={nativeSelectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
@@ -138,9 +136,9 @@ function AddMaterialForm({
         <Button type="button" variant="ghost" onClick={onDone}>
           Voltar
         </Button>
-        <SubmitButton>Lançar material</SubmitButton>
+        <FormSubmit>Lançar material</FormSubmit>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 

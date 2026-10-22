@@ -47,7 +47,6 @@ export default async function TechAgendaPage() {
             ? `${total === 1 ? "1 OM" : `${total} OMs`} nos próximos ${DAYS} dias.`
             : `Nenhuma OM pendente nos próximos ${DAYS} dias.`
         }
-        className="mb-0"
       />
 
       <nav aria-label="Dias" className="grid grid-cols-7 gap-1.5">

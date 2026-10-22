@@ -60,7 +60,9 @@ export function MoreSheet({
 
   return (
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : close())}>
-      <SheetContent side="bottom" className="mx-auto max-h-[90dvh] max-w-xl gap-0 overflow-y-auto rounded-t-3xl border-rime bg-night p-0 pb-[env(safe-area-inset-bottom)]">
+      <SheetContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        side="bottom" className="mx-auto max-h-[90dvh] max-w-xl gap-0 overflow-y-auto rounded-t-3xl border-rime bg-night p-0 pb-[env(safe-area-inset-bottom)]">
         <SheetHeader className="px-5 pb-3 pt-5">
           <SheetTitle className="font-sans text-lg font-semibold text-silver">Mais opções</SheetTitle>
           <SheetDescription>Use quando o atendimento não seguir o caminho normal.</SheetDescription>

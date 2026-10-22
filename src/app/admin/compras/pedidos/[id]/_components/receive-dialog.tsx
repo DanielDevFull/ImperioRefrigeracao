@@ -80,25 +80,25 @@ function ReceiveForm({
   defaultDueDate: string;
   onDone: () => void;
 }) {
-  const [state, action, pending] = useActionState(receiveOrder, initialActionState);
+  const [state, action, submitting] = useActionState(receiveOrder, initialActionState);
   useActionToast(state, { onSuccess: onDone });
-  const pending = items.filter((i) => i.receivedQuantity < i.quantity);
+  const open = items.filter((i) => i.receivedQuantity < i.quantity);
   const remainingOf = (i: ItemRow) => round3(i.quantity - i.receivedQuantity);
   const [values, setValues] = useState<Record<string, string>>(() =>
-    Object.fromEntries(pending.map((i) => [i.id, String(remainingOf(i)).replace(".", ",")])),
+    Object.fromEntries(open.map((i) => [i.id, String(remainingOf(i)).replace(".", ",")])),
   );
   const [updateCost, setUpdateCost] = useState(true);
   const e = state.fieldErrors ?? {};
-  const fillAll = () => setValues(Object.fromEntries(pending.map((i) => [i.id, String(remainingOf(i)).replace(".", ",")])));
-  const clearAll = () => setValues(Object.fromEntries(pending.map((i) => [i.id, ""])));
-  const willComplete = pending.every((i) => (parseDecimal(values[i.id]) ?? 0) >= remainingOf(i));
+  const fillAll = () => setValues(Object.fromEntries(open.map((i) => [i.id, String(remainingOf(i)).replace(".", ",")])));
+  const clearAll = () => setValues(Object.fromEntries(open.map((i) => [i.id, ""])));
+  const willComplete = open.every((i) => (parseDecimal(values[i.id]) ?? 0) >= remainingOf(i));
 
   return (
-    <ActionForm action={action} pending={pending} className="space-y-4">
+    <ActionForm action={action} pending={submitting} className="space-y-4">
       <input type="hidden" name="orderId" value={orderId} />
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-silver">
-          {pending.length} {pending.length === 1 ? "item pendente" : "itens pendentes"}
+          {open.length} {open.length === 1 ? "item pendente" : "itens pendentes"}
         </p>
         <div className="flex gap-1">
           <Button type="button" size="sm" variant="ghost" onClick={fillAll}>
@@ -110,7 +110,7 @@ function ReceiveForm({
         </div>
       </div>
       <ul className="divide-y divide-rime rounded-lg border border-rime bg-night/40">
-        {pending.map((i) => {
+        {open.map((i) => {
           const q = parseDecimal(values[i.id]);
           const over = q != null && q > remainingOf(i);
           const err = e[`recv_${i.id}`];

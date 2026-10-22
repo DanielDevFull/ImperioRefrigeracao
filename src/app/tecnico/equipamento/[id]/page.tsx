@@ -50,7 +50,6 @@ export default async function TechEquipmentPage({ params }: PageProps<"/tecnico/
             <EquipmentStatusBadge status={e.status} />
           </>
         }
-        className="mb-0"
       />
 
       <section className="panel overflow-hidden" aria-label="Cliente e local">

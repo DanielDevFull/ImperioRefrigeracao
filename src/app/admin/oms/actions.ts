@@ -243,16 +243,23 @@ export async function assignOmAction(id: string, _prev: ActionState, fd: FormDat
       return { ok: false, error: "Informe a data para usar um horário.", fieldErrors: { scheduledDate: "Informe a data." } };
     }
     await ensureTechnician(d.technicianId);
-    await db.transaction((tx) =>
-      assignWorkOrder(
+    const before = await db.transaction(async (tx) => {
+      const current = await getWorkOrderOrThrow(tx, id);
+      await assignWorkOrder(
         tx,
         id,
         { technicianId: d.technicianId, scheduledDate: d.scheduledDate, scheduledTime: d.scheduledTime },
         actor(user),
-      ),
-    );
+      );
+      return current;
+    });
     revalidateOm(id);
-    return { ok: true, message: d.technicianId ? "Técnico atribuído" : "Agendamento salvo" };
+    const message = !d.technicianId
+      ? "Técnico removido. A OM voltou para a fila de despacho"
+      : before.technicianId !== d.technicianId
+        ? "Técnico atribuído"
+        : "OM reagendada";
+    return { ok: true, message };
   });
 }
 

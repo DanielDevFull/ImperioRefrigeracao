@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { CameraOff, Flashlight, FlashlightOff, Keyboard, Loader2, RefreshCw, ScanLine } from "lucide-react";
+import { CameraOff, Flashlight, FlashlightOff, Keyboard, Loader2, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { resolveScanAction } from "../actions";
@@ -173,7 +173,7 @@ export function Scanner() {
   return (
     <div className="space-y-5">
       <div className="relative -mx-4 overflow-hidden bg-black sm:mx-0 sm:rounded-3xl">
-        <div className="relative aspect-[4/5] w-full">
+        <div className={cn("relative w-full", live ? "aspect-square" : "aspect-[5/4]")}>
           <video
             ref={videoRef}
             playsInline
@@ -263,6 +263,18 @@ export function Scanner() {
             </div>
           )}
 
+          {live && (
+            <p
+              aria-live="polite"
+              className={cn(
+                "absolute inset-x-4 bottom-4 mx-auto w-fit max-w-[calc(100%-5rem)] rounded-full px-3.5 py-1.5 text-center text-[0.8rem] font-medium backdrop-blur-md",
+                message ? "bg-[#2a1d0a]/90 text-brass" : "bg-abyss/70 text-frost",
+              )}
+            >
+              {message ?? (phase === "found" ? "Etiqueta lida, abrindo equipamento…" : "Aponte para a etiqueta QR do aparelho")}
+            </p>
+          )}
+
           {torch.supported && live && (
             <button
               type="button"
@@ -278,17 +290,6 @@ export function Scanner() {
             </button>
           )}
         </div>
-      </div>
-
-      <div aria-live="polite" className="min-h-6 text-center">
-        {message ? (
-          <p className="text-sm font-medium text-brass">{message}</p>
-        ) : (
-          <p className="flex items-center justify-center gap-2 text-sm text-steel">
-            <ScanLine className="size-4 text-ice" />
-            {phase === "found" ? "Etiqueta lida, abrindo equipamento…" : "Aponte para a etiqueta QR do equipamento"}
-          </p>
-        )}
       </div>
 
       <form onSubmit={submitManual} className="panel space-y-3 p-4" noValidate>

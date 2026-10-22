@@ -60,9 +60,7 @@ export async function rateWorkOrderAction(_prev: ActionState, fd: FormData): Pro
       });
     }
 
-    revalidatePath("/portal");
-    revalidatePath("/portal/atendimentos");
-    revalidatePath(`/portal/atendimentos/${rated.id}`);
+    revalidatePath("/portal", "layout");
     return { ok: true, message: "Avaliação enviada. Obrigado!" };
   });
 }

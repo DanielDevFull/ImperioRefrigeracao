@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { CalendarClock, TriangleAlert, UserRoundPlus } from "lucide-react";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, nativeSelectClass, useActionToast } from "@/components/system/form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ function AssignForm({
   initial: { technicianId: string | null; scheduledDate: string | null; scheduledTime: string | null };
   onDone: () => void;
 }) {
-  const [state, action] = useActionState(assignOmAction.bind(null, id), initialActionState);
+  const [state, action, pending] = useActionState(assignOmAction.bind(null, id), initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const [tech, setTech] = useState(initial.technicianId ?? "");
   const [date, setDate] = useState(initial.scheduledDate ?? "");
@@ -33,7 +33,7 @@ function AssignForm({
   const techName = technicians.find((t) => t.id === tech)?.name;
 
   return (
-    <form action={action} className="grid gap-4">
+    <ActionForm action={action} pending={pending} className="grid gap-4">
       <Field label="Técnico" htmlFor="assign-tech" error={state.fieldErrors?.technicianId}>
         <select id="assign-tech" name="technicianId" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
           <option value="">Sem técnico</option>
@@ -66,9 +66,9 @@ function AssignForm({
         <Button type="button" variant="ghost" onClick={onDone}>
           Voltar
         </Button>
-        <SubmitButton>{tech ? "Salvar agendamento" : "Remover técnico"}</SubmitButton>
+        <FormSubmit>{tech ? "Salvar agendamento" : "Remover técnico"}</FormSubmit>
       </DialogFooter>
-    </form>
+    </ActionForm>
   );
 }
 

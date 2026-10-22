@@ -47,8 +47,7 @@ export async function submitProofAction(_prev: ActionState, fd: FormData): Promi
     const url = await storeFile("comprovantes", file, file.name);
     await db.transaction((tx) => submitProof(tx, rec.id, customer.id, url));
 
-    revalidatePath("/portal");
-    revalidatePath("/portal/mensalidades");
+    revalidatePath("/portal", "layout");
     return { ok: true, message: "Comprovante enviado" };
   });
 }

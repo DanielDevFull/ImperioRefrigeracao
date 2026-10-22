@@ -211,7 +211,7 @@ export function EquipmentTable({ rows }: { rows: EquipmentRow[] }) {
                   </p>
                   <p className="mt-1 truncate text-sm text-silver/90">{r.customerLabel}</p>
                   <p className="truncate text-xs text-steel">{[r.location, r.siteName].filter(Boolean).join(", ")}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                     {r.refrigerant && <RefrigerantTag value={r.refrigerant} compact />}
                     {r.nextVisit && (
                       <span className={cn("text-xs", r.nextVisit.kind === "atrasada" ? "text-brass" : "text-steel")}>

@@ -44,7 +44,7 @@ export default async function TechEarningsPage({ searchParams }: PageProps<"/tec
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Meus ganhos" description="Comissões das OMs que você concluiu." className="mb-0" />
+      <PageHeader title="Meus ganhos" description="Comissões das OMs que você concluiu." />
 
       <nav aria-label="Mês" className="grid grid-cols-6 gap-1.5">
         {months.map((m) => {

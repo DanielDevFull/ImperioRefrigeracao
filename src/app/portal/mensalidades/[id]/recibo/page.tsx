@@ -59,16 +59,16 @@ export default async function ReciboPage({ params }: PageProps<"/portal/mensalid
         id="recibo"
         className="rounded-2xl bg-white px-6 py-8 text-[#0a1428] shadow-[0_30px_60px_-30px_rgb(56_168_255/0.5)] sm:px-10 sm:py-10"
       >
-        <header className="flex items-start justify-between gap-4 border-b border-[#d8e1ee] pb-6">
+        <header className="flex flex-col-reverse gap-5 border-b border-[#d8e1ee] pb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="flex items-center gap-3">
             <Emblem size={52} />
             <div>
-              <p className="font-display text-lg font-bold tracking-[0.06em]">{s.companyName}</p>
+              <p className="font-display text-base font-bold tracking-[0.06em] sm:text-lg">{s.companyName}</p>
               {s.document && <p className="text-xs text-[#3a4a66]">CNPJ {formatDocument(s.document)}</p>}
               {s.address && <p className="text-xs text-[#3a4a66]">{s.address}</p>}
             </div>
           </div>
-          <div className="text-right">
+          <div className="flex items-baseline justify-between gap-3 sm:block sm:text-right">
             <p className="font-display text-xl font-semibold tracking-[0.04em]">Recibo</p>
             <p className="font-mono text-xs text-[#3a4a66]">Nº {number}</p>
           </div>

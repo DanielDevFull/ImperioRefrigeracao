@@ -47,11 +47,11 @@ export default async function TechProfilePage() {
       </section>
 
       <section aria-labelledby="p-estoque" className="space-y-3">
-        <div className="flex items-baseline justify-between gap-3">
+        <div>
           <h2 id="p-estoque" className="font-display text-silver-brushed text-xl font-semibold">
             Estoque do veículo
           </h2>
-          <span className="truncate text-xs text-steel">{stock.location.name}</span>
+          <p className="mt-0.5 truncate text-xs text-steel">{stock.location.name}</p>
         </div>
         {stock.rows.length === 0 ? (
           <p className="panel flex items-center gap-3 px-4 py-5 text-sm text-steel">

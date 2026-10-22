@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Pencil } from "lucide-react";
-import { Field, SubmitButton, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, useActionToast } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,11 +11,11 @@ import { initialActionState } from "@/lib/action";
 import { saveBillingAction } from "../../actions";
 
 function BillingForm({ id, laborAmount, billable, onDone }: { id: string; laborAmount: number; billable: boolean; onDone: () => void }) {
-  const [state, action] = useActionState(saveBillingAction.bind(null, id), initialActionState);
+  const [state, action, pending] = useActionState(saveBillingAction.bind(null, id), initialActionState);
   useActionToast(state, { onSuccess: onDone });
   const [bill, setBill] = useState(billable);
   return (
-    <form action={action} className="grid gap-4">
+    <ActionForm action={action} pending={pending} className="grid gap-4">
       <Field label="Mão de obra (R$)" htmlFor="bill-labor" error={state.fieldErrors?.laborAmount}>
         <MaskedInput id="bill-labor" name="laborAmount" mask="money" className="h-9 text-right tabular-nums" defaultValue={laborAmount} />
       </Field>
@@ -32,9 +32,9 @@ function BillingForm({ id, laborAmount, billable, onDone }: { id: string; laborA
         <Button type="button" variant="ghost" onClick={onDone}>
           Voltar
         </Button>
-        <SubmitButton>Salvar valores</SubmitButton>
+        <FormSubmit>Salvar valores</FormSubmit>
       </DialogFooter>
-    </form>
+    </ActionForm>
   );
 }
 

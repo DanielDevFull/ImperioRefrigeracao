@@ -118,7 +118,9 @@ function AddMaterialSheet({
         if (!o) setTimeout(reset, 250);
       }}
     >
-      <SheetContent side="bottom" className="mx-auto max-h-[88dvh] max-w-xl gap-0 rounded-t-3xl border-rime bg-night p-0 pb-[env(safe-area-inset-bottom)]">
+      <SheetContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        side="bottom" className="mx-auto max-h-[88dvh] max-w-xl gap-0 rounded-t-3xl border-rime bg-night p-0 pb-[env(safe-area-inset-bottom)]">
         <SheetHeader className="px-5 pb-3 pt-5">
           <SheetTitle className="font-sans text-lg font-semibold text-silver">
             {selected ? selected.name : "Adicionar material"}
@@ -331,7 +333,11 @@ export function Materials({
                     <span className="readout">
                       {formatNumber(m.quantity)} {m.unit}
                     </span>
-                    {m.chargeCustomer && <span className="text-brass">, cobrado {formatBRL(m.quantity * m.unitPrice)}</span>}
+                    {m.chargeCustomer && (
+                      <span className="text-brass">
+                        {m.unitPrice > 0 ? `, cobrado ${formatBRL(m.quantity * m.unitPrice)}` : ", cobrar do cliente (sem preço cadastrado)"}
+                      </span>
+                    )}
                   </p>
                 </div>
                 {!closed && (

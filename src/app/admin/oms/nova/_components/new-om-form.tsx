@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useMemo, useState, useTransition } from "react";
 import { CalendarClock, ClipboardCheck, Loader2, ReceiptText, UserRound } from "lucide-react";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, nativeSelectClass, useActionToast } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
 import { Panel } from "@/components/system/panel";
 import { WorkOrderStatusBadge } from "@/components/system/status";
@@ -48,7 +48,7 @@ export function NewOmForm({
   initialEquipment: { id: string; siteId: string | null } | null;
   today: string;
 }) {
-  const [state, action] = useActionState(createOmAction, initialActionState);
+  const [state, action, pending] = useActionState(createOmAction, initialActionState);
   useActionToast(state);
   const fe = state.fieldErrors ?? {};
 
@@ -117,7 +117,7 @@ export function NewOmForm({
   const tech = technicians.find((t) => t.id === technicianId);
 
   return (
-    <form action={action} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <ActionForm action={action} pending={pending} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="space-y-6">
         <Panel title="Serviço" description="O que será feito e com qual urgência.">
           <div className="space-y-5">
@@ -347,15 +347,15 @@ export function NewOmForm({
           </ul>
           {state.error && !Object.keys(fe).length && <p className="text-sm text-gauge-red">{state.error}</p>}
           <div className="flex flex-col gap-2 border-t border-rime pt-4">
-            <SubmitButton className="h-9 w-full" disabled={loadingCtx}>
+            <FormSubmit className="h-9 w-full" disabled={loadingCtx}>
               Criar OM
-            </SubmitButton>
+            </FormSubmit>
             <Button variant="ghost" asChild className="h-9 w-full text-steel">
               <Link href="/admin/oms">Voltar sem salvar</Link>
             </Button>
           </div>
         </Panel>
       </aside>
-    </form>
+    </ActionForm>
   );
 }

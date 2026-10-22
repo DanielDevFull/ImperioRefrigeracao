@@ -79,7 +79,7 @@ export default async function EquipamentoPage({ params }: PageProps<"/portal/equ
         actions={
           <Button asChild size="lg" className="h-10 px-4">
             <Link href={`/portal/atendimentos/novo?equipmentId=${e.id}`}>
-              <Plus /> Solicitar atendimento para este equipamento
+              <Plus /> Solicitar atendimento<span className="hidden sm:inline"> para este equipamento</span>
             </Link>
           </Button>
         }

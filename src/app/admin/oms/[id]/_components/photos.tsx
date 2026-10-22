@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useState } from "react";
 import { ChevronLeft, ChevronRight, ImagePlus, Trash2 } from "lucide-react";
 import { ConfirmAction } from "@/components/system/confirm-action";
 import { EmptyState } from "@/components/system/empty-state";
-import { Field, SubmitButton, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, nativeSelectClass, useActionToast } from "@/components/system/form";
 import { ToneBadge } from "@/components/system/tone-badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,16 +20,10 @@ export type PhotoItem = { id: string; url: string; kind: string; caption: string
 const KIND_TONE: Record<string, Tone> = { antes: "frost", depois: "mint", problema: "red", outro: "steel" };
 
 function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [state, action] = useActionState(uploadPhotosAction.bind(null, id), initialActionState);
-  useActionToast(state, {
-    onSuccess: () => {
-      formRef.current?.reset();
-      onDone();
-    },
-  });
+  const [state, action, pending] = useActionState(uploadPhotosAction.bind(null, id), initialActionState);
+  useActionToast(state, { onSuccess: onDone });
   return (
-    <form ref={formRef} action={action} className="grid gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
+    <ActionForm action={action} pending={pending} className="grid gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
       <Field label="Tipo" htmlFor="photo-kind" error={state.fieldErrors?.kind}>
         <select id="photo-kind" name="kind" className={nativeSelectClass} defaultValue="antes">
           {PHOTO_KINDS.map((k) => (
@@ -49,9 +43,9 @@ function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
         <Button type="button" variant="ghost" onClick={onDone}>
           Voltar
         </Button>
-        <SubmitButton>Enviar fotos</SubmitButton>
+        <FormSubmit>Enviar fotos</FormSubmit>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 

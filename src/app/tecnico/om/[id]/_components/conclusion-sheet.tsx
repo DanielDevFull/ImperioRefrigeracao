@@ -206,6 +206,7 @@ export function ConclusionSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
         side="bottom"
         className="mx-auto max-h-[94dvh] max-w-xl gap-0 overflow-y-auto rounded-t-3xl border-rime bg-night p-0 pb-[env(safe-area-inset-bottom)]"
       >

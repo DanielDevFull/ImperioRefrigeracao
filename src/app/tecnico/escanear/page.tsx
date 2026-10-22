@@ -9,7 +9,7 @@ export default async function TechScanPage() {
   await requireTechnician();
   return (
     <div>
-      <PageHeader title="Escanear" description="Leia a etiqueta do aparelho para ver a ficha, o histórico e abrir uma OM." className="mb-4" />
+      <PageHeader title="Escanear" description="Leia a etiqueta QR para abrir a ficha do aparelho." className="mb-4" />
       <Scanner />
     </div>
   );

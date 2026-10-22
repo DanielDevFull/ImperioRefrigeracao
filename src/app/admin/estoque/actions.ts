@@ -104,9 +104,13 @@ export async function saveProduct(_prev: ActionState, fd: FormData): Promise<Act
         if (!s) throw new Error("Fornecedor não encontrado. Recarregue a página.");
       }
       if (id) {
-        const [row] = await tx.update(products).set(data).where(eq(products.id, id)).returning({ id: products.id });
-        if (!row) throw new Error("Produto não encontrado. Ele pode ter sido removido.");
-        return row.id;
+        const before = await tx.query.products.findFirst({ where: eq(products.id, id), columns: { minStock: true } });
+        if (!before) throw new Error("Produto não encontrado. Ele pode ter sido removido.");
+        await tx.update(products).set(data).where(eq(products.id, id));
+        // mínimo alterado: se o saldo ficou abaixo, já abre a solicitação de compra
+        if (data.active && data.minStock !== before.minStock)
+          await ensureReorderRequests(tx, { productIds: [id], userId: actor.id });
+        return id;
       }
       const [row] = await tx.insert(products).values(data).returning({ id: products.id });
       if (initialQty && initialQty > 0) {

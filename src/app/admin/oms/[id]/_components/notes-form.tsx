@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Field, SubmitButton, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, useActionToast } from "@/components/system/form";
 import { Textarea } from "@/components/ui/textarea";
 import { initialActionState } from "@/lib/action";
 import { saveNotesAction } from "../../actions";
@@ -13,10 +13,9 @@ export function NotesForm({
   id: string;
   values: { description: string | null; diagnosis: string | null; solution: string | null; technicianNotes: string | null };
 }) {
-  const [state, action] = useActionState(saveNotesAction.bind(null, id), initialActionState);
+  const [state, action, pending] = useActionState(saveNotesAction.bind(null, id), initialActionState);
   useActionToast(state);
   const fe = state.fieldErrors ?? {};
-  // Campos controlados: o reset automático do formulário não apaga o que foi digitado.
   const [v, setV] = useState({
     description: values.description ?? "",
     diagnosis: values.diagnosis ?? "",
@@ -25,7 +24,7 @@ export function NotesForm({
   });
   const bind = (k: keyof typeof v) => ({ value: v[k], onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => setV((o) => ({ ...o, [k]: e.target.value })) });
   return (
-    <form action={action} className="grid gap-4 sm:grid-cols-2">
+    <ActionForm action={action} pending={pending} className="grid gap-4 sm:grid-cols-2">
       <Field label="Problema relatado" htmlFor="description" error={fe.description} className="sm:col-span-2">
         <Textarea id="description" name="description" rows={3} maxLength={4000} {...bind("description")} placeholder="O que o cliente relatou ou o serviço pedido." />
       </Field>
@@ -39,8 +38,8 @@ export function NotesForm({
         <Textarea id="technicianNotes" name="technicianNotes" rows={2} maxLength={4000} {...bind("technicianNotes")} placeholder="Recomendações, peças a trocar na próxima visita, acesso ao local." />
       </Field>
       <div className="flex justify-end sm:col-span-2">
-        <SubmitButton variant="outline">Salvar anotações</SubmitButton>
+        <FormSubmit variant="outline">Salvar anotações</FormSubmit>
       </div>
-    </form>
+    </ActionForm>
   );
 }

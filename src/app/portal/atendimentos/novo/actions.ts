@@ -94,7 +94,7 @@ export async function createServiceRequest(_prev: ActionState, fd: FormData): Pr
     const headline = symptoms.filter((s) => s !== "Outro").join(", ") || (isInstall ? "Instalação/remoção" : "Solicitação de atendimento");
     const title = eqName ? `${headline} — ${eqName}${eqRow?.location ? ` (${eqRow.location})` : ""}` : headline;
     const description = [
-      symptoms.length ? `Relato do cliente: ${symptoms.join(", ")}.` : null,
+      symptoms.length ? `Sintomas marcados: ${symptoms.join(", ")}.` : null,
       input.descricao ?? null,
       !eqRow ? "Equipamento: o cliente não identificou (escolheu \"Outro / não sei\")." : null,
       input.periodo ? `Período preferido para a visita: ${input.periodo}` : null,
@@ -132,8 +132,7 @@ export async function createServiceRequest(_prev: ActionState, fd: FormData): Pr
       return created;
     });
 
-    revalidatePath("/portal");
-    revalidatePath("/portal/atendimentos");
+    revalidatePath("/portal", "layout");
     redirect(`/portal/atendimentos/novo?criado=${wo.id}`);
   });
 }

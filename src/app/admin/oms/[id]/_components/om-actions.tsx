@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import { CheckCheck, ChevronDown, Loader2, Printer, RotateCcw, Undo2, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { Field, SubmitButton, useActionToast } from "@/components/system/form";
+import { ActionForm, Field, FormSubmit, useActionToast } from "@/components/system/form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,7 +52,7 @@ function ReasonDialog({
   action: (prev: ActionState, fd: FormData) => Promise<ActionState>;
   destructive?: boolean;
 }) {
-  const [state, formAction] = useActionState(action, initialActionState);
+  const [state, formAction, pending] = useActionState(action, initialActionState);
   useActionToast(state, { onSuccess: () => onOpenChange(false) });
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,7 +61,7 @@ function ReasonDialog({
           <DialogTitle className="font-sans text-base font-semibold">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4">
+        <ActionForm action={formAction} pending={pending} className="grid gap-4">
           <Field label={label} htmlFor="reason" error={state.fieldErrors?.reason} required>
             <Textarea id="reason" name="reason" rows={3} placeholder={placeholder} maxLength={500} autoFocus />
           </Field>
@@ -69,9 +69,9 @@ function ReasonDialog({
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Voltar
             </Button>
-            <SubmitButton className={destructive ? "bg-gauge-red text-white hover:bg-gauge-red/90" : undefined}>{submitLabel}</SubmitButton>
+            <FormSubmit className={destructive ? "bg-gauge-red text-white hover:bg-gauge-red/90" : undefined}>{submitLabel}</FormSubmit>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

@@ -135,6 +135,7 @@ export default async function EquipamentoPage({ params }: PageProps<"/admin/equi
           <Panel title="Dados técnicos">
             <DetailList
               columns={3}
+              className="grid-cols-2"
               items={[
                 { label: "Tipo", value: item.type?.name ?? "—" },
                 { label: "Marca", value: item.brand ?? "—" },
@@ -432,14 +433,22 @@ function ForecastPanel({ d }: { d: EquipmentDetail }) {
                     {v.tasks.length} {v.tasks.length === 1 ? "tarefa" : "tarefas"}
                   </p>
                   <ul className="mt-1 flex flex-wrap gap-1.5">
-                    {v.tasks.map((t) => (
+                    {v.tasks.map((t, ti) => (
                       <li
                         key={t.id}
-                        className="rounded-md bg-night/70 px-2 py-0.5 text-xs text-silver/85 ring-1 ring-rime"
+                        className={cn(
+                          "rounded-md bg-night/70 px-2 py-0.5 text-xs text-silver/85 ring-1 ring-rime",
+                          ti >= 3 && "hidden sm:block",
+                        )}
                       >
                         {t.title}
                       </li>
                     ))}
+                    {v.tasks.length > 3 && (
+                      <li className="rounded-md px-2 py-0.5 text-xs text-steel ring-1 ring-rime sm:hidden">
+                        mais {v.tasks.length - 3}
+                      </li>
+                    )}
                   </ul>
                 </div>
                 <div className="sm:text-right">

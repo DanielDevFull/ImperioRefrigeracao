@@ -28,6 +28,7 @@ import { requireCustomer } from "@/lib/auth/session";
 import { addDays, diffDays, todayISO } from "@/lib/dates";
 import { formatBRL, formatCompetence, formatDate, formatTime } from "@/lib/format";
 import { effectiveFinanceStatus, type Tone } from "@/lib/labels";
+import { amountDueToday } from "@/server/billing";
 import { getSettings } from "@/server/settings";
 import { DateChip, EquipmentTile, HealthMeter, SectionTitle, ToneDot } from "./_components/bits";
 import { PayButton } from "./_components/pay-button";
@@ -123,13 +124,14 @@ export default async function PortalHome() {
       });
     } else if (eff === "vencido") {
       const late = diffDays(r.dueDate, today);
+      const due = await amountDueToday(r, today);
       pending.push({
         key: r.id,
         tone: "red",
         icon: <TriangleAlert />,
         title: r.kind === "mensalidade" && r.competence ? `Mensalidade de ${formatCompetence(r.competence)} vencida` : `${title} vencida`,
-        detail: `Venceu em ${formatDate(r.dueDate)}, há ${late} dia${late === 1 ? "" : "s"}.`,
-        amount: formatBRL(r.amount - r.discount),
+        detail: `Venceu em ${formatDate(r.dueDate)}, há ${late} dia${late === 1 ? "" : "s"}. O valor já inclui multa e juros.`,
+        amount: formatBRL(due.total),
         action: pay,
       });
     } else {

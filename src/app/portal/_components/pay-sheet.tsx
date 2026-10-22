@@ -186,8 +186,9 @@ function PixBlock({ code, qr, merchant }: { code: string; qr: React.ReactNode; m
         <div className="rounded-2xl bg-white p-2.5 shadow-[0_0_0_6px_rgb(56_168_255/0.08),0_20px_40px_-20px_rgb(56_168_255/0.45)] max-sm:[&>span]:size-40!">
           {qr}
         </div>
-        <p className="mt-3 text-xs text-steel">
-          <span className="sm:hidden">Ou leia o QR em outro aparelho. </span>Recebedor: {merchant}
+        <p className="mt-3 text-center text-xs text-steel">
+          <span className="block sm:hidden">Ou leia o QR code em outro aparelho.</span>
+          Recebedor: {merchant}
         </p>
       </div>
 

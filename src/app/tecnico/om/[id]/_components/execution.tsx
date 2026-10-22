@@ -432,7 +432,6 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
         status={status}
         primary={primary}
         busy={busy}
-        progressHint={primary?.kind === "conclude" && tasks.length && done < tasks.length ? `${done}/${tasks.length}` : null}
         primaryRef={primaryRef}
         onPrimary={onPrimary}
         onPause={() => void changeStatus("pausada")}

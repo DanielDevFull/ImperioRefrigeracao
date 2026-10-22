@@ -118,7 +118,7 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
                         {isWinner && (
                           <motion.span
                             layoutId="sim-winner"
-                            className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-ice shadow-[0_0_12px_rgb(56_168_255/0.7)]"
+                            className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-ice shadow-[0_0_12px_var(--glow-ice)]"
                             transition={{ type: "spring", stiffness: 420, damping: 36 }}
                           />
                         )}
@@ -284,7 +284,7 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
                         return (
                           <li key={r.id} className="flex items-baseline justify-between gap-3 text-xs">
                             <span className="truncate text-steel">{r.name}</span>
-                            <span className="shrink-0 text-steel/70">
+                            <span className="shrink-0 text-steel/70 light:text-steel">
                               {sameScope ? "prioridade menor" : `menos específica (${scopeOf(r).label.toLowerCase()})`}
                             </span>
                           </li>

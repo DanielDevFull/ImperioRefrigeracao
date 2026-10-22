@@ -58,7 +58,9 @@ export function AnimatedNumber({
 
   return (
     <span ref={ref} className={className} style={{ fontVariantNumeric: "tabular-nums" }}>
-      {render(reduce ? value : 0, format)}
+      {/* mesmo texto no servidor e no cliente (evita erro de hidratação); o efeito acima
+          põe o valor final na hora quando o movimento está reduzido */}
+      {render(0, format)}
     </span>
   );
 }

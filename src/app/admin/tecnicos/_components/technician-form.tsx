@@ -299,11 +299,22 @@ function ColorPicker({ value, onChange }: { value: string; onChange: (v: string)
               <span
                 className={cn(
                   "grid aspect-square w-full place-items-center rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-night transition-shadow peer-focus-visible:ring-frost",
+                  // no claro, as cores mais pálidas (Geada, Prata) precisam de contorno para não sumir no branco
+                  "light:shadow-[inset_0_0_0_1px_var(--rime-strong),0_2px_6px_-2px_var(--shade)]",
+                  // no escuro a borda translúcida escurece sobre o fundo; no claro ela desbotaria no branco,
+                  // então a borda da esfera ganha um pouco de tinta para manter o volume
+                  "light:[--sw-fill:radial-gradient(circle_at_30%_25%,var(--sw),color-mix(in_srgb,var(--sw)_84%,var(--silver)))]",
                   checked && "ring-silver/80",
                 )}
-                style={{ background: `radial-gradient(circle at 30% 25%, ${c.value}, ${c.value}aa)` }}
+                style={
+                  {
+                    "--sw": c.value,
+                    background: `var(--sw-fill, radial-gradient(circle at 30% 25%, ${c.value}, ${c.value}aa))`,
+                  } as React.CSSProperties
+                }
               >
-                {checked && <Check className="size-4 text-abyss" strokeWidth={3} />}
+                {/* a amostra é a cor do dado (igual nos dois temas): o check fica sempre em tinta escura */}
+                {checked && <Check className="size-4 text-abyss light:text-silver" strokeWidth={3} />}
               </span>
               <span className="sr-only">{c.label}</span>
             </label>

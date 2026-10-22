@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, Settings } from "lucide-react";
 import { Panel } from "@/components/system/panel";
+import { cn } from "@/lib/utils";
 import { getSettings } from "@/server/settings";
 import { technicianOptions } from "../../tecnicos/_lib/queries";
 import { rulesWithUsage } from "../_lib/queries";
@@ -11,6 +12,18 @@ const LADDER = [
   { label: "Técnico", example: "tudo do Bruno" },
   { label: "Tipo", example: "todas as corretivas" },
   { label: "Geral", example: "qualquer OM" },
+];
+
+/*
+ * A escada "esmaece" do mais para o menos específico. No escuro isso é a opacidade do degrau;
+ * no claro a opacidade deixaria o texto abaixo de 4,5:1, então o texto fica inteiro e quem
+ * esmaece é o véu azul do degrau (do mais forte ao cartão liso).
+ */
+const LADDER_LIGHT = [
+  "light:bg-ice/8 light:ring-ice/30",
+  "light:bg-ice/5 light:ring-ice/20",
+  "light:bg-ice/[0.025] light:ring-ice/12",
+  "light:bg-night light:ring-rime",
 ];
 
 const TRIGGERS: Record<string, { label: string; description: string }> = {
@@ -43,8 +56,11 @@ export async function Regras() {
             {LADDER.map((step, i) => (
               <li
                 key={step.label}
-                className="relative rounded-lg bg-night/60 px-3 py-2.5 ring-1 ring-rime"
-                style={{ opacity: 1 - i * 0.14 }}
+                className={cn(
+                  "relative rounded-lg bg-night/60 px-3 py-2.5 ring-1 ring-rime opacity-(--step-fade) light:opacity-100",
+                  LADDER_LIGHT[i],
+                )}
+                style={{ "--step-fade": 1 - i * 0.14 } as React.CSSProperties}
               >
                 <span className="readout text-[0.7rem] text-ice">{i + 1}º</span>
                 <p className="text-sm font-medium text-silver">{step.label}</p>

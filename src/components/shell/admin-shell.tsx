@@ -17,7 +17,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     <nav className="flex-1 space-y-6 overflow-y-auto px-3 pb-6" aria-label="Navegação principal">
       {adminNav.map((group) => (
         <div key={group.label}>
-          <p className="px-3 pb-2 text-[0.72rem] font-medium text-steel/70 light:text-steel">{group.label}</p>
+          <p className="px-3 pb-2 text-[0.72rem] font-medium text-steel/80 light:text-steel">{group.label}</p>
           <ul className="space-y-0.5">
             {group.items.map((item) => {
               const active = isActive(pathname, item);

@@ -182,7 +182,7 @@ export async function Extrato({
 }
 
 function Money({ value, className }: { value: number; className?: string }) {
-  return <span className={cn("tabular-nums", value ? "text-silver" : "text-steel/60", className)}>{formatBRL(value)}</span>;
+  return <span className={cn("tabular-nums", value ? "text-silver" : "text-steel/60 light:text-steel", className)}>{formatBRL(value)}</span>;
 }
 
 function SummaryRow({ s, period, current }: { s: TechSummary; period: string; current: string }) {

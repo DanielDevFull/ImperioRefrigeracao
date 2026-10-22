@@ -198,7 +198,8 @@ function PixPreview({ pixKey, name, city }: { pixKey: string; name: string; city
     <div className="flex flex-col items-center rounded-xl border border-rime bg-night/40 p-4 text-center">
       <p className="text-sm font-medium text-silver">Teste de R$ 1,00</p>
       <p className="mt-0.5 text-xs text-steel">Leia no app do banco para conferir o recebedor</p>
-      <div className="mt-3 grid size-44 place-items-center overflow-hidden rounded-lg bg-white p-1.5">
+      {/* QR sempre em papel branco; no claro ganha contorno para não se perder no cartão branco */}
+      <div className="mt-3 grid size-44 place-items-center overflow-hidden rounded-lg bg-white p-1.5 light:shadow-[0_8px_20px_-12px_var(--shade)] light:ring-1 light:ring-rime">
         {payload && svg ? (
           <span role="img" aria-label="QR Code Pix de teste" className="block size-full [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
         ) : (

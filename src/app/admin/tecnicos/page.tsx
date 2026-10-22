@@ -201,7 +201,7 @@ function TeamItem({ t }: { t: TeamRow }) {
             {t.skills.length ? (
               <SkillChips skills={t.skills} max={3} />
             ) : (
-              t.active && <p className="text-xs text-steel/70">Sem especialidades cadastradas</p>
+              t.active && <p className="text-xs text-steel/70 light:text-steel">Sem especialidades cadastradas</p>
             )}
           </div>
         </div>

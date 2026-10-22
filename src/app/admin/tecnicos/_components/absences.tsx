@@ -86,7 +86,7 @@ export function Absences({
                       </div>
                       <p className="mt-0.5 text-xs text-steel">
                         {a.reason ?? "Sem motivo informado"}
-                        <span className="text-steel/70">
+                        <span className="text-steel/70 light:text-steel">
                           {" "}
                           ({days} {days > 1 ? "dias" : "dia"})
                         </span>

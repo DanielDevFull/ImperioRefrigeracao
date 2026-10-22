@@ -386,7 +386,7 @@ export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos
               ].map((row) => (
                 <div key={row.label} className="flex items-start justify-between gap-3">
                   <dt className="shrink-0 text-steel">{row.label}</dt>
-                  <dd className={cn("min-w-0 truncate text-right tabular-nums", row.value ? "text-silver" : "text-steel/70")}>
+                  <dd className={cn("min-w-0 truncate text-right tabular-nums", row.value ? "text-silver" : "text-steel/70 light:text-steel")}>
                     {row.value ?? "Não informado"}
                   </dd>
                 </div>

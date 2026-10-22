@@ -192,7 +192,7 @@ export default async function SettingsPage() {
                           <p className="readout text-sm text-silver">{formatDateTime(r.startedAt)}</p>
                           <p className="text-xs text-steel">{originLabel(r.triggeredBy, names)}</p>
                           {duration(r.startedAt, r.finishedAt) && (
-                            <p className="readout text-xs text-steel/80">Levou {duration(r.startedAt, r.finishedAt)}</p>
+                            <p className="readout text-xs text-steel/80 light:text-steel">Levou {duration(r.startedAt, r.finishedAt)}</p>
                           )}
                         </div>
                         <div className="min-w-0 text-sm text-steel">

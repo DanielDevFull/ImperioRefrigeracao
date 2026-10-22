@@ -7,6 +7,19 @@ const SIZES = {
   lg: "size-14 text-lg",
 } as const;
 
+/*
+ * No escuro: iniciais na própria cor sobre um véu dela, com brilho (o estilo inline abaixo).
+ * No claro a cor pura some no branco (Geada, Menta, Latão ficam < 2:1), então as variáveis
+ * --av-* entram só no claro: a mesma matiz em oklch com luminosidade fixa 0,48 (≥ 5:1 no véu,
+ * para todas as cores da paleta) e um véu opaco da cor sobre o cartão, com sombra suave na matiz.
+ * Sem as variáveis (escuro), o inline cai no valor original: o escuro fica idêntico.
+ */
+const LIGHT_AVATAR = cn(
+  "light:[--av-ink:oklch(from_var(--tc)_0.48_c_h)]",
+  "light:[--av-fill:radial-gradient(circle_at_30%_25%,color-mix(in_srgb,var(--tc)_24%,var(--night)),color-mix(in_srgb,var(--tc)_10%,var(--night))_70%)]",
+  "light:[--av-ring:inset_0_0_0_1px_oklch(from_var(--tc)_0.48_c_h/0.24),0_6px_14px_-8px_oklch(from_var(--tc)_0.48_c_h/0.5)]",
+);
+
 /** Avatar do técnico: iniciais na cor dele (a mesma da agenda). */
 export function TechAvatar({
   name,
@@ -28,14 +41,18 @@ export function TechAvatar({
       className={cn(
         "relative grid shrink-0 place-items-center rounded-full font-semibold tracking-wide",
         SIZES[size],
+        LIGHT_AVATAR,
         muted && "opacity-50 grayscale",
         className,
       )}
-      style={{
-        color: c,
-        background: `radial-gradient(circle at 30% 25%, ${c}33, ${c}12 70%)`,
-        boxShadow: `inset 0 0 0 1px ${c}66, 0 0 18px -6px ${c}88`,
-      }}
+      style={
+        {
+          "--tc": c,
+          color: `var(--av-ink, ${c})`,
+          background: `var(--av-fill, radial-gradient(circle at 30% 25%, ${c}33, ${c}12 70%))`,
+          boxShadow: `var(--av-ring, inset 0 0 0 1px ${c}66, 0 0 18px -6px ${c}88)`,
+        } as React.CSSProperties
+      }
     >
       {initials(name)}
     </span>

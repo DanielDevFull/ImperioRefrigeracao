@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { getSettings } from "@/server/settings";
 import { equipmentForLabels } from "../_lib/queries";
 import { PrintButton } from "./_components/print-button";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Etiquetas QR" };
 
@@ -47,6 +48,7 @@ const PRINT_CSS = `
 `;
 
 export default async function EtiquetasPage({ searchParams }: PageProps<"/admin/equipamentos/etiquetas">) {
+  await requireStaff();
   const sp = await searchParams;
   const ids = (param(sp, "ids") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
   const customerId = param(sp, "customerId");

@@ -13,6 +13,7 @@ import { frequencyMonths as frequencyLabels } from "@/lib/labels";
 import { param } from "@/lib/params";
 import { listPlans, type PlanFilter } from "./_lib/queries";
 import { plural } from "./_lib/preview";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Planos de manutenção" };
 
@@ -22,6 +23,7 @@ function intervalText(n: number, taskCount: number) {
 }
 
 export default async function PlanosPage({ searchParams }: PageProps<"/admin/planos">) {
+  await requireStaff();
   const sp = await searchParams;
   const raw = param(sp, "status");
   const filter: PlanFilter = raw === "inativos" || raw === "todos" ? raw : "ativos";

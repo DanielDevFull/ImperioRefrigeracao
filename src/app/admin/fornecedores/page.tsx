@@ -12,10 +12,12 @@ import { PAGE_SIZE, pageFrom, param } from "@/lib/params";
 import { cn } from "@/lib/utils";
 import { SupplierDialog } from "./_components/supplier-dialog";
 import { listSuppliers, supplierCounts, type SupplierFilter } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Fornecedores" };
 
 export default async function FornecedoresPage({ searchParams }: PageProps<"/admin/fornecedores">) {
+  await requireStaff();
   const sp = await searchParams;
   const raw = param(sp, "situacao");
   const filter: SupplierFilter = raw === "inativos" || raw === "todos" ? raw : "ativos";

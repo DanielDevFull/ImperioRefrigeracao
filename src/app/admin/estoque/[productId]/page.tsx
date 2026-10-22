@@ -32,6 +32,7 @@ import {
   productConsumption,
 } from "../_lib/queries";
 import { formatQty, formatSignedQty } from "../_lib/stock-format";
+import { requireStaff } from "@/lib/auth/session";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -42,6 +43,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/estoque/[pr
 }
 
 export default async function ProdutoPage({ params, searchParams }: PageProps<"/admin/estoque/[productId]">) {
+  await requireStaff();
   const { productId } = await params;
   if (!UUID.test(productId)) notFound();
   const sp = await searchParams;

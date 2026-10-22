@@ -23,6 +23,7 @@ import { listSupplierOptions } from "../../estoque/_lib/queries";
 import { setSupplierActive } from "../actions";
 import { SupplierDialog } from "../_components/supplier-dialog";
 import { getSupplier, supplierPayables, supplierProducts, supplierStats } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ORDERS_PAGE = 10;
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/fornecedore
 }
 
 export default async function FornecedorPage({ params, searchParams }: PageProps<"/admin/fornecedores/[id]">) {
+  await requireStaff();
   const { id } = await params;
   if (!UUID.test(id)) notFound();
   const sp = await searchParams;

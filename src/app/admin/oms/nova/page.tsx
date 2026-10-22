@@ -9,10 +9,12 @@ import { customerContextAction } from "../actions";
 import { activeTechnicians } from "../_lib/queries";
 import { isUuid } from "../_lib/constants";
 import { NewOmForm } from "./_components/new-om-form";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Nova OM" };
 
 export default async function NovaOmPage({ searchParams }: PageProps<"/admin/oms/nova">) {
+  await requireStaff();
   const sp = await searchParams;
   let customerId = param(sp, "customerId");
   const equipmentId = param(sp, "equipmentId");

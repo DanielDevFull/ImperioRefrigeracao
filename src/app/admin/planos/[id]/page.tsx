@@ -14,6 +14,7 @@ import { PlanStatusActions } from "../_components/plan-status-actions";
 import { plural } from "../_lib/preview";
 import { contractsUsingPlan, getPlanForEdit, planFormOptions } from "../_lib/queries";
 import { planToInitial } from "../_lib/to-initial";
+import { requireStaff } from "@/lib/auth/session";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -24,6 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/planos/[id]
 }
 
 export default async function PlanoPage({ params }: PageProps<"/admin/planos/[id]">) {
+  await requireStaff();
   const { id } = await params;
   if (!UUID.test(id)) notFound();
   const [plan, usage, options] = await Promise.all([getPlanForEdit(id), contractsUsingPlan(id), planFormOptions()]);

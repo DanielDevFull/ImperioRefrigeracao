@@ -17,10 +17,12 @@ import {
   listEquipment,
   type EquipmentStatus,
 } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Equipamentos" };
 
 export default async function EquipamentosPage({ searchParams }: PageProps<"/admin/equipamentos">) {
+  await requireStaff();
   const sp = await searchParams;
   const q = param(sp, "q");
   const rawStatus = param(sp, "status");

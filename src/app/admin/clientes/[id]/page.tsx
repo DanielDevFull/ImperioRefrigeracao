@@ -60,6 +60,7 @@ import { PortalAccess } from "../_components/portal-access";
 import { SiteDialog } from "../_components/site-dialog";
 import { UrlTabs, type TabDef } from "../_components/url-tabs";
 import { getCustomerDetail, getCustomerForEdit, type CustomerDetail } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export async function generateMetadata({ params }: PageProps<"/admin/clientes/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -70,6 +71,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/clientes/[i
 const TAB_VALUES = ["geral", "locais", "equipamentos", "contratos", "oms", "financeiro", "portal"] as const;
 
 export default async function ClientePage({ params, searchParams }: PageProps<"/admin/clientes/[id]">) {
+  await requireStaff();
   const { id } = await params;
   const sp = await searchParams;
   const d = await getCustomerDetail(id);

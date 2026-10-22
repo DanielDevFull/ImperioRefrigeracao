@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { getSettings } from "@/server/settings";
 import { DispatchBoard } from "./_components/dispatch-board";
 import { loadBoard } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Quadro de despacho" };
 
@@ -36,6 +37,7 @@ function rangeLabel(start: string, end: string) {
 }
 
 export default async function AgendaPage({ searchParams }: PageProps<"/admin/agenda">) {
+  await requireStaff();
   const sp = await searchParams;
   const today = todayISO();
   const dia = param(sp, "dia");

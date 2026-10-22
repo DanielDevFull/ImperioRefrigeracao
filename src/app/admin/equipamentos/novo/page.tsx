@@ -3,10 +3,12 @@ import { PageHeader } from "@/components/system/page-header";
 import { param } from "@/lib/params";
 import { EquipmentForm } from "../_components/equipment-form";
 import { customerOptions, equipmentTypeOptions, isUuid, sitesOf } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Novo equipamento" };
 
 export default async function NovoEquipamentoPage({ searchParams }: PageProps<"/admin/equipamentos/novo">) {
+  await requireStaff();
   const sp = await searchParams;
   const requested = param(sp, "customerId");
   const [customers, types] = await Promise.all([customerOptions(), equipmentTypeOptions()]);

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { ActiveToggle } from "./_components/active-toggle";
 import { PlateTag, SkillChips, TechAvatar } from "./_components/tech-avatar";
 import { listTeam, type TeamRow } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Técnicos" };
 
@@ -22,6 +23,7 @@ const COLS =
   "lg:grid-cols-[minmax(0,2fr)_minmax(10.5rem,1.2fr)_6.5rem_7.5rem_6.5rem_5.5rem_7rem_3.25rem]";
 
 export default async function TecnicosPage({ searchParams }: PageProps<"/admin/tecnicos">) {
+  await requireStaff();
   const sp = await searchParams;
   const status = param(sp, "status");
   const aviso = param(sp, "aviso");

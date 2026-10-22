@@ -11,10 +11,12 @@ import {
   customerOptions,
   isUuid,
 } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Novo contrato" };
 
 export default async function NovoContratoPage({ searchParams }: PageProps<"/admin/contratos/novo">) {
+  await requireStaff();
   const sp = await searchParams;
   const requested = param(sp, "customerId");
   const [customers, plans, technicians, settings] = await Promise.all([

@@ -17,10 +17,12 @@ import { isMonth } from "../_lib/constants";
 import { PAYABLE_TABS, financeOptions, listPayables, type PayableRow, type PayableTab } from "../_lib/queries";
 import { NewPayableDialog } from "./_components/new-payable-dialog";
 import { PayDialogProvider, PayableActions, type PayableActionRow } from "./_components/payable-actions";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Contas a pagar" };
 
 export default async function PayablesPage({ searchParams }: PageProps<"/admin/financeiro/pagar">) {
+  await requireStaff();
   const sp = await searchParams;
   const today = todayISO();
   const rawTab = param(sp, "status") ?? "";

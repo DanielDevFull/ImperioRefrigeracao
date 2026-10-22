@@ -4,10 +4,12 @@ import { PageHeader } from "@/components/system/page-header";
 import { formatEquipmentCode } from "@/lib/format";
 import { EquipmentForm } from "../../_components/equipment-form";
 import { customerOptions, equipmentTypeOptions, getEquipmentForEdit, sitesOf } from "../../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Editar equipamento" };
 
 export default async function EditarEquipamentoPage({ params }: PageProps<"/admin/equipamentos/[id]/editar">) {
+  await requireStaff();
   const { id } = await params;
   const item = await getEquipmentForEdit(id);
   if (!item) notFound();

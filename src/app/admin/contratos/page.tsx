@@ -14,6 +14,7 @@ import { formatBRL, formatContractCode, formatDate } from "@/lib/format";
 import { effectiveFinanceStatus } from "@/lib/labels";
 import { pageFrom, PAGE_SIZE, param } from "@/lib/params";
 import { CONTRACT_STATUSES, contractsOverview, listContracts, type ContractStatus } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Contratos" };
 
@@ -52,6 +53,7 @@ function PlanCell({ row }: { row: Row }) {
 }
 
 export default async function ContratosPage({ searchParams }: PageProps<"/admin/contratos">) {
+  await requireStaff();
   const sp = await searchParams;
   const rawStatus = param(sp, "status");
   const status = CONTRACT_STATUSES.includes(rawStatus as ContractStatus) ? (rawStatus as ContractStatus) : undefined;

@@ -16,6 +16,7 @@ import { SetupSheet } from "./_components/setup-sheet";
 import { MonthFilter } from "./_components/url-filters";
 import { isMonth, kindLabel } from "./_lib/constants";
 import { allCategories, bankBalances, getOverview } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Financeiro" };
 
@@ -24,6 +25,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const plural = (n: number, one: string, many: string) => (n === 1 ? `1 ${one}` : `${n} ${many}`);
 
 export default async function FinanceOverviewPage({ searchParams }: PageProps<"/admin/financeiro">) {
+  await requireStaff();
   const sp = await searchParams;
   const today = todayISO();
   const currentMonth = today.slice(0, 7);

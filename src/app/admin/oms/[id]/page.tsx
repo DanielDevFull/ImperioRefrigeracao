@@ -40,6 +40,7 @@ import { OmActions } from "./_components/om-actions";
 import { Photos } from "./_components/photos";
 import { CreatedToast, StatusLive } from "./_components/status-live";
 import { Timeline } from "./_components/timeline";
+import { requireStaff } from "@/lib/auth/session";
 
 export async function generateMetadata({ params }: PageProps<"/admin/oms/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -61,6 +62,7 @@ function Block({ icon: Icon, label, children }: { icon: typeof MapPin; label: st
 }
 
 export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id]">) {
+  await requireStaff();
   const { id } = await params;
   if (!isUuid(id)) notFound();
   const data = await loadWorkOrder(id);

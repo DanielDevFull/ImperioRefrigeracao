@@ -28,12 +28,14 @@ import { GenerateInvoicesButton } from "./_components/generate-invoices-button";
 import { NewReceivableDialog } from "./_components/new-receivable-dialog";
 import { ReceivableActions, type PixConfig, type ReceivableActionRow } from "./_components/receivable-actions";
 import { ReceivableDialogsProvider } from "./_components/receivable-dialogs";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Contas a receber" };
 
 const kindShort: Record<string, string> = { mensalidade: "Mensalidade", servico: "Serviço avulso", outro: "Outra receita" };
 
 export default async function ReceivablesPage({ searchParams }: PageProps<"/admin/financeiro/receber">) {
+  await requireStaff();
   const sp = await searchParams;
   const today = todayISO();
   const rawTab = param(sp, "status") ?? "";

@@ -41,6 +41,7 @@ import {
   upcomingWorkOrders,
   vehicleStock,
 } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -64,6 +65,7 @@ function minutesLabel(min: number | null) {
 }
 
 export default async function TecnicoPage({ params }: PageProps<"/admin/tecnicos/[id]">) {
+  await requireStaff();
   const { id } = await params;
   if (!UUID.test(id)) notFound();
   const t = await getTechnician(id);

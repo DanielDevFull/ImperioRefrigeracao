@@ -11,6 +11,7 @@ import { formatQty, round2 } from "../../../../estoque/_lib/stock-format";
 import { getPurchaseOrder } from "../../../_lib/queries";
 import { orderWhatsappLink } from "../../../_lib/order-text";
 import { PrintButton } from "../_components/print-button";
+import { requireStaff } from "@/lib/auth/session";
 
 export async function generateMetadata({ params }: PageProps<"/admin/compras/pedidos/[id]/imprimir">): Promise<Metadata> {
   const { id } = await params;
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/compras/ped
 
 /** Versão para impressão / PDF do pedido, com o cabeçalho da empresa. */
 export default async function ImprimirPedidoPage({ params }: PageProps<"/admin/compras/pedidos/[id]/imprimir">) {
+  await requireStaff();
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const [order, settings] = await Promise.all([getPurchaseOrder(id), getSettings()]);

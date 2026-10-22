@@ -8,10 +8,12 @@ import { deleteCustomer } from "../../actions";
 import { ConfirmAndGo } from "../../_components/confirm-go";
 import { CustomerForm } from "../../_components/customer-form";
 import { activeTechnicians, customerHistoryCount, getCustomerForEdit, isUuid } from "../../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Editar cliente" };
 
 export default async function EditarClientePage({ params }: PageProps<"/admin/clientes/[id]/editar">) {
+  await requireStaff();
   const { id } = await params;
   const [customer, technicians, history] = await Promise.all([
     getCustomerForEdit(id),

@@ -49,6 +49,7 @@ import { RefrigerantTag, isPhaseOut } from "../_components/refrigerant";
 import { TypeIcon } from "../_components/type-icon";
 import { intervalLabel } from "../_lib/forecast";
 import { getEquipmentDetail, getEquipmentForEdit, type EquipmentDetail } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export async function generateMetadata({ params }: PageProps<"/admin/equipamentos/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -57,6 +58,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/equipamento
 }
 
 export default async function EquipamentoPage({ params }: PageProps<"/admin/equipamentos/[id]">) {
+  await requireStaff();
   const { id } = await params;
   const d = await getEquipmentDetail(id);
   if (!d) notFound();

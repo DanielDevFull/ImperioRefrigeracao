@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth/client";
+import { safeInternalPath } from "@/lib/safe-redirect";
 
 export function LoginForm({ back, initialError }: { back?: string; initialError?: string }) {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
       }
       const role = (data.user as { role?: string }).role;
       const home = role === "admin" || role === "gestor" ? "/admin" : role === "tecnico" ? "/tecnico" : "/portal";
-      router.replace(back && back.startsWith("/") ? back : home);
+      router.replace(safeInternalPath(back) ?? home);
       router.refresh();
     });
   }

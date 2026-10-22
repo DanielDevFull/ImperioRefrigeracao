@@ -35,6 +35,7 @@ import {
   futureOpenWorkOrderIds,
   getContract,
 } from "../_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 const GENERATES = new Set(["ativo", "em_manutencao"]);
 
@@ -49,6 +50,7 @@ function capitalize(s: string) {
 }
 
 export default async function ContratoPage({ params }: PageProps<"/admin/contratos/[id]">) {
+  await requireStaff();
   const { id } = await params;
   const c = await getContract(id);
   if (!c) notFound();

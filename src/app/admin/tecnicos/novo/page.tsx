@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/system/page-header";
 import { TechnicianForm } from "../_components/technician-form";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Novo técnico" };
 
-export default function NovoTecnicoPage() {
+export default async function NovoTecnicoPage() {
+  await requireStaff();
   return (
     <>
       <PageHeader

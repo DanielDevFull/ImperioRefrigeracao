@@ -30,10 +30,12 @@ import {
   type StockFilter,
 } from "./_lib/queries";
 import { categoryOptions, formatQty } from "./_lib/stock-format";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Estoque" };
 
 export default async function EstoquePage({ searchParams }: PageProps<"/admin/estoque">) {
+  await requireStaff();
   const sp = await searchParams;
   const view = param(sp, "aba") === "locais" ? "locais" : "produtos";
   const [readouts, movementData, locations] = await Promise.all([

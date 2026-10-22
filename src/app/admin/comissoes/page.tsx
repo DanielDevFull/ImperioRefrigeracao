@@ -11,6 +11,7 @@ import { Extrato } from "./_components/extrato";
 import { Fechamentos } from "./_components/fechamentos";
 import { ParamSelect, PeriodPicker } from "./_components/period-controls";
 import { Regras } from "./_components/regras";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Comissões" };
 
@@ -18,6 +19,7 @@ const PERIOD = /^\d{4}-(0[1-9]|1[0-2])$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function ComissoesPage({ searchParams }: PageProps<"/admin/comissoes">) {
+  await requireStaff();
   const sp = await searchParams;
   const tab = param(sp, "tab") ?? "";
   const current = competenceOf(todayISO());

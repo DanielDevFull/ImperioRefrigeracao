@@ -11,10 +11,12 @@ import { ListFilters } from "./_components/list-filters";
 import { OmsTable } from "./_components/oms-table";
 import { STATUS_GROUPS } from "./_lib/constants";
 import { activeTechnicians, countOverdue, listWorkOrders } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Ordens de manutenção" };
 
 export default async function OmsPage({ searchParams }: PageProps<"/admin/oms">) {
+  await requireStaff();
   const sp = await searchParams;
   const filters = {
     q: param(sp, "q"),

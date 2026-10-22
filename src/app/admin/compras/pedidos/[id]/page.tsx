@@ -23,6 +23,7 @@ import { cancelOrder, reopenOrder, sendOrder } from "./actions";
 import { OrderDetailsDialog } from "./_components/details-dialog";
 import { OrderItems, type ItemRow } from "./_components/order-items";
 import { ReceiveDialog } from "./_components/receive-dialog";
+import { requireStaff } from "@/lib/auth/session";
 
 export async function generateMetadata({ params }: PageProps<"/admin/compras/pedidos/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -31,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/admin/compras/ped
 }
 
 export default async function PedidoPage({ params }: PageProps<"/admin/compras/pedidos/[id]">) {
+  await requireStaff();
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const order = await getPurchaseOrder(id);

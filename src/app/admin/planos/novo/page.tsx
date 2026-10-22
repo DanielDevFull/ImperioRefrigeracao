@@ -5,10 +5,12 @@ import { param } from "@/lib/params";
 import { PlanForm } from "../_components/plan-form";
 import { getPlanForEdit, planFormOptions } from "../_lib/queries";
 import { emptyPlan, planToInitial } from "../_lib/to-initial";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Novo plano" };
 
 export default async function NovoPlanoPage({ searchParams }: PageProps<"/admin/planos/novo">) {
+  await requireStaff();
   const sp = await searchParams;
   const copyFrom = param(sp, "copiar");
   const [options, source] = await Promise.all([

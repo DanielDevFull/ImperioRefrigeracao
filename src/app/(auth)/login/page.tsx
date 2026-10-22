@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Emblem } from "@/components/brand/emblem";
 import { SnowField } from "@/components/brand/snow-field";
 import { getCurrentUser, homeForRole } from "@/lib/auth/session";
+import { safeInternalPath } from "@/lib/safe-redirect";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Entrar" };
@@ -10,7 +11,7 @@ export const metadata: Metadata = { title: "Entrar" };
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const user = await getCurrentUser();
   const params = await searchParams;
-  const back = typeof params.voltar === "string" ? params.voltar : undefined;
+  const back = safeInternalPath(typeof params.voltar === "string" ? params.voltar : undefined);
   if (user) redirect(back ?? homeForRole(user.role));
   const error = params.erro === "sem-cadastro"
     ? "Seu acesso ainda não foi vinculado a um cadastro. Fale com a Imperium."

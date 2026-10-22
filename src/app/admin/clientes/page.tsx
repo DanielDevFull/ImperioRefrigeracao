@@ -14,12 +14,14 @@ import { PAGE_SIZE, pageFrom, param } from "@/lib/params";
 import { cn } from "@/lib/utils";
 import { ClickableRow } from "./_components/clickable-row";
 import { customerTabCounts, listCustomers, type CustomerFilter, type CustomerListRow } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Clientes" };
 
 const FILTERS: CustomerFilter[] = ["", "contrato", "sem-contrato", "inativos"];
 
 export default async function ClientesPage({ searchParams }: PageProps<"/admin/clientes">) {
+  await requireStaff();
   const sp = await searchParams;
   const q = param(sp, "q");
   const raw = param(sp, "filtro") ?? "";

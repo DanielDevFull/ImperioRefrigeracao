@@ -29,12 +29,14 @@ import {
   productsWithOpenRequest,
   type OrderStatus,
 } from "./_lib/queries";
+import { requireStaff } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Compras" };
 
 const FORECAST_DAYS = 30;
 
 export default async function ComprasPage({ searchParams }: PageProps<"/admin/compras">) {
+  await requireStaff();
   const sp = await searchParams;
   const rawStatus = param(sp, "status");
   const status = ORDER_STATUSES.includes(rawStatus as OrderStatus) ? (rawStatus as OrderStatus) : undefined;

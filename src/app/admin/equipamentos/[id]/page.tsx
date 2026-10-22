@@ -422,7 +422,7 @@ function ForecastPanel({ d }: { d: EquipmentDetail }) {
                     {formatDate(shown)}
                   </p>
                   <p className="text-xs text-steel first-letter:uppercase">
-                    {formatLongDate(shown).split(",")[0]}, {days === 0 ? "hoje" : days === 1 ? "amanhã" : `em ${days} dias`}
+                    {formatLongDate(shown).split(",")[0]}, {days === 0 ? "hoje" : days === 1 ? "amanhã" : days === -1 ? "ontem" : days < 0 ? `há ${-days} dias` : `em ${days} dias`}
                   </p>
                   {shown !== v.date && (
                     <p className="text-[0.7rem] text-steel/80">Vencimento do plano {formatDayMonth(v.date)}</p>

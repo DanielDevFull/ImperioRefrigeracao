@@ -37,7 +37,7 @@ export function MaskedInput({
   mask,
   defaultValue,
   ...props
-}: Omit<React.ComponentProps<typeof Input>, "onChange" | "value"> & { mask: Mask; defaultValue?: string | number | null }) {
+}: Omit<React.ComponentProps<typeof Input>, "onChange" | "value" | "defaultValue"> & { mask: Mask; defaultValue?: string | number | null }) {
   const initial =
     defaultValue == null || defaultValue === ""
       ? ""

@@ -46,3 +46,6 @@ next-env.d.ts
 .shot*.mjs
 .*.tmp.mjs
 *.tmp.mjs
+
+# arquivos enviados (dev)
+/.data

@@ -26,7 +26,7 @@ Variáveis de ambiente (Production e Preview):
 | `BETTER_AUTH_URL` | URL pública (ex.: `https://imperium-tec.vercel.app`) |
 | `NEXT_PUBLIC_APP_URL` | mesma URL pública (usada nos QR codes e links) |
 | `CRON_SECRET` | segredo aleatório; a Vercel envia no cabeçalho da rotina diária |
-| `BLOB_READ_WRITE_TOKEN` | criado ao conectar um Blob store ao projeto (fotos, assinaturas, comprovantes) |
+| `BLOB_READ_WRITE_TOKEN` | criado ao conectar um Blob store **privado** ao projeto. Fotos, assinaturas e comprovantes são servidos por `/arquivos/…` só para quem tem permissão |
 
 `vercel.json` define a região das funções (`gru1`, São Paulo) e a rotina diária `0 9 * * *` (06:00 BRT).
 

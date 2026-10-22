@@ -1,7 +1,7 @@
 /* Imperium — service worker do app do técnico.
  * Páginas: rede primeiro, com cópia em cache para uso offline.
  * Arquivos estáticos: cache primeiro. */
-const VERSION = "imperium-v2";
+const VERSION = "imperium-v3";
 const PAGES = `${VERSION}-pages`;
 const ASSETS = `${VERSION}-assets`;
 const OFFLINE_URL = "/offline";
@@ -31,8 +31,7 @@ self.addEventListener("fetch", (event) => {
   const isAsset =
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/brand/") ||
-    url.pathname.startsWith("/icons/") ||
-    url.pathname.startsWith("/uploads/");
+    url.pathname.startsWith("/icons/");
 
   if (isAsset) {
     event.respondWith(

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  ChevronDown,
   ChevronRight,
   CircleCheck,
   FileWarning,
@@ -17,6 +18,8 @@ import { addDays, diffDays, type ISODate } from "@/lib/dates";
 import { formatBRL, formatDayMonth, formatNumber, formatRelative } from "@/lib/format";
 import type { Tone } from "@/lib/labels";
 import { cn } from "@/lib/utils";
+import type { StockFilter } from "../estoque/_lib/queries";
+import type { StatusGroup } from "../oms/_lib/constants";
 import type { Attention } from "./queries";
 import { plural } from "./util";
 
@@ -28,6 +31,8 @@ type Item = {
   title: string;
   detail?: string;
   href: string;
+  /** Em vez de levar a uma lista genérica, abre aqui mesmo os registros afetados. */
+  expand?: { key: string; title: string; subtitle: string; detail: string; href: string }[];
 };
 
 const ICON_WRAP: Partial<Record<Tone, string>> = {
@@ -56,12 +61,12 @@ function buildItems(a: Attention, today: ISODate): Item[] {
       href:
         a.portal.count === 1 && a.portal.firstId
           ? `/admin/oms/${a.portal.firstId}`
-          : "/admin/oms?origem=portal_cliente&status=aberta",
+          : `/admin/oms?origem=portal_cliente&status=${"sem-tecnico" satisfies StatusGroup}`,
     });
   }
 
   if (a.issues.length) {
-    const contractIds = new Set(a.issues.map((i) => i.contractId));
+    const affected = a.issueContracts;
     const rest = a.issues.length - 1;
     items.push({
       key: "issues",
@@ -73,8 +78,22 @@ function buildItems(a: Attention, today: ISODate): Item[] {
         "Problema de cadastro travando a geração de OMs",
         "Problemas de cadastro travando a geração de OMs",
       ),
-      detail: `${a.issues[0].problem}${rest > 0 ? ` E mais ${rest}.` : ""}`,
-      href: contractIds.size === 1 ? `/admin/contratos/${a.issues[0].contractId}` : "/admin/contratos",
+      detail:
+        affected.length > 1
+          ? `Em ${affected.length} contratos. Abra para ver quais.`
+          : `${a.issues[0].problem}${rest > 0 ? ` E mais ${rest}.` : ""}`,
+      // Um contrato só: vai direto para ele. Vários: a lista abre aqui mesmo (a lista de contratos não mostra o problema).
+      href: affected.length > 1 ? "/admin/contratos" : `/admin/contratos/${a.issues[0].contractId}`,
+      expand:
+        affected.length > 1
+          ? affected.map((c) => ({
+              key: c.id,
+              title: c.customer,
+              subtitle: c.name,
+              detail: c.problems.join(" "),
+              href: `/admin/contratos/${c.id}`,
+            }))
+          : undefined,
     });
   }
 
@@ -92,7 +111,9 @@ function buildItems(a: Attention, today: ISODate): Item[] {
           }`
         : "Sem data prevista",
       href:
-        a.noTech.count === 1 && a.noTech.firstId ? `/admin/oms/${a.noTech.firstId}` : "/admin/oms?filtro=sem-tecnico",
+        a.noTech.count === 1 && a.noTech.firstId
+          ? `/admin/oms/${a.noTech.firstId}`
+          : `/admin/oms?status=${"sem-tecnico" satisfies StatusGroup}`,
     });
   }
 
@@ -141,7 +162,8 @@ function buildItems(a: Attention, today: ISODate): Item[] {
       detail: `${first.name}: ${formatNumber(first.total)} de ${formatNumber(first.min)} ${first.unit}${
         a.lowStock.length > 1 ? `, e mais ${a.lowStock.length - 1}` : ""
       }`,
-      href: a.lowStock.length === 1 ? `/admin/estoque/${first.id}` : "/admin/estoque?filtro=abaixo-minimo",
+      href:
+        a.lowStock.length === 1 ? `/admin/estoque/${first.id}` : `/admin/estoque?filtro=${"abaixo" satisfies StockFilter}`,
     });
   }
 
@@ -207,34 +229,71 @@ export function AttentionList({ data, today }: { data: Attention; today: ISODate
         </div>
       ) : (
         <ul className="divide-y divide-rime">
-          {items.map((it) => {
-            const Icon = it.icon;
-            return (
-              <li key={it.key}>
+          {items.map((it) => (
+            <li key={it.key}>
+              {it.expand ? (
+                <details className="group/expand">
+                  <summary
+                    className={cn(
+                      "group flex cursor-pointer list-none items-center gap-3.5 px-5 py-3.5 transition-colors",
+                      "hover:bg-ice/5 focus-visible:bg-ice/5 focus-visible:outline-none [&::-webkit-details-marker]:hidden",
+                    )}
+                  >
+                    <ItemBody it={it} />
+                    <ChevronDown className="size-4 shrink-0 text-steel/50 transition-[color,rotate] group-hover:text-frost group-open/expand:rotate-180" />
+                  </summary>
+                  <ul className="max-h-96 space-y-0.5 overflow-y-auto pb-3 pl-[4.25rem] pr-5">
+                    {it.expand.map((e) => (
+                      <li key={e.key}>
+                        <Link
+                          href={e.href}
+                          className="group/row -mx-2 flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-ice/5 focus-visible:bg-ice/5"
+                        >
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm text-silver">{e.title}</span>
+                            <span className="block truncate text-xs text-steel">{e.subtitle}</span>
+                            <span className={cn("mt-0.5 block text-xs", toneText[it.tone])}>{e.detail}</span>
+                          </span>
+                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-steel/50 transition-colors group-hover/row:text-frost" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ) : (
                 <Link
                   href={it.href}
                   className="group flex items-center gap-3.5 px-5 py-3.5 transition-colors hover:bg-ice/5 focus-visible:bg-ice/5"
                 >
-                  <span
-                    className={cn(
-                      "grid size-9 shrink-0 place-items-center rounded-lg ring-1 ring-inset",
-                      ICON_WRAP[it.tone] ?? ICON_WRAP.frost,
-                    )}
-                  >
-                    <Icon className={cn("size-4", toneText[it.tone])} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm leading-snug text-silver">{it.title}</span>
-                    {it.detail && <span className="mt-0.5 block truncate text-xs text-steel">{it.detail}</span>}
-                  </span>
-                  <span className={cn("readout shrink-0 text-xl font-semibold", toneText[it.tone])}>{it.count}</span>
+                  <ItemBody it={it} />
                   <ChevronRight className="size-4 shrink-0 text-steel/50 transition-colors group-hover:text-frost" />
                 </Link>
-              </li>
-            );
-          })}
+              )}
+            </li>
+          ))}
         </ul>
       )}
     </Panel>
+  );
+}
+
+function ItemBody({ it }: { it: Item }) {
+  const Icon = it.icon;
+  return (
+    <>
+      <span
+        className={cn(
+          "grid size-9 shrink-0 place-items-center rounded-lg ring-1 ring-inset",
+          ICON_WRAP[it.tone] ?? ICON_WRAP.frost,
+        )}
+      >
+        <Icon className={cn("size-4", toneText[it.tone])} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm leading-snug text-silver">{it.title}</span>
+        {it.detail && <span className="mt-0.5 block truncate text-xs text-steel">{it.detail}</span>}
+      </span>
+      <span className={cn("readout shrink-0 text-xl font-semibold", toneText[it.tone])}>{it.count}</span>
+    </>
   );
 }

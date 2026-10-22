@@ -301,6 +301,14 @@ export function DispatchBoard({
       );
     });
   const lateCount = tray.filter((i) => isLate(i, today)).length;
+  const noTechCount = tray.filter((i) => !i.technicianId).length;
+  const noDateCount = tray.filter((i) => i.technicianId && !i.scheduledDate).length;
+  // Técnico atual (segue o movimento otimista); o nome salvo cobre técnico desativado, que não tem linha no quadro.
+  const techOf = (i: BoardItem) => {
+    if (!i.technicianId) return null;
+    const t = technicians.find((x) => x.id === i.technicianId);
+    return t ? { name: t.name, color: t.color } : i.technicianName ? { name: i.technicianName, color: null } : null;
+  };
   const onBoard = optimistic.filter((i) => !needsDispatch(i, today) && i.technicianId && i.scheduledDate && dates.has(i.scheduledDate) && i.status !== "cancelada");
 
   const drop = (id: string, target: MoveTarget, fromDialog = false) => {
@@ -331,9 +339,12 @@ export function DispatchBoard({
     });
   };
 
+  // Soltar na bandeja tira o técnico de uma OM que estava no quadro. Um chip que já está na bandeja
+  // (atrasado ou sem data, mesmo com técnico) solto de volta nela não muda nada: para tirar o técnico
+  // dele, use a opção "Sem técnico" na janela da OM.
   const trayZone = useDropZone((id) => {
     const item = optimistic.find((i) => i.id === id);
-    if (!item || !item.technicianId) return;
+    if (!item || !item.technicianId || needsDispatch(item, today)) return;
     drop(id, { technicianId: null, date: item.scheduledDate });
   });
 
@@ -346,32 +357,57 @@ export function DispatchBoard({
 
   return (
     <LayoutGroup>
-      {/* Bandeja: sem técnico, sem data e atrasadas */}
+      {/* Bandeja: sem técnico, sem data e atrasadas (estas mantêm o técnico, que aparece no chip) */}
       <section
         {...trayZone.props}
-        aria-label="OMs sem técnico"
+        aria-label="OMs para despachar"
         className={cn("panel mb-4 transition-colors", trayZone.over && "ring-2 ring-ice/60")}
       >
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rime px-4 py-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Inbox className="size-4 text-brass" />
-            <h2 className="text-[0.95rem] font-semibold text-silver">Sem técnico</h2>
+            <h2 className="text-[0.95rem] font-semibold text-silver">Para despachar</h2>
             <span className="readout rounded-full bg-brass/12 px-2 text-xs font-semibold text-brass ring-1 ring-brass/30">{tray.length}</span>
+            {noTechCount > 0 && (
+              <span className="readout rounded-full px-2 text-xs font-medium text-silver ring-1 ring-rime">
+                {noTechCount} sem técnico
+              </span>
+            )}
+            {noDateCount > 0 && (
+              <span className="readout rounded-full px-2 text-xs font-medium text-silver ring-1 ring-rime">
+                {noDateCount} sem data
+              </span>
+            )}
             {lateCount > 0 && (
               <span className="readout rounded-full bg-gauge-red/12 px-2 text-xs font-semibold text-gauge-red ring-1 ring-gauge-red/35">
                 {lateCount} {lateCount === 1 ? "atrasada" : "atrasadas"}
               </span>
             )}
           </div>
-          <p className="text-xs text-steel">Arraste para um técnico e um dia, ou toque na OM para escolher. Solte aqui para tirar o técnico.</p>
+          <p className="text-xs text-steel">
+            Arraste para um técnico e um dia, ou toque na OM para escolher. Solte aqui uma OM do quadro para tirar o técnico.
+          </p>
         </div>
         {tray.length === 0 ? (
-          <p className="px-4 py-4 text-sm text-steel">Tudo despachado: nenhuma OM esperando técnico ou data.</p>
+          <p className="px-4 py-4 text-sm text-steel">Tudo despachado: nenhuma OM sem técnico, sem data ou atrasada.</p>
         ) : (
           <div className="grid max-h-60 grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-2 overflow-y-auto p-3">
-            {tray.map((i) => (
-              <OmChip key={i.id} item={i} late={isLate(i, today)} showDate dragging={dragging === i.id} onDragState={setDragging} onOpen={setOpenId} />
-            ))}
+            {tray.map((i) => {
+              const tech = techOf(i);
+              return (
+                <OmChip
+                  key={i.id}
+                  item={i}
+                  late={isLate(i, today)}
+                  showDate
+                  techName={tech?.name}
+                  techColor={tech?.color}
+                  dragging={dragging === i.id}
+                  onDragState={setDragging}
+                  onOpen={setOpenId}
+                />
+              );
+            })}
           </div>
         )}
       </section>

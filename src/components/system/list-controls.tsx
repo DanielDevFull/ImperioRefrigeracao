@@ -26,10 +26,28 @@ function useSetParam() {
 /** Busca que atualiza ?q= na URL (com atraso de digitação). */
 export function SearchInput({ placeholder = "Buscar…", className, param = "q" }: { placeholder?: string; className?: string; param?: string }) {
   const { set, params, pending } = useSetParam();
-  const [value, setValue] = useState(params.get(param) ?? "");
+  const urlValue = params.get(param) ?? "";
+  const [value, setValue] = useState(urlValue);
+  // Valores que esta busca escreveu na URL e que ela ainda não alcançou, e o último valor da URL já visto.
+  const [pushed, setPushed] = useState<string[]>([urlValue]);
+  const [seen, setSeen] = useState(urlValue);
+  if (urlValue !== seen) {
+    setSeen(urlValue);
+    if (urlValue === pushed[pushed.length - 1]) {
+      // A URL alcançou o que foi digitado: nada muda (não apaga o que ainda está sendo digitado).
+      setPushed([urlValue]);
+    } else if (!pushed.includes(urlValue)) {
+      // A URL mudou por fora (Limpar filtros, menu lateral, voltar/avançar): a caixa acompanha.
+      setPushed([urlValue]);
+      setValue(urlValue);
+    }
+  }
   useEffect(() => {
     const t = setTimeout(() => {
-      if ((params.get(param) ?? "") !== value) set({ [param]: value || null });
+      if ((params.get(param) ?? "") !== value) {
+        setPushed((p) => [...p, value]);
+        set({ [param]: value || null });
+      }
     }, 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps

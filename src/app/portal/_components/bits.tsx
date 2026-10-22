@@ -37,7 +37,7 @@ export function SectionTitle({
 }) {
   return (
     <div className={cn("mb-3 flex items-end justify-between gap-3", className)}>
-      <h2 className="font-display text-silver-brushed text-[1.15rem] font-semibold tracking-[0.02em] sm:text-xl">
+      <h2 className="font-display text-silver-brushed text-xl leading-tight font-semibold tracking-[0.02em] text-balance">
         {children}
         {count != null && count > 0 && (
           <span className="readout ml-2 align-middle font-sans text-sm font-medium text-steel">{count}</span>

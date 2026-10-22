@@ -10,6 +10,8 @@ export type BoardItem = {
   scheduledDate: string | null;
   scheduledTime: string | null;
   technicianId: string | null;
+  /** Nome do técnico atribuído no banco (também de técnico desativado, que não tem linha no quadro). */
+  technicianName: string | null;
   customerName: string;
   equipmentLabel: string | null;
   minutes: number;

@@ -154,6 +154,7 @@ export async function getAttention(today: ISODate) {
   ]);
 
   return {
+    issueContracts: await issueContracts(issues),
     noTech: { count: w?.noTech ?? 0, next: w?.noTechNext ?? null, firstId: w?.noTechFirst ?? null },
     portal: { count: w?.portal ?? 0, oldest: w?.portalOldest ?? null, firstId: w?.portalFirst ?? null },
     proofs: { count: proofs?.count ?? 0, amount: proofs?.amount ?? 0 },
@@ -165,6 +166,31 @@ export async function getAttention(today: ISODate) {
 }
 
 export type Attention = Awaited<ReturnType<typeof getAttention>>;
+
+/** Contratos com problema de cadastro (nome e cliente), na ordem em que aparecem os problemas. */
+async function issueContracts(issues: Awaited<ReturnType<typeof generationIssues>>) {
+  if (!issues.length) return [];
+  const problems = new Map<string, Set<string>>();
+  for (const i of issues) {
+    const set = problems.get(i.contractId) ?? new Set<string>();
+    set.add(i.problem);
+    problems.set(i.contractId, set);
+  }
+  const rows = await db
+    .select({
+      id: contracts.id,
+      name: contracts.name,
+      customer: sql<string>`coalesce(${customers.tradeName}, ${customers.name})`,
+    })
+    .from(contracts)
+    .innerJoin(customers, eq(customers.id, contracts.customerId))
+    .where(inArray(contracts.id, [...problems.keys()]));
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return [...problems.entries()].flatMap(([id, set]) => {
+    const r = byId.get(id);
+    return r ? [{ ...r, problems: [...set] }] : [];
+  });
+}
 
 /** OMs de hoje por técnico (ordem do dia). */
 export async function getFieldToday(today: ISODate) {

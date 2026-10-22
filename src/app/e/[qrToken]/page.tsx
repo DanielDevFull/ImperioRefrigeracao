@@ -304,7 +304,7 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
 
         {recent.length > 0 && (
           <section className="mt-8">
-            <h2 className="font-display text-silver-brushed text-lg font-semibold">Histórico recente</h2>
+            <h2 className="font-display text-silver-brushed text-xl font-semibold">Histórico recente</h2>
             <ol className="mt-3 space-y-0 border-l border-rime pl-5">
               {recent.map((w, i) => (
                 <li key={w.id} className="relative pb-4 last:pb-0">

@@ -322,7 +322,7 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
             </dl>
             {wo.receivable && (
               <Link
-                href={`/admin/financeiro/receber?q=${encodeURIComponent(formatOM(wo.number))}`}
+                href={`/admin/financeiro/receber?status=todas&q=${encodeURIComponent(formatOM(wo.number))}`}
                 className="mt-4 flex items-center justify-between gap-3 rounded-lg bg-night/50 px-3 py-2.5 ring-1 ring-rime transition hover:ring-ice/30"
               >
                 <span className="min-w-0">

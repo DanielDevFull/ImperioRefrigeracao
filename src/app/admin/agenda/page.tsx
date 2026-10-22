@@ -132,7 +132,7 @@ export default async function AgendaPage({ searchParams }: PageProps<"/admin/age
       <DispatchBoard mode={mode} days={days} today={today} technicians={technicians} items={items} />
 
       <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-steel">
-        <span>Barra lateral do cartão: tipo da OM (escrito no canto do cartão).</span>
+        <span>Barra lateral do cartão: tipo da OM (escrito no canto do cartão quando há espaço).</span>
         <span>Cadeado: OM em campo ou concluída, não pode ser movida.</span>
         <span>Faixa listrada: técnico ausente.</span>
       </p>

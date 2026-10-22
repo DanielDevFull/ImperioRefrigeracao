@@ -48,6 +48,8 @@ export function OmChip({
   className,
   showDate = false,
   compact = false,
+  techName = null,
+  techColor = null,
 }: {
   item: BoardItem;
   late: boolean;
@@ -58,6 +60,9 @@ export function OmChip({
   showDate?: boolean;
   /** Visão diária: cartão estreito, sem número e tipo (o número vai no rótulo acessível). */
   compact?: boolean;
+  /** Bandeja: técnico já atribuído (a OM está lá por estar atrasada ou sem data). */
+  techName?: string | null;
+  techColor?: string | null;
 }) {
   const locked = LOCKED.has(item.status);
   const s = STATUS[item.status] ?? STATUS.aberta;
@@ -73,7 +78,7 @@ export function OmChip({
         role="button"
         tabIndex={0}
         draggable={!locked}
-        aria-label={`${formatOM(item.number)}, ${item.customerName}, ${s.label}${locked ? ", bloqueada" : ""}. Abrir opções`}
+        aria-label={`${formatOM(item.number)}, ${item.customerName}, ${s.label}${techName ? `, com ${techName}` : ""}${locked ? ", bloqueada" : ""}. Abrir opções`}
         onDragStart={(e) => {
           e.dataTransfer.setData(DRAG_TYPE, item.id);
           e.dataTransfer.setData("text/plain", formatOM(item.number));
@@ -89,7 +94,8 @@ export function OmChip({
           }
         }}
         className={cn(
-          "group relative overflow-hidden rounded-md py-1.5 pl-2.5 pr-2 text-left text-xs ring-1 transition-[box-shadow,opacity,background-color] select-none",
+          // @container: em colunas estreitas (celular, telas médias) o chip esconde o que é secundário.
+          "@container group relative overflow-hidden rounded-md py-1.5 pl-2.5 pr-2 text-left text-xs ring-1 transition-[box-shadow,opacity,background-color] select-none",
           "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
           TYPE_BAR[item.type] ?? "before:bg-steel",
           late ? "bg-gauge-red/10 ring-gauge-red/50" : "bg-glacier/80 ring-rime hover:ring-ice/40",
@@ -98,16 +104,17 @@ export function OmChip({
           dragging && "opacity-40",
         )}
       >
-        <div className="flex items-center gap-1.5">
+        <div className={cn("flex items-center gap-x-1.5", compact ? "" : "flex-wrap gap-y-0.5")}>
           {when ? (
-            <span className={cn("readout font-semibold", late ? "text-gauge-red" : "text-silver")}>{when}</span>
+            <span className={cn("readout shrink-0 font-semibold", late ? "text-gauge-red" : "text-silver")}>{when}</span>
           ) : (
-            !compact && <span className="whitespace-nowrap text-[0.68rem] text-steel">Sem horário</span>
+            !compact && <span className="whitespace-nowrap text-[0.68rem] text-steel @max-[9rem]:hidden">Sem horário</span>
           )}
           {compact ? (
             <span className="truncate font-medium text-silver">{item.customerName}</span>
           ) : (
-            <span className="readout truncate text-[0.68rem] text-steel">{formatOM(item.number)}</span>
+            // O número é o identificador da OM: nunca corta.
+            <span className="readout shrink-0 text-[0.68rem] text-steel">{formatOM(item.number)}</span>
           )}
           {urgent && (
             <span className={cn("ml-auto shrink-0 text-[0.65rem] font-semibold", item.priority === "urgente" ? "text-gauge-red" : "text-brass")}>
@@ -120,8 +127,16 @@ export function OmChip({
         <div className="mt-0.5 flex items-center gap-1.5">
           <Icon className={cn("size-3 shrink-0", s.text)} aria-hidden />
           <span className={cn("truncate", s.text)}>{s.label}</span>
-          {!compact && <span className="ml-auto shrink-0 text-[0.65rem] text-steel">{labelOf(workOrderType, item.type).label}</span>}
+          {!compact && (
+            <span className="ml-auto shrink-0 text-[0.65rem] text-steel @max-[9rem]:hidden">{labelOf(workOrderType, item.type).label}</span>
+          )}
         </div>
+        {techName && (
+          <p className="mt-0.5 flex items-center gap-1.5 text-[0.68rem] text-steel">
+            <span aria-hidden className={cn("size-2 shrink-0 rounded-full", !techColor && "bg-steel/60")} style={techColor ? { backgroundColor: techColor } : undefined} />
+            <span className="truncate">{techName}</span>
+          </p>
+        )}
         {late && item.scheduledDate && <p className="mt-0.5 text-[0.68rem] font-medium text-gauge-red">Atrasada desde {formatDate(item.scheduledDate).slice(0, 5)}</p>}
       </div>
     </motion.div>

@@ -45,6 +45,7 @@ export async function loadBoard({ start, end, today }: { start: string; end: str
       },
       with: {
         customer: { columns: { name: true, tradeName: true } },
+        technician: { columns: { name: true } },
         equipment: { columns: { location: true }, with: { type: { columns: { name: true } } } },
         plan: { columns: { estimatedMinutes: true } },
       },
@@ -68,6 +69,7 @@ export async function loadBoard({ start, end, today }: { start: string; end: str
     scheduledDate: r.scheduledDate,
     scheduledTime: r.scheduledTime?.slice(0, 5) ?? null,
     technicianId: r.technicianId,
+    technicianName: r.technician?.name ?? null,
     customerName: r.customer.tradeName ?? r.customer.name,
     equipmentLabel: r.equipment ? [r.equipment.type?.name, r.equipment.location].filter(Boolean).join(", ") || null : null,
     minutes: r.plan?.estimatedMinutes ?? DEFAULT_MINUTES[r.type] ?? 60,

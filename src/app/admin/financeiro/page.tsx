@@ -307,7 +307,7 @@ function SectionRow({ label }: { label: string }) {
       <TableCell colSpan={2} className="pl-5 pt-4 text-xs font-medium text-steel max-sm:pr-5">
         {label}
       </TableCell>
-      <TableCell className="hidden w-20 pr-5 pt-4 text-right text-xs text-steel/70 sm:table-cell">% receita</TableCell>
+      <TableCell className="hidden w-20 pr-5 pt-4 text-right text-xs text-steel/70 light:text-steel sm:table-cell">% receita</TableCell>
     </TableRow>
   );
 }

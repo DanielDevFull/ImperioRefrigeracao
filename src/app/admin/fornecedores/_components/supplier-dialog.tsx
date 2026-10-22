@@ -86,7 +86,7 @@ function SupplierForm({ supplier, onDone }: { supplier?: SupplierValues; onDone:
         <Textarea id="sp-notes" name="notes" rows={3} defaultValue={supplier?.notes ?? ""} placeholder="Prazo de entrega, condição de pagamento, pedido mínimo…" />
       </Field>
       {supplier && (
-        <label className="flex items-center justify-between gap-4 rounded-lg border border-rime bg-night/40 px-3 py-2.5">
+        <label className="flex items-center justify-between gap-4 rounded-lg border border-rime bg-muted/40 px-3 py-2.5">
           <span>
             <span className="block text-sm text-silver">Fornecedor ativo</span>
             <span className="block text-xs text-steel">Inativos não aparecem para novos pedidos.</span>

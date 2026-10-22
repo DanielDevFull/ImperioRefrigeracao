@@ -143,7 +143,7 @@ function PayForm({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="flex items-baseline justify-between gap-4 rounded-xl bg-night/70 p-4 ring-1 ring-rime">
+      <div className="flex items-baseline justify-between gap-4 rounded-xl bg-muted/70 p-4 ring-1 ring-rime">
         <div>
           <p className="text-xs text-steel">Vencimento</p>
           <p className={cn("text-sm tabular-nums", overdue ? "text-gauge-red" : "text-silver")}>{formatDate(row.dueDate)}</p>
@@ -177,7 +177,7 @@ function PayForm({
 
       {state.error && !state.fieldErrors && <p className="text-sm text-gauge-red">{state.error}</p>}
 
-      <DialogFooter className="-mx-4 -mb-4 border-rime bg-night/50">
+      <DialogFooter className="-mx-4 -mb-4 border-rime bg-muted/50">
         <DialogClose asChild>
           <Button type="button" variant="outline">
             Voltar

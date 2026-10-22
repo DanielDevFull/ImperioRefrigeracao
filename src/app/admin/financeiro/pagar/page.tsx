@@ -198,7 +198,7 @@ function DueDate({ dueDate, overdue, today }: { dueDate: string; overdue: boolea
   return (
     <div className="tabular-nums">
       <span className={cn("block text-sm", overdue ? "font-medium text-gauge-red" : "text-silver")}>{formatDate(dueDate)}</span>
-      {overdue && <span className="block text-xs text-gauge-red/80">{days === 1 ? "há 1 dia" : `há ${days} dias`}</span>}
+      {overdue && <span className="block text-xs text-gauge-red/80 light:text-gauge-red">{days === 1 ? "há 1 dia" : `há ${days} dias`}</span>}
       {!overdue && days === 0 && <span className="block text-xs text-brass">vence hoje</span>}
     </div>
   );
@@ -208,7 +208,7 @@ function CategoryLabel({ name, color }: { name: string | null; color: string | n
   if (!name) return <span className="text-sm text-steel">Sem categoria</span>;
   return (
     <span className="inline-flex items-center gap-2 text-sm text-silver/90">
-      <span className="size-2 shrink-0 rounded-full" style={{ background: color ?? "#8da2bf" }} aria-hidden />
+      <span className="size-2 shrink-0 rounded-full light:ring-1 light:ring-rime" style={{ background: color ?? "var(--steel)" }} aria-hidden />
       {name}
     </span>
   );

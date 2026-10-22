@@ -126,7 +126,7 @@ function NewReceivableForm({
 
       {state.error && !state.fieldErrors && <p className="text-sm text-gauge-red">{state.error}</p>}
 
-      <DialogFooter className="-mx-4 -mb-4 border-rime bg-night/50">
+      <DialogFooter className="-mx-4 -mb-4 border-rime bg-muted/50">
         <DialogClose asChild>
           <Button type="button" variant="outline">
             Voltar

@@ -94,7 +94,7 @@ function ProofBody({ target, onConfirm, onDone }: { target: ProofTarget; onConfi
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 border-t border-rime bg-night/60 px-4 py-3 text-sm text-frost hover:bg-ice/10"
+              className="flex items-center justify-center gap-2 border-t border-rime bg-muted/60 px-4 py-3 text-sm text-frost hover:bg-ice/10"
             >
               <FileText className="size-4" />
               Abrir comprovante em PDF
@@ -102,7 +102,7 @@ function ProofBody({ target, onConfirm, onDone }: { target: ProofTarget; onConfi
           </div>
         )
       ) : (
-        <p className="rounded-xl bg-night/60 p-4 text-sm text-steel ring-1 ring-rime">Nenhum arquivo foi anexado a esta conta.</p>
+        <p className="rounded-xl bg-muted/60 p-4 text-sm text-steel ring-1 ring-rime">Nenhum arquivo foi anexado a esta conta.</p>
       )}
 
       {reviewing && rejecting && (
@@ -127,13 +127,13 @@ function ProofBody({ target, onConfirm, onDone }: { target: ProofTarget; onConfi
             <Button type="button" variant="ghost" onClick={() => setRejecting(false)}>
               Voltar
             </Button>
-            <FormSubmit className="bg-gauge-red text-white hover:bg-gauge-red/90">Recusar comprovante</FormSubmit>
+            <FormSubmit className="bg-gauge-red text-abyss hover:bg-gauge-red/90">Recusar comprovante</FormSubmit>
           </div>
         </ActionForm>
       )}
 
       {reviewing && !rejecting && (
-        <DialogFooter className="-mx-4 -mb-4 border-rime bg-night/50">
+        <DialogFooter className="-mx-4 -mb-4 border-rime bg-muted/50">
           <Button type="button" variant="outline" onClick={() => setRejecting(true)}>
             Recusar
           </Button>

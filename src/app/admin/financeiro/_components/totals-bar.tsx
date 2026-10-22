@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 /** Rodapé com os totais do conjunto filtrado (todas as páginas). */
 export function TotalsBar({ items }: { items: { label: string; value: number | null; tone?: string }[] }) {
   return (
-    <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-2 border-t border-rime bg-night/40 px-5 py-3 text-sm">
+    <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-2 border-t border-rime bg-muted/40 px-5 py-3 text-sm">
       {items.map((it) =>
         it.value == null ? (
           <div key={it.label} className="mr-auto text-steel">

@@ -32,7 +32,7 @@ export function SectionTabs({
             )}
           >
             {t.label}
-            {t.count != null && <span className={cn("ml-1.5 text-xs tabular-nums", active ? "text-ice" : "text-steel/70")}>{t.count}</span>}
+            {t.count != null && <span className={cn("ml-1.5 text-xs tabular-nums", active ? "text-ice" : "text-steel/70 light:text-steel")}>{t.count}</span>}
             {active && (
               <motion.span
                 layoutId={layoutId}

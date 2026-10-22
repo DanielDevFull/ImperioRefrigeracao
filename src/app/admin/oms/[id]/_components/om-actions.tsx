@@ -69,7 +69,7 @@ function ReasonDialog({
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Voltar
             </Button>
-            <FormSubmit className={destructive ? "bg-gauge-red text-white hover:bg-gauge-red/90" : undefined}>{submitLabel}</FormSubmit>
+            <FormSubmit className={destructive ? "bg-gauge-red text-abyss hover:bg-gauge-red/90" : undefined}>{submitLabel}</FormSubmit>
           </DialogFooter>
         </ActionForm>
       </DialogContent>

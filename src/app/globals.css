@@ -118,6 +118,12 @@
   --haze-deep: rgb(22 119 214 / 0.3);
   --haze-mint: rgb(62 224 181 / 0.1);
   --haze-brass: rgb(232 176 75 / 0.13);
+  /* Avisos (faixas e caixas de destaque por tom): no claro são opacos, misturados ao branco,
+     para não ficarem acinzentados sobre o fundo azulado da página. Use bg-notice-<tom>. */
+  --notice-brass: rgb(232 176 75 / 0.08);
+  --notice-red: rgb(255 90 110 / 0.08);
+  --notice-mint: rgb(62 224 181 / 0.08);
+  --notice-ice: rgb(56 168 255 / 0.08);
   --page-haze-1: rgb(56 168 255 / 0.1);
   --page-haze-2: rgb(22 119 214 / 0.1);
   --selection-bg: rgb(56 168 255 / 0.35);
@@ -196,6 +202,10 @@
     --haze-deep: rgb(23 105 201 / 0.12);
     --haze-mint: rgb(7 123 92 / 0.08);
     --haze-brass: rgb(149 96 0 / 0.09);
+    --notice-brass: #f8f4ed;
+    --notice-red: #fbf2f4;
+    --notice-mint: #eef6f4;
+    --notice-ice: #eff5fb;
     --page-haze-1: rgb(23 105 201 / 0.07);
     --page-haze-2: rgb(23 105 201 / 0.05);
     --selection-bg: rgb(23 105 201 / 0.2);
@@ -247,6 +257,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
+  --color-notice-brass: var(--notice-brass);
+  --color-notice-red: var(--notice-red);
+  --color-notice-mint: var(--notice-mint);
+  --color-notice-ice: var(--notice-ice);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

@@ -114,6 +114,9 @@ Seletor: menu do usuário (admin e portal) e Perfil do técnico (`src/components
   Ex.: `shadow-[0_20px_40px_-12px_var(--shade)]`, `shadow-[0_0_12px_var(--glow-ice)]`.
   Para outra intensidade, misture o token: `color-mix(in_srgb,var(--ice)_45%,transparent)`.
 - Exceções pontuais: variantes `light:` e `dark:` (respeitam o Automático).
+- Faixas de aviso e caixas de destaque por tom: `bg-notice-brass` / `bg-notice-red` / `bg-notice-mint` /
+  `bg-notice-ice` (8% do tom no escuro; creme opaco no claro, sem o cinza de tom translúcido sobre a página).
+- Botão destrutivo cheio: `bg-gauge-red text-abyss` (tinta escura no escuro, quase branca no claro; ≥ 5:1 nos dois).
 - Texto no tom sobre fundo do mesmo tom (ex.: `bg-mint/10` com texto mint): use `toneOnTint[tone]`
   de `@/components/system/tone-badge` (tinta mais funda só no claro, para passar no contraste).
 - `.force-dark`: ilha sempre escura (painel de marca do login). Só para momentos de marca.

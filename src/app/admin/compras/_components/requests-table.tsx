@@ -253,7 +253,7 @@ function Origin({ r, compact = false }: { r: OpenRequest; compact?: boolean }) {
           {formatOM(r.workOrderNumber)}
         </Link>
       ) : (
-        !r.purchaseOrderId && !compact && <span className="text-steel/60">—</span>
+        !r.purchaseOrderId && !compact && <span className="text-steel/60 light:text-steel/90">—</span>
       )}
     </span>
   );
@@ -277,7 +277,7 @@ function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppli
       {chosen.map((r) => (
         <input key={r.id} type="hidden" name="requestId" value={r.id} />
       ))}
-      <ul className="max-h-48 divide-y divide-rime overflow-y-auto rounded-lg border border-rime bg-night/40">
+      <ul className="max-h-48 divide-y divide-rime overflow-y-auto rounded-lg border border-rime bg-muted/40">
         {chosen.map((r) => (
           <li key={r.id} className="flex items-baseline justify-between gap-3 px-3 py-2 text-sm">
             <span className="min-w-0 truncate text-silver">{r.productName}</span>

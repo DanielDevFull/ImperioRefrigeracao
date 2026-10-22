@@ -144,7 +144,7 @@ function ConfirmForm({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="rounded-xl bg-night/70 p-4 ring-1 ring-rime">
+      <div className="rounded-xl bg-muted/70 p-4 ring-1 ring-rime">
         <dl className="space-y-2 text-sm">
           <Row label="Vencimento">
             <span className={cn(charges.daysLate > 0 && "text-gauge-red")}>{formatDate(target.dueDate)}</span>
@@ -212,7 +212,7 @@ function ConfirmForm({
 
       {state.error && !state.fieldErrors && <p className="text-sm text-gauge-red">{state.error}</p>}
 
-      <DialogFooter className="-mx-4 -mb-4 mt-1 border-rime bg-night/50">
+      <DialogFooter className="-mx-4 -mb-4 mt-1 border-rime bg-muted/50">
         <DialogClose asChild>
           <Button type="button" variant="outline">
             Voltar

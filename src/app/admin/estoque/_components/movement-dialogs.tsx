@@ -110,7 +110,7 @@ function ProductField({
   if (fixedProductId) {
     const p = data.products.find((x) => x.id === fixedProductId);
     return (
-      <div className="rounded-lg border border-rime bg-night/50 px-3 py-2">
+      <div className="rounded-lg border border-rime bg-muted/50 px-3 py-2">
         <input type="hidden" name="productId" value={fixedProductId} />
         <p className="text-xs text-steel">Produto</p>
         <p className="truncate text-sm text-silver">{p?.name ?? "—"}</p>
@@ -201,7 +201,7 @@ function EntryForm({ data, fixedProductId, onDone }: { data: MovementData; fixed
       <Field label="Observação" htmlFor="en-notes" hint="Ex.: NF 4521, devolução do veículo do Rafael.">
         <Input id="en-notes" name="notes" className="h-9" />
       </Field>
-      <label className="flex items-start gap-3 rounded-lg border border-rime bg-night/40 p-3">
+      <label className="flex items-start gap-3 rounded-lg border border-rime bg-muted/40 p-3">
         <Checkbox
           name="updateCost"
           checked={updateCost}
@@ -249,7 +249,7 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
     <ActionForm action={action} pending={pending} className="space-y-4">
       <ProductField data={data} fixedProductId={fixedProductId} value={productId} onChange={setProductId} error={e.productId} />
       <input type="hidden" name="mode" value={mode} />
-      <div className="grid grid-cols-2 gap-1 rounded-xl bg-night/60 p-1 ring-1 ring-rime" role="radiogroup" aria-label="Tipo de ajuste">
+      <div className="grid grid-cols-2 gap-1 rounded-xl bg-muted/60 p-1 ring-1 ring-rime" role="radiogroup" aria-label="Tipo de ajuste">
         {(
           [
             ["contagem", "Ajuste de contagem"],
@@ -298,7 +298,7 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
         )}
       </div>
       {product && (
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg border border-rime bg-night/40 px-3 py-2.5 text-sm">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg border border-rime bg-muted/40 px-3 py-2.5 text-sm">
           <span className="text-steel">
             Saldo no sistema <span className="tabular-nums text-silver">{formatQty(current, unit)}</span>
           </span>
@@ -393,7 +393,7 @@ function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fi
         <QtyInput id="tr-qty" name="quantity" unit={product?.unit} value={qty} onChange={setQty} invalid={Boolean(e.quantity)} />
       </Field>
       {product && (
-        <div className="grid grid-cols-2 gap-3 rounded-lg border border-rime bg-night/40 px-3 py-2.5 text-sm">
+        <div className="grid grid-cols-2 gap-3 rounded-lg border border-rime bg-muted/40 px-3 py-2.5 text-sm">
           <div>
             <p className="text-xs text-steel">Na origem</p>
             <p className={cn("tabular-nums", q != null && q > available ? "text-gauge-red" : "text-silver")}>

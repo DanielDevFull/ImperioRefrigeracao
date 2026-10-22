@@ -181,11 +181,12 @@ function EditableRow({ item }: { item: ItemRow }) {
   return (
     <motion.tr
       layout
-      initial={{ opacity: 0, backgroundColor: "rgba(56,168,255,0.10)" }}
-      animate={{ opacity: removing ? 0.4 : 1, backgroundColor: "rgba(56,168,255,0)" }}
+      // brilho de "item novo": anima a força do tom ice (token do tema) de 10% a 0%
+      initial={{ opacity: 0, "--row-flash": "10%" }}
+      animate={{ opacity: removing ? 0.4 : 1, "--row-flash": "0%" }}
       exit={{ opacity: 0, x: -12 }}
       transition={{ duration: 0.35 }}
-      className="border-b border-rime last:border-0"
+      className="border-b border-rime bg-[color-mix(in_srgb,var(--ice)_var(--row-flash,0%),transparent)] last:border-0"
     >
       <td className="py-2.5 pl-5">
         {/* formulário vazio: os campos da linha se ligam a ele pelo atributo form */}
@@ -283,7 +284,7 @@ function AddItemForm({ orderId, products }: { orderId: string; products: PickerP
       key={round}
       action={action}
       pending={pending}
-      className="grid gap-3 border-t border-rime bg-night/40 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_8rem_8rem_auto] sm:items-end"
+      className="grid gap-3 border-t border-rime bg-muted/40 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_8rem_8rem_auto] sm:items-end"
     >
       <input type="hidden" name="orderId" value={orderId} />
       <div className="space-y-1.5">

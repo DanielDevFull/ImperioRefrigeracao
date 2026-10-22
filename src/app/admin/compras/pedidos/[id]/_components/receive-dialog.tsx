@@ -109,7 +109,7 @@ function ReceiveForm({
           </Button>
         </div>
       </div>
-      <ul className="divide-y divide-rime rounded-lg border border-rime bg-night/40">
+      <ul className="divide-y divide-rime rounded-lg border border-rime bg-muted/40">
         {open.map((i) => {
           const q = parseDecimal(values[i.id]);
           const over = q != null && q > remainingOf(i);
@@ -155,7 +155,7 @@ function ReceiveForm({
       </Field>
 
       {needsPayable && (
-        <fieldset className="rounded-xl border border-rime bg-night/40 p-4">
+        <fieldset className="rounded-xl border border-rime bg-muted/40 p-4">
           <legend className="px-1 text-sm font-medium text-silver">Conta a pagar</legend>
           <p className="mb-3 text-xs text-steel">
             Lançada agora em Contas a pagar no valor do pedido com frete, <span className="text-silver tabular-nums">{formatBRL(payableAmount)}</span>.
@@ -171,7 +171,7 @@ function ReceiveForm({
         </fieldset>
       )}
 
-      <label className="flex items-start gap-3 rounded-lg border border-rime bg-night/40 p-3">
+      <label className="flex items-start gap-3 rounded-lg border border-rime bg-muted/40 p-3">
         <Checkbox name="updateCost" checked={updateCost} onCheckedChange={(v) => setUpdateCost(v === true)} className="mt-0.5" />
         <span className="text-sm text-silver">
           Atualizar o custo dos produtos pelo custo médio

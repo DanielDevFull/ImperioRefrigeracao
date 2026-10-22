@@ -250,7 +250,7 @@ async function ProductsSection({
                         {p.minStock > 0 ? (
                           <>
                             {formatQty(p.minStock, p.unit)}
-                            <span className="text-steel/60"> / {formatQty(p.reorderQty, p.unit)}</span>
+                            <span className="text-steel/60 light:text-steel/90"> / {formatQty(p.reorderQty, p.unit)}</span>
                           </>
                         ) : (
                           "—"
@@ -366,7 +366,7 @@ async function LocationsSection({ locations }: { locations: Awaited<ReturnType<t
                           {l.technicianName}
                         </Link>
                       ) : (
-                        <span className="text-steel/60">—</span>
+                        <span className="text-steel/60 light:text-steel/90">—</span>
                       )}
                     </TableCell>
                     <TableCell className="text-right tabular-nums text-silver">{l.items}</TableCell>

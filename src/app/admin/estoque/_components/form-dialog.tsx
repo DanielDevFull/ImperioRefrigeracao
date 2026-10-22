@@ -48,7 +48,7 @@ export function FormDialog({
 /** Rodapé padrão dos diálogos de formulário. */
 export function DialogActions({ children }: { children: React.ReactNode }) {
   return (
-    <div className="-mx-4 -mb-4 mt-2 flex flex-col-reverse gap-2 rounded-b-xl border-t border-rime bg-night/60 p-4 sm:flex-row sm:justify-end">
+    <div className="-mx-4 -mb-4 mt-2 flex flex-col-reverse gap-2 rounded-b-xl border-t border-rime bg-muted/60 p-4 sm:flex-row sm:justify-end">
       {children}
     </div>
   );

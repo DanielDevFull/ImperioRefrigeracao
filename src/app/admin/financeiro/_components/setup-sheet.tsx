@@ -101,7 +101,7 @@ function SwatchPicker({ name, defaultValue, error }: { name: string; defaultValu
               key={s.value}
               title={s.label}
               className={cn(
-                "grid size-7 cursor-pointer place-items-center rounded-full ring-offset-2 ring-offset-night transition-shadow has-focus-visible:ring-2 has-focus-visible:ring-frost",
+                "grid size-7 cursor-pointer place-items-center rounded-full ring-offset-2 ring-offset-night transition-shadow has-focus-visible:ring-2 has-focus-visible:ring-frost light:shadow-[inset_0_0_0_1px_var(--rime)]",
                 checked && "ring-2 ring-silver/80",
               )}
               style={{ background: s.value }}
@@ -115,7 +115,7 @@ function SwatchPicker({ name, defaultValue, error }: { name: string; defaultValu
                 className="sr-only"
                 aria-label={s.label}
               />
-              {checked && <Check className="size-3.5 text-abyss" strokeWidth={3} />}
+              {checked && <Check className="size-3.5 text-abyss light:text-silver" strokeWidth={3} />}
             </label>
           );
         })}
@@ -228,7 +228,7 @@ function CategoryRow({ category }: { category: SetupCategory }) {
 
   return (
     <div className={cn("flex items-center gap-3 px-3 py-2.5", !category.active && "opacity-60")}>
-      <span className="size-2.5 shrink-0 rounded-full" style={{ background: category.color }} aria-hidden />
+      <span className="size-2.5 shrink-0 rounded-full light:ring-1 light:ring-rime" style={{ background: category.color }} aria-hidden />
       <span className="min-w-0 flex-1 truncate text-sm text-silver">{category.name}</span>
       {!category.active && <ToneBadge tone="steel">Inativa</ToneBadge>}
       <Button variant="ghost" size="icon-sm" className="text-steel" onClick={() => setEditing(true)} aria-label={`Editar ${category.name}`}>

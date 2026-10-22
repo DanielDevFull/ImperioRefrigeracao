@@ -61,7 +61,7 @@ export function ConfirmAction({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>Voltar</AlertDialogCancel>
           <AlertDialogAction
-            className={destructive ? "bg-gauge-red text-white hover:bg-gauge-red/90" : undefined}
+            className={destructive ? "bg-gauge-red text-abyss hover:bg-gauge-red/90" : undefined}
             disabled={pending}
             onClick={(e) => {
               e.preventDefault();

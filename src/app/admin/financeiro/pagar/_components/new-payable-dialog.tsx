@@ -126,7 +126,7 @@ function NewPayableForm({
         </Field>
       </div>
 
-      <div className="rounded-xl bg-night/60 p-3 ring-1 ring-rime">
+      <div className="rounded-xl bg-muted/60 p-3 ring-1 ring-rime">
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span>
             <span className="block text-sm font-medium text-silver">Repetir mensalmente</span>
@@ -198,7 +198,7 @@ function NewPayableForm({
 
       {state.error && !state.fieldErrors && <p className="text-sm text-gauge-red">{state.error}</p>}
 
-      <DialogFooter className="-mx-4 -mb-4 border-rime bg-night/50">
+      <DialogFooter className="-mx-4 -mb-4 border-rime bg-muted/50">
         <DialogClose asChild>
           <Button type="button" variant="outline">
             Voltar

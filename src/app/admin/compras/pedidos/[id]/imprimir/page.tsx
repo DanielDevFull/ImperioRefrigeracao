@@ -65,7 +65,7 @@ export default async function ImprimirPedidoPage({ params }: PageProps<"/admin/c
 
       <article
         id="po-sheet"
-        className="mx-auto max-w-[210mm] rounded-xl bg-white p-6 text-[13px] leading-relaxed text-slate-800 shadow-2xl sm:p-10"
+        className="mx-auto max-w-[210mm] rounded-xl bg-white p-6 text-[13px] leading-relaxed text-slate-800 shadow-2xl light:shadow-[0_25px_50px_-12px_var(--shade)] light:ring-1 light:ring-rime sm:p-10"
       >
         <header className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-4">

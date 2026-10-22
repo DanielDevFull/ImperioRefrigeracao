@@ -373,7 +373,7 @@ function OrderTimeline({ order }: { order: NonNullable<Awaited<ReturnType<typeof
               reached(i) ? (i === 2 && stepIndex === 2 ? "bg-brass" : i === 2 ? "bg-mint" : "bg-ice") : "bg-ice/10",
             )}
           />
-          <p className={cn("mt-2 text-xs sm:truncate", reached(i) ? "text-silver" : "text-steel/70")}>
+          <p className={cn("mt-2 text-xs sm:truncate", reached(i) ? "text-silver" : "text-steel/70 light:text-steel/90")}>
             {s.label}
             {s.date && <span className="block text-steel sm:ml-1.5 sm:inline">{s.date}</span>}
           </p>

@@ -84,7 +84,7 @@ function DeletePlanButton({ planId, planName }: { planId: string; planName: stri
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>Voltar</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-gauge-red text-white hover:bg-gauge-red/90"
+            className="bg-gauge-red text-abyss hover:bg-gauge-red/90"
             disabled={pending}
             onClick={(e) => {
               e.preventDefault();

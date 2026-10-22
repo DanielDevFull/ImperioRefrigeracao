@@ -143,7 +143,7 @@ export function ProductForm({
       </div>
 
       {isNew && locations && locations.length > 0 && (
-        <fieldset className="rounded-xl border border-rime bg-night/40 p-4">
+        <fieldset className="rounded-xl border border-rime bg-muted/40 p-4">
           <legend className="px-1 text-sm font-medium text-silver">Saldo inicial</legend>
           <p className="mb-3 text-xs text-steel">Opcional. Registra uma entrada com o custo informado acima.</p>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -168,7 +168,7 @@ export function ProductForm({
       </Field>
 
       {product && (
-        <label className="flex items-center justify-between gap-4 rounded-lg border border-rime bg-night/40 px-3 py-2.5">
+        <label className="flex items-center justify-between gap-4 rounded-lg border border-rime bg-muted/40 px-3 py-2.5">
           <span>
             <span className="block text-sm text-silver">Produto ativo</span>
             <span className="block text-xs text-steel">Inativos somem das listas de seleção e não geram reposição.</span>

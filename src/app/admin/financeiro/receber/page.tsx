@@ -6,6 +6,7 @@ import { FilterTabs, Pager, SearchInput } from "@/components/system/list-control
 import { PageHeader } from "@/components/system/page-header";
 import { Panel } from "@/components/system/panel";
 import { ReceivableStatusBadge } from "@/components/system/status";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { diffDays, todayISO, toISODate } from "@/lib/dates";
 import { formatBRL, formatCompetence, formatDate, formatOM } from "@/lib/format";
@@ -81,7 +82,7 @@ export default async function ReceivablesPage({ searchParams }: PageProps<"/admi
       {pendingProofs > 0 && tab !== "em_analise" && (
         <Link
           href="/admin/financeiro/receber?status=em_analise"
-          className="mb-5 flex items-center gap-3 rounded-xl bg-brass/8 px-4 py-3 ring-1 ring-brass/30 transition-colors hover:bg-brass/12"
+          className="mb-5 flex items-center gap-3 rounded-xl bg-notice-brass px-4 py-3 ring-1 ring-brass/30 transition-colors hover:bg-brass/12 light:hover:bg-[color-mix(in_srgb,var(--brass)_11%,var(--night))]"
         >
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brass/15 text-brass">
             <FileSearch className="size-4" />
@@ -92,7 +93,7 @@ export default async function ReceivablesPage({ searchParams }: PageProps<"/admi
             </span>
             <span className="block text-steel">Clientes enviaram pelo portal. Confira o valor e confirme ou recuse.</span>
           </span>
-          <span className="hidden shrink-0 text-sm font-medium text-brass sm:inline">Conferir comprovantes</span>
+          <span className={cn("hidden shrink-0 text-sm font-medium sm:inline", toneOnTint.brass)}>Conferir comprovantes</span>
         </Link>
       )}
 
@@ -238,7 +239,7 @@ function DueDate({ dueDate, overdue, today }: { dueDate: string; overdue: boolea
   return (
     <div className="tabular-nums">
       <span className={cn("block text-sm", overdue ? "font-medium text-gauge-red" : "text-silver")}>{formatDate(dueDate)}</span>
-      {overdue && <span className="block text-xs text-gauge-red/80">{days === 1 ? "há 1 dia" : `há ${days} dias`}</span>}
+      {overdue && <span className="block text-xs text-gauge-red/80 light:text-gauge-red">{days === 1 ? "há 1 dia" : `há ${days} dias`}</span>}
       {!overdue && days === 0 && <span className="block text-xs text-brass">vence hoje</span>}
     </div>
   );
@@ -258,7 +259,7 @@ function CustomerCell({ row }: { row: ReceivableRow }) {
         {row.description}
       </span>
       {(row.kind !== "mensalidade" || row.workOrderId) && (
-        <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-steel/80">
+        <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-steel/80 light:text-steel">
           {row.kind !== "mensalidade" && <span>{kindShort[row.kind] ?? row.kind}</span>}
           {row.workOrderId && row.workOrderNumber != null && (
             <Link href={`/admin/oms/${row.workOrderId}`} className="text-ice hover:text-frost">

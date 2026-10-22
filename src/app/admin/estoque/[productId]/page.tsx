@@ -158,7 +158,7 @@ export default async function ProdutoPage({ params, searchParams }: PageProps<"/
                   <TableCell
                     className={cn(
                       "text-right tabular-nums",
-                      l.quantity < 0 ? "text-gauge-red" : l.quantity === 0 ? "text-steel/70" : "text-silver",
+                      l.quantity < 0 ? "text-gauge-red" : l.quantity === 0 ? "text-steel/70 light:text-steel/90" : "text-silver",
                     )}
                   >
                     {formatQty(l.quantity, unit)}
@@ -410,7 +410,7 @@ function MovementLinks({
 }: {
   m: { workOrderId: string | null; workOrderNumber: number | null; purchaseOrderId: string | null; purchaseOrderNumber: number | null };
 }) {
-  if (!m.workOrderId && !m.purchaseOrderId) return <span className="text-steel/60">—</span>;
+  if (!m.workOrderId && !m.purchaseOrderId) return <span className="text-steel/60 light:text-steel/90">—</span>;
   return (
     <span className="flex flex-wrap gap-2 text-xs">
       {m.workOrderId && (

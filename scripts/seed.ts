@@ -391,7 +391,7 @@ async function main() {
     ])
     .returning();
   const C = (n: string) => cats.find((c) => c.name === n)!.id;
-  const [bank] = await db.insert(s.bankAccounts).values([{ name: "Conta PJ — Banco Inter", initialBalance: 18500 }, { name: "Caixa", initialBalance: 600 }]).returning();
+  const [bank] = await db.insert(s.bankAccounts).values([{ name: "Conta PJ — Banco Inter", initialBalance: 26000 }, { name: "Caixa", initialBalance: 600 }]).returning();
 
   // Mensalidades dos últimos 6 meses (a maioria paga; algumas em atraso)
   for (const ct of createdContracts) {
@@ -427,11 +427,11 @@ async function main() {
     const comp = addCompetence(competenceOf(today), -m);
     const paid = m >= 1;
     const rows = [
-      { description: `Aluguel do galpão — ${comp}`, categoryId: C("Aluguel"), dueDate: dueDateFor(comp, 5), amount: 3200 },
-      { description: `Folha de pagamento — ${comp}`, categoryId: C("Salários"), dueDate: dueDateFor(comp, 5), amount: 14800 },
-      { description: `Combustível frota — ${comp}`, categoryId: C("Combustível"), dueDate: dueDateFor(comp, 20), amount: 1900 + int(-200, 400) },
-      { description: `DAS Simples Nacional — ${comp}`, categoryId: C("Impostos"), dueDate: dueDateFor(comp, 20), amount: 2100 + int(-150, 300) },
-      { description: `Compra de peças — ${comp}`, categoryId: C("Fornecedores / peças"), dueDate: dueDateFor(comp, 12), amount: 2400 + int(-500, 900), supplierId: pick(suppliers).id },
+      { description: `Aluguel do galpão — ${comp}`, categoryId: C("Aluguel"), dueDate: dueDateFor(comp, 5), amount: 1800 },
+      { description: `Folha de pagamento — ${comp}`, categoryId: C("Salários"), dueDate: dueDateFor(comp, 5), amount: 6900 },
+      { description: `Combustível frota — ${comp}`, categoryId: C("Combustível"), dueDate: dueDateFor(comp, 20), amount: 1150 + int(-150, 250) },
+      { description: `DAS Simples Nacional — ${comp}`, categoryId: C("Impostos"), dueDate: dueDateFor(comp, 20), amount: 880 + int(-100, 150) },
+      { description: `Compra de peças — ${comp}`, categoryId: C("Fornecedores / peças"), dueDate: dueDateFor(comp, 12), amount: 1300 + int(-300, 500), supplierId: pick(suppliers).id },
     ];
     for (const r of rows) {
       await db.insert(s.payables).values({
@@ -443,6 +443,39 @@ async function main() {
         bankAccountId: paid || r.dueDate < today ? bank.id : null,
       });
     }
+  }
+
+  console.log("→ pedidos de compra…");
+  {
+    const [po1] = await db
+      .insert(s.purchaseOrders)
+      .values({ supplierId: suppliers[0].id, status: "recebido", orderDate: addDays(today, -24), expectedDate: addDays(today, -20), receivedAt: new Date(`${addDays(today, -19)}T15:00:00-03:00`), locationId: almox.id, freight: 45, notes: "Reposição mensal de gás e filtros." })
+      .returning();
+    const items1: [string, number][] = [["GAS-410A", 11.3], ["FILT-UNIV", 40], ["LIMP-SERP", 20]];
+    let total1 = 0;
+    for (const [sku, q] of items1) {
+      const p = P(sku);
+      await db.insert(s.purchaseOrderItems).values({ purchaseOrderId: po1.id, productId: p.id, quantity: q, unitCost: p.costPrice, receivedQuantity: q });
+      await moveStock(db, { productId: p.id, locationId: almox.id, type: "entrada", quantity: q, unitCost: p.costPrice, purchaseOrderId: po1.id, notes: "PC-00001" });
+      total1 += q * p.costPrice;
+    }
+    const [pay1] = await db
+      .insert(s.payables)
+      .values({ supplierId: suppliers[0].id, categoryId: C("Fornecedores / peças"), description: "Pedido PC-00001 — Frigelar Distribuidora", documentNumber: "NF 41.552", dueDate: addDays(today, 9), amount: Math.round((total1 + 45) * 100) / 100, purchaseOrderId: po1.id })
+      .returning();
+    await db.update(s.purchaseOrders).set({ total: Math.round(total1 * 100) / 100, payableId: pay1.id }).where(sql`${s.purchaseOrders.id} = ${po1.id}`);
+
+    const [po2] = await db
+      .insert(s.purchaseOrders)
+      .values({ supplierId: suppliers[1].id, status: "enviado", orderDate: addDays(today, -2), expectedDate: addDays(today, 3), locationId: almox.id, notes: "Capacitores e contatores para corretivas." })
+      .returning();
+    let total2 = 0;
+    for (const [sku, q] of [["CAP-35", 12], ["CAP-45", 8], ["CONT-30A", 6]] as [string, number][]) {
+      const p = P(sku);
+      await db.insert(s.purchaseOrderItems).values({ purchaseOrderId: po2.id, productId: p.id, quantity: q, unitCost: p.costPrice });
+      total2 += q * p.costPrice;
+    }
+    await db.update(s.purchaseOrders).set({ total: Math.round(total2 * 100) / 100 }).where(sql`${s.purchaseOrders.id} = ${po2.id}`);
   }
 
   console.log("→ comissões e histórico de OMs…");
@@ -507,20 +540,24 @@ async function main() {
     }
   }
 
-  // Corretivas avulsas concluídas e cobradas
-  for (let i = 0; i < 8; i++) {
-    const day = addDays(today, -int(5, 160));
+  // Corretivas e instalações avulsas concluídas e cobradas (fora da cobertura dos contratos)
+  const allCustomers = await db.query.customers.findMany({ with: { equipment: true } });
+  const withEquipment = allCustomers.filter((c) => c.equipment.length > 0);
+  for (let i = 0; i < 34; i++) {
+    const day = addDays(today, -int(3, 175));
     const tech = pick(techs);
-    const labor = pick([180, 220, 250, 320, 450]);
+    const labor = pick([180, 220, 250, 320, 450, 650, 890]);
+    const cust = i < 8 ? { id: avulso.id, equipment: [avEq] } : pick(withEquipment);
+    const eqp = pick(cust.equipment);
     const [wo] = await db
       .insert(s.workOrders)
       .values({
         type: pick(["corretiva", "corretiva", "instalacao"] as const),
         origin: "manual",
         status: "concluida",
-        customerId: avulso.id,
-        siteId: avSite.id,
-        equipmentId: avEq.id,
+        customerId: cust.id,
+        siteId: eqp.siteId,
+        equipmentId: eqp.id,
         technicianId: tech.id,
         scheduledDate: day,
         title: pick(["Aparelho não gela", "Vazamento de água na evaporadora", "Ruído na condensadora", "Instalação de split 12.000 BTU/h"]),
@@ -532,7 +569,7 @@ async function main() {
         solution: "Diagnóstico e correção realizados; teste de funcionamento aprovado.",
       })
       .returning();
-    const [rec] = await db.insert(s.receivables).values({ customerId: avulso.id, workOrderId: wo.id, categoryId: C("Serviços avulsos"), kind: "servico", description: `OM-${String(wo.number).padStart(6, "0")} — ${wo.title}`, dueDate: addDays(day, 5), amount: labor, status: "pago", paidAmount: labor, paidAt: new Date(`${addDays(day, 2)}T10:00:00-03:00`), paymentMethod: "pix", bankAccountId: bank.id }).returning();
+    const [rec] = await db.insert(s.receivables).values({ customerId: cust.id, workOrderId: wo.id, categoryId: C("Serviços avulsos"), kind: "servico", description: `OM-${String(wo.number).padStart(6, "0")} — ${wo.title}`, dueDate: addDays(day, 5), amount: labor, status: "pago", paidAmount: labor, paidAt: new Date(`${addDays(day, 2)}T10:00:00-03:00`), paymentMethod: "pix", bankAccountId: bank.id }).returning();
     await db.update(s.workOrders).set({ receivableId: rec.id }).where(sql`${s.workOrders.id} = ${wo.id}`);
     const rule = pickRule(rules, tech.id, wo.type);
     if (rule) {
@@ -572,6 +609,20 @@ async function main() {
   console.log("→ rodando a rotina diária (OMs e mensalidades)…");
   const summary = await runDaily("seed");
   console.log(summary);
+
+  // Mensalidades já vencidas: a maioria foi paga em dia; algumas ficam em atraso (e a da cliente do portal, para a demonstração do Pix)
+  const portalCustomer = await db.query.customers.findFirst({ where: sql`${s.customers.email} = 'cliente@imperiumtec.com.br'` });
+  const dueNow = await db.query.receivables.findMany({
+    where: sql`${s.receivables.kind} = 'mensalidade' and ${s.receivables.status} = 'aberto' and ${s.receivables.dueDate} < ${today}`,
+    orderBy: (r, { asc }) => [asc(r.dueDate)],
+  });
+  for (const [i, r] of dueNow.entries()) {
+    if (r.customerId === portalCustomer?.id || i % 6 === 5) continue;
+    await db
+      .update(s.receivables)
+      .set({ status: "pago", paidAmount: r.amount, paidAt: new Date(`${addDays(r.dueDate, -int(0, 3))}T11:00:00-03:00`), paymentMethod: pick(["pix", "pix", "boleto", "transferencia"] as const), bankAccountId: bank.id })
+      .where(sql`${s.receivables.id} = ${r.id}`);
+  }
 
   // Algumas OMs de hoje já em andamento para o app do técnico ficar vivo
   const todays = await db.query.workOrders.findMany({ where: sql`${s.workOrders.status} = 'agendada' and ${s.workOrders.scheduledDate} <= ${addDays(today, 2)}` , limit: 6 });

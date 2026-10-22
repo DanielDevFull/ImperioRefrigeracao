@@ -18,7 +18,8 @@ import type { PayData } from "../_lib/pay";
 import { submitProofAction } from "../mensalidades/actions";
 
 const sheetClass = cn(
-  "frost-edge gap-0 overflow-y-auto p-0 sm:max-w-md",
+  // minmax(0,1fr): o conteúdo não alarga a folha além da tela (estourava em 360px)
+  "frost-edge grid-cols-[minmax(0,1fr)] gap-0 overflow-y-auto p-0 sm:max-w-md",
   // Escuro: gelo profundo (do glacier ao quase abismo). Claro: folha branca que assenta no gelo da página.
   "bg-[linear-gradient(180deg,rgb(21_42_82/0.97),rgb(8_16_34/0.98))] light:bg-[linear-gradient(180deg,var(--night)_40%,color-mix(in_srgb,var(--abyss)_65%,var(--night)))]",
   "ring-1 ring-rime shadow-[0_30px_80px_-30px_var(--shade-strong)]",
@@ -207,7 +208,7 @@ function PixBlock({ code, qr, merchant }: { code: string; qr: React.ReactNode; m
             readOnly
             value={code}
             onFocus={(e) => e.currentTarget.select()}
-            className="min-w-0 flex-1 truncate rounded-lg border border-input bg-abyss/50 px-3 font-mono text-xs text-frost outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            className="w-0 min-w-0 flex-1 truncate rounded-lg border border-input bg-abyss/50 px-3 font-mono text-xs text-frost outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           <Button type="button" size="lg" onClick={copy} className="relative min-w-[8.5rem] overflow-hidden">
             <AnimatePresence mode="popLayout" initial={false}>
@@ -313,7 +314,7 @@ function ProofUpload({
             htmlFor={`proof-${receivableId}`}
             className={cn(
               "mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed px-4 py-3.5 transition-colors",
-              file ? "border-ice/40 bg-ice/8" : "border-rime-strong hover:border-ice/40 hover:bg-ice/5",
+              file ? "border-ice/40 bg-ice/8" : "border-rime-strong light:border-steel/50 hover:border-ice/40 hover:bg-ice/5",
               error && "border-gauge-red/50",
             )}
           >

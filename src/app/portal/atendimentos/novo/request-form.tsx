@@ -258,7 +258,7 @@ function Choice({ selected, onSelect, children }: { selected: boolean; onSelect:
       <span
         className={cn(
           "grid size-5 shrink-0 place-items-center rounded-full ring-1 transition-colors",
-          selected ? "bg-ice text-abyss ring-ice" : "ring-steel/40",
+          selected ? "bg-ice text-abyss ring-ice" : "ring-steel/40 light:ring-steel/70",
         )}
       >
         {selected && <Check className="size-3" strokeWidth={3} />}

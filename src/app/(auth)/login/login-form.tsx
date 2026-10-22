@@ -57,7 +57,7 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-11"
+          className="h-11 light:bg-night"
           placeholder="voce@empresa.com.br"
         />
       </div>
@@ -71,7 +71,7 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-11 pr-11"
+            className="h-11 pr-11 light:bg-night"
           />
           <button
             type="button"
@@ -91,7 +91,7 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             role="alert"
-            className={cn("rounded-lg border border-gauge-red/30 bg-gauge-red/10 px-3 py-2 text-sm", toneOnTint.red)}
+            className={cn("rounded-lg border border-gauge-red/30 bg-gauge-red/10 px-3 py-2 text-sm light:bg-notice-red", toneOnTint.red)}
           >
             {error}
           </motion.p>

@@ -95,7 +95,7 @@ export function RatingDisplay({ value, className }: { value: number; className?:
           className={cn(
             "size-4",
             // no claro o brilho borra o floco pequeno: fica só o traço nítido
-            n <= value ? "text-ice drop-shadow-[0_0_6px_color-mix(in_srgb,var(--ice)_50%,transparent)] light:drop-shadow-none" : "text-steel/30",
+            n <= value ? "text-ice drop-shadow-[0_0_6px_color-mix(in_srgb,var(--ice)_50%,transparent)] light:drop-shadow-none" : "text-steel/30 light:text-steel/55",
           )}
         />
       ))}

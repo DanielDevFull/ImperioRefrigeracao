@@ -258,7 +258,7 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
         )}
 
         {pmoc && (
-          <div className="mt-3 flex items-center gap-3 rounded-2xl bg-mint/8 px-4 py-3 ring-1 ring-mint/25">
+          <div className="mt-3 flex items-center gap-3 rounded-2xl bg-mint/8 px-4 py-3 ring-1 ring-mint/25 light:bg-notice-mint">
             <ShieldCheck className="size-5 shrink-0 text-mint" />
             <div>
               <p className={cn("text-sm font-medium", toneOnTint.mint)}>PMOC vigente até {formatDate(pmoc.validUntil)}</p>

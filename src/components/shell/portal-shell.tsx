@@ -65,7 +65,7 @@ export function PortalShell({ topbar, children }: { topbar: React.ReactNode; chi
                 <Link
                   href={it.href}
                   aria-current={active ? "page" : undefined}
-                  className={cn("flex h-16 flex-col items-center justify-center gap-1 text-[0.68rem]", active ? "text-silver" : "text-steel")}
+                  className={cn("flex h-16 flex-col items-center justify-center gap-1 text-[0.68rem] max-[380px]:text-[0.62rem] max-[380px]:tracking-tight", active ? "text-silver" : "text-steel")}
                 >
                   <Icon className={cn("size-5", active && "text-ice")} />
                   {it.label}

@@ -24,7 +24,7 @@ export function UserMenu({ name, email, role, extra }: { name: string; email: st
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 rounded-full p-0.5 pr-0.5 outline-none transition-colors hover:bg-ice/10 md:pr-3">
+      <DropdownMenuTrigger className="flex items-center gap-2 rounded-full p-0.5 pr-0.5 outline-none transition-colors hover:bg-ice/10 focus-visible:ring-2 focus-visible:ring-ring md:pr-3">
         <span className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-ice/40 to-ice-deep/30 text-xs font-semibold text-silver ring-1 ring-ice/30">
           {initials(name)}
         </span>

@@ -175,7 +175,8 @@
     /* no claro o cartão é branco: estados "muted" do shadcn (hover de linha, skeleton, rodapé de diálogo) usam glacier */
     --muted: var(--glacier);
     --primary-foreground: #ffffff;
-    --input: rgb(20 50 100 / 0.26);
+    /* borda de campo ≥ 3:1 no branco (campos sem preenchimento no claro) */
+    --input: rgb(20 50 100 / 0.45);
     --sidebar: rgb(255 255 255 / 0.8);
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: rgb(23 105 201 / 0.08);

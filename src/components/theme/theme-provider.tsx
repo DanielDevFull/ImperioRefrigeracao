@@ -2,7 +2,6 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
-import { saveThemeAction } from "@/lib/theme-actions";
 import { themeClass, themeColors, type ResolvedTheme, type ThemePref } from "@/lib/theme";
 
 type ThemeContextValue = {
@@ -88,7 +87,12 @@ export function ThemeProvider({ initial, children }: { initial: ThemePref; child
       vt.finished.finally(() => root.classList.remove("theme-switching"));
     }
 
-    saveThemeAction(pref).catch(() => {
+    fetch("/api/tema", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ tema: pref }),
+      keepalive: true,
+    }).catch(() => {
       // sem conexão: a troca vale nesta tela; volta a valer a anterior no próximo carregamento
     });
   }, []);

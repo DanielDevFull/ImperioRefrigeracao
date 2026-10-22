@@ -187,7 +187,7 @@ export default async function PedidoPage({ params }: PageProps<"/admin/compras/p
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
           <Panel
             flush
             title="Itens"
@@ -229,7 +229,7 @@ export default async function PedidoPage({ params }: PageProps<"/admin/compras/p
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Panel
             title="Fornecedor"
             actions={
@@ -371,9 +371,9 @@ function OrderTimeline({ order }: { order: NonNullable<Awaited<ReturnType<typeof
               reached(i) ? (i === 2 && stepIndex === 2 ? "bg-brass" : i === 2 ? "bg-mint" : "bg-ice") : "bg-ice/10",
             )}
           />
-          <p className={cn("mt-2 truncate text-xs", reached(i) ? "text-silver" : "text-steel/70")}>
+          <p className={cn("mt-2 text-xs sm:truncate", reached(i) ? "text-silver" : "text-steel/70")}>
             {s.label}
-            {s.date && <span className="ml-1.5 text-steel">{s.date}</span>}
+            {s.date && <span className="block text-steel sm:ml-1.5 sm:inline">{s.date}</span>}
           </p>
         </li>
       ))}

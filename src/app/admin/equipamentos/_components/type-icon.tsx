@@ -10,27 +10,36 @@ import {
   Snowflake,
   SquareDashed,
   Warehouse,
-  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Ícones aceitos em equipment_types.icon (nomes do lucide em kebab-case). */
-const ICONS: Record<string, LucideIcon> = {
-  "air-vent": AirVent,
-  "square-dashed": SquareDashed,
-  "panel-top": PanelTop,
-  "app-window": AppWindow,
-  network: Network,
-  server: Server,
-  box: Box,
-  warehouse: Warehouse,
-  refrigerator: Refrigerator,
-  "glass-water": GlassWater,
-  snowflake: Snowflake,
-};
-
-export function typeIconFor(name: string | null | undefined): LucideIcon {
-  return (name && ICONS[name]) || AirVent;
+/** Ícone lucide a partir de equipment_types.icon (nome em kebab-case). */
+function Glyph({ name, className }: { name: string | null | undefined; className?: string }) {
+  const p = { className, strokeWidth: 1.75 };
+  switch (name) {
+    case "square-dashed":
+      return <SquareDashed {...p} />;
+    case "panel-top":
+      return <PanelTop {...p} />;
+    case "app-window":
+      return <AppWindow {...p} />;
+    case "network":
+      return <Network {...p} />;
+    case "server":
+      return <Server {...p} />;
+    case "box":
+      return <Box {...p} />;
+    case "warehouse":
+      return <Warehouse {...p} />;
+    case "refrigerator":
+      return <Refrigerator {...p} />;
+    case "glass-water":
+      return <GlassWater {...p} />;
+    case "snowflake":
+      return <Snowflake {...p} />;
+    default:
+      return <AirVent {...p} />;
+  }
 }
 
 /** Ícone do tipo de equipamento num disco gelado. */
@@ -43,7 +52,6 @@ export function TypeIcon({
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }) {
-  const Icon = typeIconFor(icon);
   const box = { sm: "size-7", md: "size-9", lg: "size-12", xl: "size-16" }[size];
   const glyph = { sm: "size-3.5", md: "size-4", lg: "size-6", xl: "size-8" }[size];
   return (
@@ -55,7 +63,7 @@ export function TypeIcon({
         className,
       )}
     >
-      <Icon className={glyph} strokeWidth={1.75} />
+      <Glyph name={icon} className={glyph} />
     </span>
   );
 }

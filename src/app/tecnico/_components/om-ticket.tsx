@@ -21,7 +21,7 @@ function MapButton({ href, compact = false }: { href: string; compact?: boolean 
       )}
     >
       <Navigation className="size-4" />
-      Abrir no mapa
+      {compact ? "Mapa" : "Abrir no mapa"}
     </a>
   );
 }
@@ -109,7 +109,7 @@ export function OmTicket({
           <p className="min-w-0 flex-1 truncate text-[0.82rem] text-steel">{address || "Endereço não cadastrado"}</p>
           {map && (
             <span className="pointer-events-auto">
-              <MapButton href={map} compact />
+              <MapButton href={map} />
             </span>
           )}
         </div>
@@ -134,10 +134,8 @@ export function TicketList({ groups, today }: { groups: TicketGroup[]; today: st
         const map = site ? mapsLink(site) : null;
         return (
           <li key={`${g.siteId}-${gi}`} className="rounded-[1.4rem] bg-night/40 p-1.5 ring-1 ring-rime">
-            <div className="flex items-center gap-2.5 px-2.5 pb-2 pt-1.5">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-ice/10 text-ice ring-1 ring-ice/25">
-                <MapPin className="size-4" />
-              </span>
+            <div className="flex items-center gap-2 pb-2 pl-2.5 pr-0.5 pt-1">
+              <MapPin className="size-4 shrink-0 text-ice" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-silver">{g.rows.length} equipamentos neste endereço</p>
                 <p className="truncate text-xs text-steel">{addressLine(site) || site?.name}</p>

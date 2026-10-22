@@ -33,7 +33,7 @@ function MoveForm({
 
   return (
     <form
-      className="grid gap-4"
+      className="grid grid-cols-1 gap-4"
       onSubmit={(e) => {
         e.preventDefault();
         onMove(item.id, { technicianId: tech || null, date: date || null, time: time || null });

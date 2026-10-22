@@ -24,7 +24,7 @@ export function NotesForm({
   });
   const bind = (k: keyof typeof v) => ({ value: v[k], onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => setV((o) => ({ ...o, [k]: e.target.value })) });
   return (
-    <ActionForm action={action} pending={pending} className="grid gap-4 sm:grid-cols-2">
+    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <Field label="Problema relatado" htmlFor="description" error={fe.description} className="sm:col-span-2">
         <Textarea id="description" name="description" rows={3} maxLength={4000} {...bind("description")} placeholder="O que o cliente relatou ou o serviço pedido." />
       </Field>

@@ -25,6 +25,7 @@ import { todayISO } from "@/lib/dates";
 import { formatBTU, formatDate, formatEquipmentCode, formatLongDate, formatPhone, whatsappLink } from "@/lib/format";
 import { activeWorkOrderStatuses, labelOf, workOrderType } from "@/lib/labels";
 import { cn } from "@/lib/utils";
+import { scheduleDateFor } from "@/server/core/schedule";
 import { getSettings } from "@/server/settings";
 import { TypeIcon } from "../../admin/equipamentos/_components/type-icon";
 import { forecastVisits } from "../../admin/equipamentos/_lib/forecast";
@@ -137,7 +138,7 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
           link.lastGeneratedDueDate,
         )[0]
       : undefined;
-  const next = nextOpen ?? forecast?.date ?? null;
+  const next = nextOpen ?? (forecast ? scheduleDateFor(forecast.date, today, settings.worksSaturday) : null);
   const last = recent[0];
 
   const contact = settings.whatsapp ?? settings.phone;

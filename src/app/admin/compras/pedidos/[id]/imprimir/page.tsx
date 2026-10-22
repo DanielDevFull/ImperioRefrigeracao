@@ -72,9 +72,8 @@ export default async function ImprimirPedidoPage({ params }: PageProps<"/admin/c
               <p className="text-lg font-semibold text-slate-900">{settings.companyName}</p>
               {settings.document && <p className="text-slate-500">CNPJ {formatDocument(settings.document)}</p>}
               {address && <p className="text-slate-500">{address}</p>}
-              <p className="text-slate-500">
-                {[settings.phone ? formatPhone(settings.phone) : null, settings.email].filter(Boolean).join("  |  ")}
-              </p>
+              {settings.phone && <p className="text-slate-500">{formatPhone(settings.phone)}</p>}
+              {settings.email && <p className="text-slate-500">{settings.email}</p>}
             </div>
           </div>
           <div className="sm:text-right">
@@ -95,7 +94,8 @@ export default async function ImprimirPedidoPage({ params }: PageProps<"/admin/c
                 <p className="font-medium text-slate-900">{order.supplier.name}</p>
                 {order.supplier.document && <p>CNPJ {formatDocument(order.supplier.document)}</p>}
                 {order.supplier.contactName && <p>A/C {order.supplier.contactName}</p>}
-                <p>{[order.supplier.phone ? formatPhone(order.supplier.phone) : null, order.supplier.email].filter(Boolean).join("  |  ")}</p>
+                {order.supplier.phone && <p>{formatPhone(order.supplier.phone)}</p>}
+                {order.supplier.email && <p>{order.supplier.email}</p>}
               </>
             ) : (
               <p>Não definido</p>
@@ -112,18 +112,21 @@ export default async function ImprimirPedidoPage({ params }: PageProps<"/admin/c
         <table className="mt-6 w-full border-collapse">
           <thead>
             <tr className="border-b border-slate-300 text-left text-xs text-slate-500">
-              <th className="py-2 pr-2 font-medium">Código</th>
+              <th className="hidden py-2 pr-2 font-medium sm:table-cell">Código</th>
               <th className="py-2 pr-2 font-medium">Descrição</th>
               <th className="py-2 pr-2 text-right font-medium">Quantidade</th>
-              <th className="py-2 pr-2 text-right font-medium">Valor unitário</th>
+              <th className="py-2 pr-2 text-right font-medium">Unitário</th>
               <th className="py-2 text-right font-medium">Subtotal</th>
             </tr>
           </thead>
           <tbody>
             {order.items.map((i) => (
               <tr key={i.id} className="border-b border-slate-100 align-top">
-                <td className="py-2 pr-2 text-slate-500">{i.product.sku ?? "—"}</td>
-                <td className="py-2 pr-2 text-slate-900">{i.product.name}</td>
+                <td className="hidden py-2 pr-2 text-slate-500 sm:table-cell">{i.product.sku ?? "—"}</td>
+                <td className="py-2 pr-2 text-slate-900">
+                  {i.product.name}
+                  {i.product.sku && <span className="block text-xs text-slate-500 sm:hidden">{i.product.sku}</span>}
+                </td>
                 <td className="whitespace-nowrap py-2 pr-2 text-right tabular-nums">{formatQty(i.quantity, i.product.unit)}</td>
                 <td className="whitespace-nowrap py-2 pr-2 text-right tabular-nums">{formatBRL(i.unitCost)}</td>
                 <td className="whitespace-nowrap py-2 text-right tabular-nums">{formatBRL(round2(i.quantity * i.unitCost))}</td>

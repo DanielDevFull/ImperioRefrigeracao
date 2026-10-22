@@ -15,7 +15,7 @@ function BillingForm({ id, laborAmount, billable, onDone }: { id: string; laborA
   useActionToast(state, { onSuccess: onDone });
   const [bill, setBill] = useState(billable);
   return (
-    <ActionForm action={action} pending={pending} className="grid gap-4">
+    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-4">
       <Field label="Mão de obra (R$)" htmlFor="bill-labor" error={state.fieldErrors?.laborAmount}>
         <MaskedInput id="bill-labor" name="laborAmount" mask="money" className="h-9 text-right tabular-nums" defaultValue={laborAmount} />
       </Field>

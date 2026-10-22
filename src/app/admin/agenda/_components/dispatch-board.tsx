@@ -380,8 +380,8 @@ export function DispatchBoard({
       <div className="panel overflow-x-auto">
         {mode === "semana" ? (
           <div
-            className="grid min-w-[56rem]"
-            style={{ gridTemplateColumns: `11.5rem repeat(${days.length}, minmax(9.5rem, 1fr))` }}
+            className="grid min-w-[50rem] [--tech-col:7.5rem] sm:min-w-[56rem] sm:[--tech-col:11.5rem]"
+            style={{ gridTemplateColumns: `var(--tech-col) repeat(${days.length}, minmax(9.5rem, 1fr))` }}
             role="grid"
             aria-label="Quadro de despacho da semana"
           >
@@ -446,7 +446,7 @@ export function DispatchBoard({
             })}
           </div>
         ) : (
-          <div className="grid min-w-[64rem]" style={{ gridTemplateColumns: "11.5rem 9.5rem minmax(0,1fr)" }} aria-label="Quadro de despacho do dia">
+          <div className="grid min-w-[60rem] [--tech-col:7.5rem] sm:min-w-[64rem] sm:[--tech-col:11.5rem]" style={{ gridTemplateColumns: "var(--tech-col) 9.5rem minmax(0,1fr)" }} aria-label="Quadro de despacho do dia">
             <div className="sticky left-0 z-20 bg-night px-3 py-2.5 text-xs text-steel">Técnico</div>
             <div className="border-l border-rime px-2.5 py-2.5 text-xs text-steel">Sem horário</div>
             <div className="relative border-l border-rime py-2.5">

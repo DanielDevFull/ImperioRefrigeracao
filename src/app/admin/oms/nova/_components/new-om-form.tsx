@@ -117,7 +117,7 @@ export function NewOmForm({
   const tech = technicians.find((t) => t.id === technicianId);
 
   return (
-    <ActionForm action={action} pending={pending} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="space-y-6">
         <Panel title="Serviço" description="O que será feito e com qual urgência.">
           <div className="space-y-5">
@@ -139,7 +139,7 @@ export function NewOmForm({
         </Panel>
 
         <Panel title="Cliente e equipamento" description="Onde o atendimento acontece.">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Cliente" htmlFor="customer" required error={fe.customerId} className="sm:col-span-2">
               <CustomerPicker id="customer" customers={customers} value={customerId} onChange={chooseCustomer} invalid={!!fe.customerId} />
               <input type="hidden" name="customerId" value={customerId ?? ""} />
@@ -252,7 +252,7 @@ export function NewOmForm({
         </Panel>
 
         <Panel title="Agendamento" description="Com técnico e data, a OM já nasce agendada e o técnico é avisado.">
-          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem_8rem]">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_10rem_8rem]">
             <Field label="Técnico" htmlFor="technicianId" error={fe.technicianId}>
               <select
                 id="technicianId"
@@ -283,7 +283,7 @@ export function NewOmForm({
         </Panel>
 
         <Panel title="Valores" description="Mão de obra cobrada do cliente; materiais são lançados na OM.">
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field
               label="Mão de obra (R$)"
               htmlFor="laborAmount"

@@ -61,7 +61,7 @@ function ReasonDialog({
           <DialogTitle className="font-sans text-base font-semibold">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <ActionForm action={formAction} pending={pending} className="grid gap-4">
+        <ActionForm action={formAction} pending={pending} className="grid grid-cols-1 gap-4">
           <Field label={label} htmlFor="reason" error={state.fieldErrors?.reason} required>
             <Textarea id="reason" name="reason" rows={3} placeholder={placeholder} maxLength={500} autoFocus />
           </Field>

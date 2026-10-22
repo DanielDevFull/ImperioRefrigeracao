@@ -138,7 +138,8 @@ export async function listEquipment({
     .limit(PAGE_SIZE)
     .offset((page - 1) * PAGE_SIZE);
 
-  // Previsão pelo plano para quem não tem OM em aberto
+  // Previsão pelo plano para quem não tem OM em aberto (no dia útil em que a OM seria agendada)
+  const settings = await getSettings();
   const planIds = [...new Set(rows.map((r) => r.planId).filter((v): v is string => Boolean(v)))];
   const tasks = planIds.length
     ? await db.query.maintenancePlanTasks.findMany({ where: inArray(maintenancePlanTasks.planId, planIds) })
@@ -161,7 +162,7 @@ export async function listEquipment({
         1,
         r.lastGeneratedDueDate,
       );
-      if (first) nextVisit = { date: first.date, kind: "previsao" };
+      if (first) nextVisit = { date: scheduleDateFor(first.date, today, settings.worksSaturday), kind: "previsao" };
     }
     return { ...r, nextVisit };
   });

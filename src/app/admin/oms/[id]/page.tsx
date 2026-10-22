@@ -126,7 +126,7 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
       />
 
       {/* Ficha: cliente, local, equipamento e agendamento */}
-      <section className="panel mb-6 grid gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="panel mb-6 grid grid-cols-1 gap-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
         <Block icon={UserRound} label="Cliente">
           <Link href={`/admin/clientes/${wo.customer.id}`} className="block truncate font-medium text-silver hover:text-frost">
             {customerName}
@@ -205,7 +205,7 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
         </Block>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
         <div className="min-w-0 space-y-6">
           <Panel
             flush

@@ -23,7 +23,7 @@ function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
   const [state, action, pending] = useActionState(uploadPhotosAction.bind(null, id), initialActionState);
   useActionToast(state, { onSuccess: onDone });
   return (
-    <ActionForm action={action} pending={pending} className="grid gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
+    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
       <Field label="Tipo" htmlFor="photo-kind" error={state.fieldErrors?.kind}>
         <select id="photo-kind" name="kind" className={nativeSelectClass} defaultValue="antes">
           {PHOTO_KINDS.map((k) => (

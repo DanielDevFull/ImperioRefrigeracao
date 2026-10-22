@@ -115,7 +115,7 @@ export default async function ClientesPage({ searchParams }: PageProps<"/admin/c
                           {c.tradeName || c.name}
                         </Link>
                         <span className="block truncate text-xs text-steel">
-                          {c.tradeName ? c.name : c.status === "inativo" ? "Inativo" : " "}
+                          {c.tradeName ? c.name : c.phone ? formatPhone(c.phone) : "Pessoa física"}
                         </span>
                       </TableCell>
                       <TableCell>

@@ -101,7 +101,7 @@ export default async function FornecedorPage({ params, searchParams }: PageProps
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
           <Panel flush title="Pedidos de compra" description="Do mais recente para o mais antigo.">
             {orders.rows.length ? (
               <>
@@ -149,7 +149,7 @@ export default async function FornecedorPage({ params, searchParams }: PageProps
           </Panel>
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Panel title="Cadastro">
             <DetailList
               columns={1}

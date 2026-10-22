@@ -33,7 +33,7 @@ function AssignForm({
   const techName = technicians.find((t) => t.id === tech)?.name;
 
   return (
-    <ActionForm action={action} pending={pending} className="grid gap-4">
+    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-4">
       <Field label="Técnico" htmlFor="assign-tech" error={state.fieldErrors?.technicianId}>
         <select id="assign-tech" name="technicianId" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
           <option value="">Sem técnico</option>

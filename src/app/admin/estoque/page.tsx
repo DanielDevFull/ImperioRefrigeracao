@@ -126,7 +126,7 @@ async function ProductsSection({
       <div className="flex flex-col gap-3 border-b border-rime p-4 xl:flex-row xl:items-center">
         <SearchInput placeholder="Buscar por nome, SKU ou código de barras" className="xl:w-auto xl:min-w-56 xl:flex-1" />
         <FilterTabs
-          className="w-fit shrink-0"
+          className="w-full flex-nowrap overflow-x-auto sm:w-fit [&>button]:shrink-0 [&>button]:whitespace-nowrap shrink-0"
           param="filtro"
           options={[
             { value: "", label: "Todos", count: counts.all },

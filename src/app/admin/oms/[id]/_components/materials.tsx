@@ -70,7 +70,7 @@ function AddMaterialForm({
 
   return (
     <ActionForm action={action} pending={pending} className="space-y-4 border-t border-rime bg-night/30 px-5 py-4">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Field label="Produto" htmlFor="mat-product" error={fe.productId} required>
           <select id="mat-product" name="productId" className={nativeSelectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
             <option value="">Escolha o produto</option>

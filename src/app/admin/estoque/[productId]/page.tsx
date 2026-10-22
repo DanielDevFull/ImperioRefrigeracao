@@ -343,7 +343,11 @@ export default async function ProdutoPage({ params, searchParams }: PageProps<"/
                       <span className="min-w-0 truncate">{m.locationName}</span>
                       <span className="shrink-0 tabular-nums">{formatDateTime(m.createdAt)}</span>
                     </div>
-                    <MovementLinks m={m} />
+                    {(m.workOrderId || m.purchaseOrderId) && (
+                      <div className="mt-1">
+                        <MovementLinks m={m} />
+                      </div>
+                    )}
                   </li>
                 );
               })}

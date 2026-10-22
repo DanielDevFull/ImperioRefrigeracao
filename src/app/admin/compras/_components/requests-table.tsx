@@ -123,9 +123,23 @@ export function RequestsTable({ requests, suppliers }: { requests: OpenRequest[]
               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-steel">
                 <span className="tabular-nums text-silver">{formatQty(r.quantity, r.unit)}</span>
                 <ReasonBadge reason={r.reason} />
-                <Origin r={r} />
+                <Origin r={r} compact />
               </div>
+              {r.notes && <p className="mt-1 line-clamp-2 text-xs text-steel">{r.notes}</p>}
             </div>
+            {r.status === "aberta" && (
+              <ConfirmAction
+                action={cancelRequest.bind(null, r.id)}
+                title="Cancelar esta solicitação?"
+                description={`${formatQty(r.quantity, r.unit)} de ${r.productName} sai da fila de compras.`}
+                confirmLabel="Cancelar solicitação"
+                destructive
+                variant="ghost"
+                className="shrink-0 text-steel"
+              >
+                Cancelar
+              </ConfirmAction>
+            )}
           </li>
         ))}
       </ul>
@@ -226,7 +240,7 @@ function ReasonBadge({ reason }: { reason: string }) {
   return <ToneBadge tone={l.tone}>{l.label}</ToneBadge>;
 }
 
-function Origin({ r }: { r: OpenRequest }) {
+function Origin({ r, compact = false }: { r: OpenRequest; compact?: boolean }) {
   return (
     <span className="flex flex-wrap items-center gap-2 text-xs">
       {r.purchaseOrderId && r.purchaseOrderNumber != null && (
@@ -239,7 +253,7 @@ function Origin({ r }: { r: OpenRequest }) {
           {formatOM(r.workOrderNumber)}
         </Link>
       ) : (
-        !r.purchaseOrderId && <span className="text-steel/60">—</span>
+        !r.purchaseOrderId && !compact && <span className="text-steel/60">—</span>
       )}
     </span>
   );

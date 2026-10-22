@@ -102,7 +102,7 @@ export function OmChip({
           {when ? (
             <span className={cn("readout font-semibold", late ? "text-gauge-red" : "text-silver")}>{when}</span>
           ) : (
-            !compact && <span className="text-[0.68rem] text-steel">Sem horário</span>
+            !compact && <span className="whitespace-nowrap text-[0.68rem] text-steel">Sem horário</span>
           )}
           {compact ? (
             <span className="truncate font-medium text-silver">{item.customerName}</span>

@@ -238,8 +238,14 @@ export async function changeWorkOrderStatus(
         .update(receivables)
         .set({ status: "cancelado", notes: "OM cancelada." })
         .where(and(eq(receivables.id, wo.receivableId), inArray(receivables.status, ["aberto", "em_analise"])));
+      // se a OM for reativada e concluída, gera uma cobrança nova
+      patch.receivableId = null;
     }
     await reverseWorkOrderMaterials(tx, wo.id, actor);
+  }
+  if (from === "cancelada" && to === "aberta") {
+    // os materiais continuam lançados na OM: volta a dar baixa no estoque
+    await reconsumeWorkOrderMaterials(tx, wo.id, wo.number, actor);
   }
 
   const [updated] = await tx.update(workOrders).set(patch).where(eq(workOrders.id, id)).returning();
@@ -377,8 +383,11 @@ export async function assignWorkOrder(
   actor: Actor,
 ) {
   const wo = await getWorkOrderOrThrow(tx, id);
-  if (["concluida", "cancelada", "em_execucao"].includes(wo.status)) {
-    throw new Error("Não é possível reatribuir uma OM em execução, concluída ou cancelada.");
+  if (["concluida", "cancelada", "em_execucao", "em_deslocamento"].includes(wo.status)) {
+    throw new Error("Não é possível reatribuir uma OM em campo, concluída ou cancelada.");
+  }
+  if (!technicianId && wo.status !== "aberta" && wo.status !== "agendada") {
+    throw new Error("Só é possível remover o técnico de OMs abertas ou agendadas.");
   }
   const date = scheduledDate === undefined ? wo.scheduledDate : scheduledDate;
   const nextStatus: WorkOrderStatus =
@@ -417,10 +426,22 @@ export async function assignWorkOrder(
 export async function addWorkOrderMaterial(
   tx: DbLike,
   workOrderId: string,
-  input: { productId: string; quantity: number; chargeCustomer?: boolean; unitPrice?: number; locationId?: string | null },
+  input: {
+    productId: string;
+    quantity: number;
+    chargeCustomer?: boolean;
+    unitPrice?: number;
+    locationId?: string | null;
+    /** id gerado no aparelho: um reenvio não baixa o estoque de novo */
+    clientId?: string | null;
+  },
   actor: Actor,
 ) {
   if (input.quantity <= 0) throw new Error("Informe uma quantidade maior que zero.");
+  if (input.clientId) {
+    const existing = await tx.query.workOrderMaterials.findFirst({ where: eq(workOrderMaterials.clientId, input.clientId) });
+    if (existing) return existing;
+  }
   const wo = await getWorkOrderOrThrow(tx, workOrderId);
   if (["concluida", "cancelada"].includes(wo.status)) throw new Error("A OM já foi encerrada.");
   const product = await tx.query.products.findFirst({ where: eq(products.id, input.productId) });
@@ -439,6 +460,7 @@ export async function addWorkOrderMaterial(
       unitCost: product.costPrice,
       unitPrice: input.unitPrice ?? product.salePrice,
       chargeCustomer: input.chargeCustomer ?? false,
+      clientId: input.clientId ?? null,
     })
     .returning();
   await moveStock(tx, {
@@ -474,6 +496,24 @@ export async function removeWorkOrderMaterial(tx: DbLike, materialId: string, ac
   }
   await tx.delete(workOrderMaterials).where(eq(workOrderMaterials.id, materialId));
   await logEvent(tx, m.workOrderId, { kind: "material", message: "Material removido.", actor });
+}
+
+/** Ao reativar uma OM cancelada, volta a dar baixa nos materiais que continuam lançados nela. */
+async function reconsumeWorkOrderMaterials(tx: DbLike, workOrderId: string, number: number, actor: Actor) {
+  const mats = await tx.query.workOrderMaterials.findMany({ where: eq(workOrderMaterials.workOrderId, workOrderId) });
+  for (const m of mats) {
+    if (!m.locationId) continue;
+    await moveStock(tx, {
+      productId: m.productId,
+      locationId: m.locationId,
+      type: "consumo_om",
+      quantity: -m.quantity,
+      unitCost: m.unitCost,
+      workOrderId,
+      userId: actor.userId,
+      notes: `${formatOM(number)} reativada`,
+    });
+  }
 }
 
 /** Devolve ao estoque os materiais de uma OM cancelada. */

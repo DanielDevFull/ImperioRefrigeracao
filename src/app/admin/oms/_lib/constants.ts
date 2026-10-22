@@ -37,7 +37,7 @@ export const ORIGINS = [
 export const BILLABLE_BY_DEFAULT = new Set(["corretiva", "instalacao", "visita_tecnica"]);
 
 /** Estados em que a OM não pode mais ser reatribuída/reagendada (regra do assignWorkOrder). */
-export const NOT_ASSIGNABLE = new Set(["em_execucao", "concluida", "cancelada"]);
+export const NOT_ASSIGNABLE = new Set(["em_deslocamento", "em_execucao", "concluida", "cancelada"]);
 
 /** Estados em que o checklist pode ser preenchido (regra do setTaskDone). */
 export const CHECKLIST_OPEN = new Set(["em_execucao", "pausada"]);

@@ -206,6 +206,7 @@ const materialSchema = z.object({
   productId: z.uuid({ message: "Escolha um material." }),
   quantity: z.number({ message: "Informe a quantidade." }).positive("Informe uma quantidade maior que zero.").max(9999, "Quantidade alta demais."),
   chargeCustomer: z.boolean(),
+  clientId: z.uuid().optional(),
 });
 
 /** Lança material aplicado (baixa no estoque do veículo do técnico). */
@@ -221,7 +222,12 @@ export async function addMaterialAction(input: z.input<typeof materialSchema>): 
       addWorkOrderMaterial(
         tx,
         wo.id,
-        { productId: parsed.data.productId, quantity: parsed.data.quantity, chargeCustomer: parsed.data.chargeCustomer },
+        {
+          productId: parsed.data.productId,
+          quantity: parsed.data.quantity,
+          chargeCustomer: parsed.data.chargeCustomer,
+          clientId: parsed.data.clientId,
+        },
         actorOf(user),
       ),
     );

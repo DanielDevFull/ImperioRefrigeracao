@@ -156,9 +156,14 @@ export const workOrderMaterials = pgTable(
     unitCost: money("unit_cost").default(0).notNull(),
     unitPrice: money("unit_price").default(0).notNull(),
     chargeCustomer: boolean("charge_customer").default(false).notNull(),
+    /** Id gerado no aparelho: impede lançamento duplicado em reenvio */
+    clientId: text("client_id"),
     createdAt,
   },
-  (t) => [index("work_order_materials_wo_idx").on(t.workOrderId)],
+  (t) => [
+    index("work_order_materials_wo_idx").on(t.workOrderId),
+    uniqueIndex("work_order_materials_client_id_uq").on(t.clientId),
+  ],
 );
 
 /** Linha do tempo / auditoria da OM. */

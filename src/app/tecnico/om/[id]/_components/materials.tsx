@@ -40,6 +40,8 @@ function AddMaterialSheet({
   const [qty, setQty] = useState("1");
   const [charge, setCharge] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // id desta tentativa de lançamento: se a resposta se perder e a pessoa tentar de novo, não baixa em dobro
+  const [clientId, setClientId] = useState(() => crypto.randomUUID());
   const [pending, start] = useTransition();
 
   const list = useMemo(() => {
@@ -68,6 +70,7 @@ function AddMaterialSheet({
   }
 
   function reset() {
+    setClientId(crypto.randomUUID());
     setSelected(null);
     setQuery("");
     setQty("1");
@@ -96,7 +99,7 @@ function AddMaterialSheet({
     setError(null);
     start(async () => {
       try {
-        const r = await addMaterialAction({ workOrderId, productId: selected.id, quantity: amount, chargeCustomer: charge });
+        const r = await addMaterialAction({ workOrderId, productId: selected.id, quantity: amount, chargeCustomer: charge, clientId });
         if (r.ok === false) {
           setError(r.error ?? "Não foi possível lançar o material.");
           return;

@@ -437,7 +437,8 @@ export async function addMaterialAction(id: string, _prev: MaterialState, fd: Fo
     const parsed = materialSchema.safeParse({
       productId: v.str("productId") ?? "",
       locationId: v.str("locationId"),
-      quantity: v.num("quantity") ?? undefined,
+      // aceita "0.5", "0,5" e "1.234,5" (quantidades fracionadas: kg de gás, metros de tubo)
+      quantity: v.money("quantity") ?? undefined,
       chargeCustomer: v.bool("chargeCustomer"),
       unitPrice: v.money("unitPrice"),
     });

@@ -1,7 +1,7 @@
 import "server-only";
 import { and, eq, inArray, lt } from "drizzle-orm";
 import { db } from "@/db";
-import { contractEquipment, receivables, technicianAbsences } from "@/db/schema";
+import { contractEquipment, receivables, technicianAbsences, technicians } from "@/db/schema";
 import { addDays, todayISO, type ISODate } from "@/lib/dates";
 import { formatEquipmentCode } from "@/lib/format";
 import { maxDaysOverdue } from "./core/billing";
@@ -90,6 +90,11 @@ export async function generateWorkOrders({
     absencesByTech.set(a.technicianId, [...(absencesByTech.get(a.technicianId) ?? []), a]);
   }
 
+  // técnico desativado não recebe OMs novas (ficam sem técnico, na bandeja de despacho)
+  const activeTechIds = new Set(
+    (await db.query.technicians.findMany({ where: eq(technicians.active, true), columns: { id: true } })).map((t) => t.id),
+  );
+
   for (const ce of eligible) {
     summary.equipmentChecked++;
     if (blockedCustomers.has(ce.contract.customerId)) {
@@ -114,6 +119,7 @@ export async function generateWorkOrders({
           const taskIds = new Set(tasksOn.map((t) => t.id));
           const scheduled = scheduleDateFor(due, today, settings.worksSaturday);
           let techId = ce.preferredTechnicianId ?? ce.contract.customer.defaultTechnicianId ?? null;
+          if (techId && !activeTechIds.has(techId)) techId = null;
           if (techId && isTechnicianAbsent(absencesByTech.get(techId) ?? [], scheduled)) techId = null;
           if (!techId) summary.withoutTechnician++;
 

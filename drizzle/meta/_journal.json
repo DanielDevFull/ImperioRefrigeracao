@@ -15,6 +15,13 @@
       "when": 1792627887167,
       "tag": "0001_foto_client_id",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792662851420,
+      "tag": "0002_material_client_id",
+      "breakpoints": true
     }
   ]
 }

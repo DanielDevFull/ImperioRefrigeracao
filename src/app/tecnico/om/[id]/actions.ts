@@ -56,6 +56,7 @@ const statusSchema = z.object({
   note: text(500),
   lat: coord,
   lng: coord,
+  clientAt: z.number().int().positive().optional(),
 });
 
 const STATUS_DONE: Record<StatusPayload["to"], string> = {
@@ -130,6 +131,8 @@ const photoSchema = z.object({
   kind: z.enum(["antes", "depois", "problema", "outro"]),
   taskId: z.uuid().nullable().optional(),
   dataUrl: z.string().regex(/^data:image\/(jpeg|png|webp);base64,/, "Envie uma foto (JPEG, PNG ou WebP)."),
+  clientId: z.string().max(64).optional(),
+  clientAt: z.number().int().positive().optional(),
 });
 
 const KIND_LABEL = { antes: "antes", depois: "depois", problema: "do problema", outro: "" } as const;
@@ -149,18 +152,25 @@ export async function addPhotoAction(input: PhotoPayload): Promise<PhotoState> {
       const task = await db.query.workOrderTasks.findFirst({ where: eq(workOrderTasks.id, taskId), columns: { workOrderId: true } });
       if (task?.workOrderId !== wo.id) taskId = null;
     }
+    if (parsed.data.clientId) {
+      // reenvio de uma foto que já chegou (a resposta se perdeu): devolve a existente
+      const existing = await db.query.workOrderPhotos.findFirst({ where: eq(workOrderPhotos.clientId, parsed.data.clientId) });
+      if (existing && existing.workOrderId === wo.id) {
+        return { ok: true, message: "Foto enviada", photo: { id: existing.id, url: existing.url, kind: existing.kind, taskId: existing.taskId } };
+      }
+    }
     const blob = dataUrlToBlob(parsed.data.dataUrl);
     if (blob.size > MAX_UPLOAD_BYTES) return { ok: false, error: "A foto passou de 8 MB. Tire de novo com menos zoom." };
     const url = await storeFile("om", blob, `foto.${blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg"}`);
     const photo = await db.transaction(async (tx) => {
       const [p] = await tx
         .insert(workOrderPhotos)
-        .values({ workOrderId: wo.id, taskId, url, kind: parsed.data.kind, takenById: user.id })
+        .values({ workOrderId: wo.id, taskId, url, kind: parsed.data.kind, takenById: user.id, clientId: parsed.data.clientId ?? null })
         .returning();
       await logEvent(tx, wo.id, {
         kind: "photo",
         message: `Foto ${KIND_LABEL[parsed.data.kind]}`.trim() + " adicionada.",
-        actor: actorOf(user),
+        actor: actorOf(user, parsed.data),
       });
       return p;
     });

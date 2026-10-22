@@ -255,7 +255,12 @@ async function drain() {
         inflightId = next.id;
         let result: OutboxResult | void;
         try {
-          result = await handlers[next.kind](next.payload as never);
+          // clientAt: quando a pessoa tocou (não quando reenviou); clientId: evita duplicar em reenvio
+          const payload =
+            next.payload && typeof next.payload === "object"
+              ? { ...(next.payload as Record<string, unknown>), clientAt: next.createdAt, clientId: next.id }
+              : next.payload;
+          result = await handlers[next.kind](payload as never);
         } catch (e) {
           inflightId = null;
           const message = e instanceof Error ? e.message : String(e);

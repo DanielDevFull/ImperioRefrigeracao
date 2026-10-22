@@ -130,9 +130,14 @@ export const workOrderPhotos = pgTable(
     kind: photoKindEnum("kind").default("outro").notNull(),
     caption: text("caption"),
     takenById: text("taken_by_id").references(() => user.id, { onDelete: "set null" }),
+    /** Id gerado no aparelho: impede foto duplicada quando a fila offline reenvia */
+    clientId: text("client_id"),
     createdAt,
   },
-  (t) => [index("work_order_photos_wo_idx").on(t.workOrderId)],
+  (t) => [
+    index("work_order_photos_wo_idx").on(t.workOrderId),
+    uniqueIndex("work_order_photos_client_id_uq").on(t.clientId),
+  ],
 );
 
 /** Materiais aplicados na OM (baixa no estoque do veículo/almoxarifado). */

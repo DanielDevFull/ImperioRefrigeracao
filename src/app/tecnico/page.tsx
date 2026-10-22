@@ -10,6 +10,7 @@ import { formatLongDate } from "@/lib/format";
 import { capitalize, firstName, greeting, groupConsecutiveBySite } from "./_lib/board";
 import { countOn, monthSummary, todayBoard } from "./_lib/queries";
 import { TicketList } from "./_components/om-ticket";
+import { WarmOfflineCache } from "@/components/pwa/warm-cache";
 
 export const metadata: Metadata = { title: "Hoje" };
 
@@ -29,6 +30,7 @@ export default async function TechTodayPage() {
 
   return (
     <div className="space-y-6">
+      <WarmOfflineCache urls={open.map((r) => `/tecnico/om/${r.id}`)} />
       <header>
         <p className="text-sm text-steel">{capitalize(formatLongDate(today))}</p>
         <h1 className="font-display text-silver-brushed mt-1 text-[1.7rem] font-semibold leading-tight">

@@ -29,7 +29,11 @@ export async function ownedTask(taskId: string, technicianId: string) {
   return { task, wo };
 }
 
-export function actorOf(user: AppUser, pos?: { lat?: number | null; lng?: number | null }): Actor {
+export function actorOf(
+  user: AppUser,
+  pos?: { lat?: number | null; lng?: number | null; clientAt?: number | null },
+): Actor {
   const ok = (v: number | null | undefined) => (typeof v === "number" && Number.isFinite(v) ? v : null);
-  return { userId: user.id, lat: ok(pos?.lat), lng: ok(pos?.lng) };
+  const at = ok(pos?.clientAt);
+  return { userId: user.id, lat: ok(pos?.lat), lng: ok(pos?.lng), at: at ? new Date(at) : null };
 }

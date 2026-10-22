@@ -29,7 +29,22 @@ import { defaultLocationFor, ensureReorderRequests, moveStock } from "./stock";
 
 type DbLike = Tx | typeof db;
 
-export type Actor = { userId: string | null; lat?: number | null; lng?: number | null };
+export type Actor = {
+  userId: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  /** Momento real da ação (ex.: registrada offline e enviada depois) */
+  at?: Date | null;
+};
+
+/** Momento da ação: o informado pelo aparelho, limitado a 7 dias atrás e nunca no futuro. */
+export function actionTime(actor?: Actor) {
+  const now = new Date();
+  const at = actor?.at;
+  if (!at || Number.isNaN(at.getTime())) return now;
+  if (at > now || now.getTime() - at.getTime() > 7 * 86_400_000) return now;
+  return at;
+}
 
 export async function logEvent(
   tx: DbLike,
@@ -51,6 +66,7 @@ export async function logEvent(
     userId: e.actor?.userId ?? null,
     lat: e.actor?.lat ?? null,
     lng: e.actor?.lng ?? null,
+    createdAt: actionTime(e.actor),
   });
 }
 
@@ -199,7 +215,7 @@ export async function changeWorkOrderStatus(
   if (!canTransition(from, to)) {
     throw new Error(`Não é possível ir de "${labelOf(statusLabels, from).label}" para "${labelOf(statusLabels, to).label}".`);
   }
-  const now = new Date();
+  const now = actionTime(actor);
   const patch: Partial<typeof workOrders.$inferInsert> = { status: to };
   if (to === "em_deslocamento") patch.travelStartedAt = now;
   if (to === "em_execucao" && !wo.startedAt) {
@@ -256,7 +272,7 @@ export async function completeWorkOrder(tx: DbLike, id: string, input: CompleteI
 
   const materialsCharged = await materialsChargedFor(tx, id);
   const total = round2((wo.billable ? wo.laborAmount : 0) + materialsCharged);
-  const now = new Date();
+  const now = actionTime(actor);
 
   const [updated] = await tx
     .update(workOrders)

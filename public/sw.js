@@ -1,7 +1,7 @@
 /* Imperium — service worker do app do técnico.
  * Páginas: rede primeiro, com cópia em cache para uso offline.
  * Arquivos estáticos: cache primeiro. */
-const VERSION = "imperium-v1";
+const VERSION = "imperium-v2";
 const PAGES = `${VERSION}-pages`;
 const ASSETS = `${VERSION}-assets`;
 const OFFLINE_URL = "/offline";
@@ -57,4 +57,22 @@ self.addEventListener("fetch", (event) => {
         .catch(async () => (await caches.match(req)) || (await caches.match(OFFLINE_URL))),
     );
   }
+});
+
+/* O app pede para guardar as OMs do dia (abrir offline mesmo sem ter visitado antes). */
+self.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data || data.type !== "warm" || !Array.isArray(data.urls)) return;
+  const urls = data.urls.filter((u) => typeof u === "string" && u.startsWith("/tecnico")).slice(0, 40);
+  event.waitUntil(
+    caches.open(PAGES).then((cache) =>
+      Promise.all(
+        urls.map((u) =>
+          fetch(u, { credentials: "same-origin" })
+            .then((res) => (res.ok && !res.redirected ? cache.put(u, res) : undefined))
+            .catch(() => undefined),
+        ),
+      ),
+    ),
+  );
 });

@@ -48,4 +48,4 @@ function mimeExt(mime: string) {
   return map[mime];
 }
 
-export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+export { MAX_UPLOAD_BYTES, ACCEPTED_UPLOAD_TYPES } from "./upload";

@@ -7,7 +7,8 @@ import { db } from "@/db";
 import { suppliers } from "@/db/schema";
 import { formValues, runAction, zodFieldErrors, type ActionState } from "@/lib/action";
 import { assertRole } from "@/lib/auth/session";
-import { onlyDigits } from "@/lib/format";
+import { normalizeDocument, normalizePhone } from "@/lib/format";
+import { cpfOrCnpjError } from "../clientes/_lib/document";
 
 const STAFF = ["admin", "gestor"] as const;
 
@@ -15,7 +16,7 @@ const supplierSchema = z.object({
   name: z.string({ error: "Informe o nome do fornecedor." }).min(2, "Informe o nome do fornecedor."),
   document: z
     .string()
-    .refine((d) => d.length === 11 || d.length === 14, "CNPJ (14 dígitos) ou CPF (11 dígitos) incompleto.")
+    .refine((d) => /^\d{11}$/.test(d) || /^[0-9A-Z]{12}\d{2}$/.test(d), "CNPJ (14 caracteres) ou CPF (11 dígitos) incompleto.")
     .nullable(),
   contactName: z.string().nullable(),
   phone: z
@@ -38,8 +39,9 @@ export async function saveSupplier(_prev: ActionState, fd: FormData): Promise<Ac
   await assertRole([...STAFF]);
   const v = formValues(fd);
   const id = v.str("id");
-  const doc = onlyDigits(v.str("document"));
-  const phone = onlyDigits(v.str("phone"));
+  // CNPJ pode ser alfanumérico: mantém as letras (em maiúsculas); telefone sem o +55
+  const doc = normalizeDocument(v.str("document"));
+  const phone = normalizePhone(v.str("phone"));
   const parsed = supplierSchema.safeParse({
     name: v.str("name") ?? "",
     document: doc || null,
@@ -52,8 +54,19 @@ export async function saveSupplier(_prev: ActionState, fd: FormData): Promise<Ac
   if (!parsed.success) return { ok: false, error: "Revise os campos destacados.", fieldErrors: zodFieldErrors(parsed.error) };
   const d = parsed.data;
   if (d.document) {
+    // dígitos verificadores: só quando o documento mudou (cadastros antigos podem ter números sem DV válido)
+    const current = id
+      ? await db.query.suppliers.findFirst({ where: eq(suppliers.id, id), columns: { document: true } })
+      : undefined;
+    if (normalizeDocument(current?.document) !== d.document) {
+      const err = cpfOrCnpjError(d.document);
+      if (err) return { ok: false, error: "Revise os campos destacados.", fieldErrors: { document: err } };
+    }
     const dup = await db.query.suppliers.findFirst({
-      where: and(sql`regexp_replace(coalesce(${suppliers.document}, ''), '\\D', '', 'g') = ${d.document}`, id ? ne(suppliers.id, id) : undefined),
+      where: and(
+        sql`regexp_replace(upper(coalesce(${suppliers.document}, '')), '[^0-9A-Z]', '', 'g') = ${d.document}`,
+        id ? ne(suppliers.id, id) : undefined,
+      ),
       columns: { id: true, name: true },
     });
     if (dup)

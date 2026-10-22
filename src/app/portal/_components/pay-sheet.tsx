@@ -11,8 +11,9 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { initialActionState, type ActionState } from "@/lib/action";
 import { formatBRL, formatDate, formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { fitImage, isImageFile } from "@/lib/upload-client";
 import { shrinkImage, setInputFiles } from "../_lib/compress";
-import { formatFileSize, UPLOAD_LIMIT_BYTES } from "../_lib/copy";
+import { formatFileSize, UPLOAD_LIMIT_BYTES, UPLOAD_LIMIT_LABEL } from "../_lib/copy";
 import type { PayData } from "../_lib/pay";
 import { submitProofAction } from "../mensalidades/actions";
 
@@ -265,11 +266,15 @@ function ProofUpload({
       setFile(null);
       return setLocalError("Envie uma imagem (JPG ou PNG) ou um PDF do comprovante.");
     }
-    const ready = await shrinkImage(picked);
+    let ready = await shrinkImage(picked);
+    // o navegador não decodificou como bitmap (ex.: HEIC): tenta de novo pelo <img>, com teto de tamanho
+    if (ready.size > UPLOAD_LIMIT_BYTES - 16 * 1024 && isImageFile(picked)) {
+      ready = await fitImage(picked, { maxSide: 2000, maxBytes: 2 * 1024 * 1024 });
+    }
     if (ready.size > UPLOAD_LIMIT_BYTES - 16 * 1024) {
       e.target.value = "";
       setFile(null);
-      return setLocalError("O arquivo passa de 8 MB. Envie um print da tela ou um PDF menor.");
+      return setLocalError(`O arquivo passa de ${UPLOAD_LIMIT_LABEL}. Envie um print da tela ou um PDF menor.`);
     }
     if (ready !== picked && inputRef.current) setInputFiles(inputRef.current, [ready]);
     setFile(ready);
@@ -299,7 +304,7 @@ function ProofUpload({
         >
           <input type="hidden" name="receivableId" value={receivableId} />
           <p className="text-sm font-medium text-silver">Enviar comprovante</p>
-          <p className="mt-0.5 text-xs text-steel">Print da tela ou PDF do banco, até 8 MB.</p>
+          <p className="mt-0.5 text-xs text-steel">Print da tela ou PDF do banco, até {UPLOAD_LIMIT_LABEL}.</p>
 
           <label
             htmlFor={`proof-${receivableId}`}

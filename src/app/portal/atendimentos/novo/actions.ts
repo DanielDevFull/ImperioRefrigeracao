@@ -9,7 +9,8 @@ import { customerSites, equipment, workOrderPhotos } from "@/db/schema";
 import { runAction, zodFieldErrors, type ActionState } from "@/lib/action";
 import { assertRole } from "@/lib/auth/session";
 import { formatOM } from "@/lib/format";
-import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { storeFile } from "@/lib/storage";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL } from "@/lib/upload";
 import { notifyStaff } from "@/server/notify";
 import { createWorkOrder } from "@/server/work-orders";
 import { isUuid, MAX_REQUEST_PHOTOS, PROBLEM_CHIPS } from "../../_lib/copy";
@@ -84,7 +85,10 @@ export async function createServiceRequest(_prev: ActionState, fd: FormData): Pr
     }
     for (const p of photos) {
       if (!p.type.startsWith("image/")) return { ok: false, error: "As fotos precisam ser imagens (JPG ou PNG).", fieldErrors: { fotos: "As fotos precisam ser imagens (JPG ou PNG)." } };
-      if (p.size > MAX_UPLOAD_BYTES) return { ok: false, error: "Cada foto pode ter até 8 MB.", fieldErrors: { fotos: "Cada foto pode ter até 8 MB." } };
+      if (p.size > MAX_UPLOAD_BYTES) {
+        const msg = `Cada foto pode ter até ${MAX_UPLOAD_LABEL}.`;
+        return { ok: false, error: msg, fieldErrors: { fotos: msg } };
+      }
     }
     const urls = await Promise.all(photos.map((p) => storeFile("om", p, p.name)));
 

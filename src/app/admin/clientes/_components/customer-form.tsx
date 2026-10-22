@@ -11,6 +11,7 @@ import { Panel } from "@/components/system/panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeDocument } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { saveCustomer } from "../actions";
 import { documentError } from "../_lib/document";
@@ -145,15 +146,14 @@ export function CustomerForm({
                 key={personType}
                 id="document"
                 name="document"
-                mask="cpfcnpj"
+                mask={pj ? "cnpj" : "cpf"}
                 defaultValue={initial?.personType === personType ? (initial?.document ?? "") : ""}
                 placeholder={pj ? "00.000.000/0000-00" : "000.000.000-00"}
                 className="h-9 tabular-nums"
-                inputMode="numeric"
                 onBlur={(e) => {
-                  const original = initial?.document ?? "";
-                  const digits = e.currentTarget.value.replace(/\D/g, "");
-                  setDocHint(digits && digits !== original ? documentError(personType, digits) : null);
+                  const original = normalizeDocument(initial?.document);
+                  const doc = normalizeDocument(e.currentTarget.value);
+                  setDocHint(doc && doc !== original ? documentError(personType, doc) : null);
                 }}
               />
             </Field>

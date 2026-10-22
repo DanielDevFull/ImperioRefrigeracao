@@ -10,8 +10,8 @@ import type { Tone } from "@/lib/labels";
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const isUuid = (v: unknown): v is string => typeof v === "string" && UUID_RE.test(v);
 
-/** Limite de upload (igual a MAX_UPLOAD_BYTES de @/lib/storage, que é server-only). */
-export const UPLOAD_LIMIT_BYTES = 8 * 1024 * 1024;
+/** Limite de upload por envio (o mesmo MAX_UPLOAD_BYTES das ações; abaixo do teto de 4,5 MB da Vercel). */
+export { MAX_UPLOAD_BYTES as UPLOAD_LIMIT_BYTES, MAX_UPLOAD_LABEL as UPLOAD_LIMIT_LABEL } from "@/lib/upload";
 export const MAX_REQUEST_PHOTOS = 3;
 
 export function firstName(name: string | null | undefined) {

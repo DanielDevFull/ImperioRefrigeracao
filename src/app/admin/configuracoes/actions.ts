@@ -7,10 +7,11 @@ import { db } from "@/db";
 import { settings } from "@/db/schema";
 import { type ActionState, formValues, runAction, zodFieldErrors } from "@/lib/action";
 import { assertRole } from "@/lib/auth/session";
-import { onlyDigits } from "@/lib/format";
+import { normalizeDocument, normalizePhone, onlyDigits } from "@/lib/format";
 import { sanitizePixText } from "@/lib/pix";
 import { runDaily } from "@/server/daily";
 import { getSettings } from "@/server/settings";
+import { cpfOrCnpjError } from "../clientes/_lib/document";
 
 type SettingsPatch = Partial<typeof settings.$inferInsert>;
 
@@ -40,7 +41,7 @@ const optionalText = (max: number, msg: string) =>
 const phone = z
   .string()
   .nullable()
-  .transform((v) => (v ? onlyDigits(v) : null))
+  .transform((v) => (v ? normalizePhone(v) : null))
   .refine((v) => v == null || v.length === 10 || v.length === 11, "Use DDD + número, ex.: (11) 99999-0000.");
 
 /* ------------------------------------------------------------------ Empresa */
@@ -50,8 +51,12 @@ const companySchema = z.object({
   document: z
     .string()
     .nullable()
-    .transform((v) => (v ? onlyDigits(v) : null))
-    .refine((v) => v == null || v.length === 14 || v.length === 11, "Informe um CNPJ com 14 dígitos (ou CPF com 11)."),
+    // CNPJ pode ser alfanumérico (12 caracteres + 2 dígitos verificadores)
+    .transform((v) => (v ? normalizeDocument(v) || null : null))
+    .refine(
+      (v) => v == null || /^[0-9A-Z]{12}\d{2}$/.test(v) || /^\d{11}$/.test(v),
+      "Informe um CNPJ com 14 caracteres (ou CPF com 11 dígitos).",
+    ),
   phone,
   whatsapp: phone,
   email: z.email("Informe um e-mail válido.").nullable(),
@@ -79,6 +84,11 @@ export async function saveCompany(_prev: ActionState, fd: FormData): Promise<Act
       state: f.str("state"),
     });
     if (!parsed.success) return invalid(parsed.error);
+    const doc = parsed.data.document;
+    if (doc && doc !== normalizeDocument((await getSettings()).document)) {
+      const err = cpfOrCnpjError(doc);
+      if (err) return { ok: false, error: "Confira os campos destacados.", fieldErrors: { document: err } };
+    }
     const r = await save(parsed.data, "Dados da empresa salvos");
     revalidatePath("/", "layout");
     return r;

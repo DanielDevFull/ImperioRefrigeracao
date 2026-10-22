@@ -21,6 +21,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { initialActionState } from "@/lib/action";
 import { addMonths } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
+import { fitImage, isImageFile, setInputFiles, UPLOAD_BUDGET_BYTES } from "@/lib/upload-client";
 import { OptionPicker } from "../../_components/option-picker";
 import type { CategoryOption } from "../../_lib/constants";
 import { createPayable } from "../actions";
@@ -67,6 +69,8 @@ function NewPayableForm({
   const [repeat, setRepeat] = useState(false);
   const [months, setMonths] = useState("12");
   const [dueDate, setDueDate] = useState(today);
+  const [preparing, setPreparing] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
   const e = state.fieldErrors ?? {};
   const n = Math.min(36, Math.max(2, Number(months) || 2));
   const validDue = /^\d{4}-\d{2}-\d{2}$/.test(dueDate);
@@ -153,13 +157,38 @@ function NewPayableForm({
         )}
       </div>
 
-      <Field label="Anexo" htmlFor="attachment" error={e.attachment} hint="Boleto ou nota em PDF ou imagem, até 8 MB.">
+      <Field
+        label="Anexo"
+        htmlFor="attachment"
+        error={fileError ?? e.attachment}
+        hint={preparing ? "Reduzindo a imagem…" : `Boleto ou nota em PDF ou imagem, até ${MAX_UPLOAD_LABEL}.`}
+      >
         <Input
           id="attachment"
           name="attachment"
           type="file"
           accept="application/pdf,image/jpeg,image/png,image/webp,image/heic"
           className="file:mr-3 file:text-silver"
+          onChange={async (ev) => {
+            const input = ev.currentTarget;
+            const f = input.files?.[0];
+            setFileError(null);
+            if (!f) return;
+            // imagem: reduz no navegador (lado maior 2400 px para o código de barras continuar legível)
+            setPreparing(true);
+            const ready = isImageFile(f) ? await fitImage(f, { maxSide: 2400, maxBytes: 2 * 1024 * 1024 }) : f;
+            setPreparing(false);
+            if (ready.size > UPLOAD_BUDGET_BYTES) {
+              input.value = "";
+              setFileError(
+                isImageFile(f)
+                  ? `A imagem passa de ${MAX_UPLOAD_LABEL} e não pôde ser reduzida. Envie em JPG, PNG ou PDF.`
+                  : `O PDF passa de ${MAX_UPLOAD_LABEL}. Envie uma versão menor (ex.: o boleto baixado direto do banco).`,
+              );
+              return;
+            }
+            if (ready !== f) setInputFiles(input, [ready]);
+          }}
         />
       </Field>
 
@@ -175,7 +204,7 @@ function NewPayableForm({
             Voltar
           </Button>
         </DialogClose>
-        <FormSubmit>{repeat ? `Criar ${n} contas a pagar` : "Criar conta a pagar"}</FormSubmit>
+        <FormSubmit disabled={preparing}>{repeat ? `Criar ${n} contas a pagar` : "Criar conta a pagar"}</FormSubmit>
       </DialogFooter>
     </ActionForm>
   );

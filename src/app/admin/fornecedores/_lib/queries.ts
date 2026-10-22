@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { payables, products, purchaseOrders, suppliers } from "@/db/schema";
-import { onlyDigits } from "@/lib/format";
+import { normalizeDocument, onlyDigits } from "@/lib/format";
 import { PAGE_SIZE } from "@/lib/params";
 
 export type SupplierFilter = "ativos" | "inativos" | "todos";
@@ -20,12 +20,15 @@ export async function listSuppliers(opts: { q?: string; filter: SupplierFilter; 
   if (opts.q) {
     const like = `%${opts.q}%`;
     const digits = onlyDigits(opts.q);
+    const doc = normalizeDocument(opts.q);
     conds.push(
       or(
         ilike(suppliers.name, like),
         ilike(suppliers.contactName, like),
         ilike(suppliers.email, like),
         digits.length >= 3 ? ilike(suppliers.document, `%${digits}%`) : undefined,
+        // CNPJ alfanumérico: o documento é salvo normalizado, com as letras
+        doc !== digits && doc.length >= 3 && /\d/.test(doc) ? ilike(suppliers.document, `%${doc}%`) : undefined,
         digits.length >= 3 ? ilike(suppliers.phone, `%${digits}%`) : undefined,
       ),
     );

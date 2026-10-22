@@ -6,7 +6,8 @@ import { db } from "@/db";
 import { receivables } from "@/db/schema";
 import { runAction, type ActionState } from "@/lib/action";
 import { assertRole } from "@/lib/auth/session";
-import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { storeFile } from "@/lib/storage";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL } from "@/lib/upload";
 import { submitProof } from "@/server/billing";
 import { isUuid } from "../_lib/copy";
 import { customerForUser, PORTAL_ROLES } from "../_lib/data";
@@ -31,7 +32,7 @@ export async function submitProofAction(_prev: ActionState, fd: FormData): Promi
       return { ok: false, error: msg, fieldErrors: { comprovante: msg } };
     }
     if (file.size > MAX_UPLOAD_BYTES) {
-      const msg = "O arquivo passa de 8 MB. Envie um print da tela ou um PDF menor.";
+      const msg = `O arquivo passa de ${MAX_UPLOAD_LABEL}. Envie um print da tela ou um PDF menor.`;
       return { ok: false, error: msg, fieldErrors: { comprovante: msg } };
     }
 

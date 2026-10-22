@@ -9,13 +9,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { initialActionState } from "@/lib/action";
-import { formatEquipmentCode } from "@/lib/format";
+import { formatDate, formatEquipmentCode } from "@/lib/format";
 import { visitIntervalMonths } from "@/server/core/schedule";
 import { periodLabel, plural } from "../../planos/_lib/preview";
 import { addContractItem, removeContractItem, updateContractItem } from "../actions";
 import { defaultPlanFor } from "../_lib/defaults";
+import { nextVisitAfterChange, type ContractWindow, type ScheduleTask } from "../_lib/forecast";
+import { openOrdersText } from "./contract-actions";
 
-type PlanOpt = { id: string; name: string; equipmentTypeId: string | null; isPmoc: boolean; tasks: { frequencyMonths: number }[] };
+type PlanOpt = { id: string; name: string; equipmentTypeId: string | null; isPmoc: boolean; tasks: ScheduleTask[] };
 type TechOpt = { id: string; name: string };
 type FreeEquipment = { id: string; code: number; label: string; typeId: string | null; status: string };
 
@@ -169,19 +171,32 @@ function AddItemForm({
   );
 }
 
+type EditableItem = {
+  id: string;
+  label: string;
+  maintenancePlanId: string;
+  /** Tarefas do plano atual (mesmo que ele esteja inativo e fora da lista) */
+  planTasks: ScheduleTask[];
+  anchorDate: string;
+  preferredTechnicianId: string | null;
+  /** OMs abertas ou agendadas (qualquer data), para a reatribuição */
+  openWorkOrders: number;
+  /** OMs automáticas abertas ou agendadas de hoje em diante: canceladas se a agenda mudar */
+  futureOpen: number;
+  /** Último vencimento das OMs que ficam se a agenda mudar */
+  keptLastDue: string | null;
+};
+
+type ScheduleContext = { term: ContractWindow; today: string; contractActive: boolean };
+
 export function EditItemButton({
   item,
+  schedule,
   plans,
   technicians,
 }: {
-  item: {
-    id: string;
-    label: string;
-    maintenancePlanId: string;
-    anchorDate: string;
-    preferredTechnicianId: string | null;
-    openWorkOrders: number;
-  };
+  item: EditableItem;
+  schedule: ScheduleContext;
   plans: PlanOpt[];
   technicians: TechOpt[];
 }) {
@@ -197,22 +212,37 @@ export function EditItemButton({
         <DialogHeader>
           <DialogTitle>{item.label}</DialogTitle>
           <DialogDescription>
-            OMs já geradas mantêm o checklist e a data. As próximas seguem o plano e a âncora escolhidos aqui.
+            Mudar o plano ou a âncora refaz a agenda: as OMs abertas ou agendadas de hoje em diante são canceladas e geradas de novo.
+            Concluídas, em andamento e atrasadas ficam como estão.
           </DialogDescription>
         </DialogHeader>
-        {open && <EditItemForm item={item} plans={plans} technicians={technicians} onDone={() => setOpen(false)} />}
+        {open && <EditItemForm item={item} schedule={schedule} plans={plans} technicians={technicians} onDone={() => setOpen(false)} />}
       </DialogContent>
     </Dialog>
   );
 }
 
+/** O que acontece com as OMs se a agenda mudar (mesma regra de updateContractItem). */
+function scheduleChangeText(item: EditableItem, schedule: ScheduleContext, anchorDate: string, tasks: ScheduleTask[]) {
+  const cancel =
+    item.futureOpen > 0
+      ? `${plural(item.futureOpen, "OM aberta ou agendada", "OMs abertas ou agendadas")} de hoje em diante ${item.futureOpen === 1 ? "será cancelada" : "serão canceladas"}.`
+      : "Nenhuma OM aberta de hoje em diante para cancelar.";
+  if (!schedule.contractActive) return `${cancel} A nova agenda é gerada quando o contrato for reativado.`;
+  const next = nextVisitAfterChange({ anchorDate, tasks }, schedule.term, schedule.today, item.keptLastDue);
+  if (!next) return `${cancel} Nenhuma visita prevista na nova agenda.`;
+  return `${cancel} Próxima visita na nova agenda: ${formatDate(next)}${next < schedule.today ? " (já vencida, entra na agenda de hoje)" : ""}.`;
+}
+
 function EditItemForm({
   item,
+  schedule,
   plans,
   technicians,
   onDone,
 }: {
-  item: { id: string; maintenancePlanId: string; anchorDate: string; preferredTechnicianId: string | null; openWorkOrders: number };
+  item: EditableItem;
+  schedule: ScheduleContext;
   plans: PlanOpt[];
   technicians: TechOpt[];
   onDone: () => void;
@@ -221,8 +251,11 @@ function EditItemForm({
   useActionToast(state, { onSuccess: onDone });
   const fe = state.fieldErrors ?? {};
   const [planId, setPlanId] = useState(item.maintenancePlanId);
+  const [anchor, setAnchor] = useState(item.anchorDate);
   const [tech, setTech] = useState(item.preferredTechnicianId ?? "");
   const current = plans.some((p) => p.id === item.maintenancePlanId);
+  const scheduleChanged = /^\d{4}-\d{2}-\d{2}$/.test(anchor) && (anchor !== item.anchorDate || planId !== item.maintenancePlanId);
+  const tasks = planId === item.maintenancePlanId ? item.planTasks : (plans.find((p) => p.id === planId)?.tasks ?? []);
   return (
     <form action={action} className="grid gap-4" noValidate>
       <Field label="Plano de manutenção" htmlFor="ei-plan" required error={fe.maintenancePlanId} hint={planHint(plans.find((p) => p.id === planId))}>
@@ -237,7 +270,7 @@ function EditItemForm({
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Âncora (primeira visita)" htmlFor="ei-anchor" required error={fe.anchorDate}>
-          <Input id="ei-anchor" name="anchorDate" type="date" defaultValue={item.anchorDate} className="h-9" />
+          <Input id="ei-anchor" name="anchorDate" type="date" value={anchor} onChange={(e) => setAnchor(e.target.value)} className="h-9" />
         </Field>
         <Field label="Técnico preferencial" htmlFor="ei-tech" error={fe.preferredTechnicianId}>
           <select id="ei-tech" name="preferredTechnicianId" value={tech} onChange={(e) => setTech(e.target.value)} className={nativeSelectClass}>
@@ -250,6 +283,11 @@ function EditItemForm({
           </select>
         </Field>
       </div>
+      {scheduleChanged && (
+        <p role="status" className="rounded-lg border border-brass/30 bg-brass/10 p-3 text-sm text-brass">
+          {scheduleChangeText(item, schedule, anchor, tasks)}
+        </p>
+      )}
       {item.openWorkOrders > 0 && tech !== (item.preferredTechnicianId ?? "") && (
         <label className="flex items-start gap-2.5 rounded-lg border border-rime bg-night/50 p-3 text-sm">
           <Checkbox name="applyToOpen" defaultChecked className="mt-0.5" />
@@ -268,18 +306,22 @@ function EditItemForm({
   );
 }
 
-export function RemoveItemButton({ itemId, label, futureCount }: { itemId: string; label: string; futureCount: number }) {
+export function RemoveItemButton({
+  itemId,
+  label,
+  openCount,
+  overdueCount,
+}: {
+  itemId: string;
+  label: string;
+  openCount: number;
+  overdueCount: number;
+}) {
   return (
     <ConfirmAction
       action={removeContractItem.bind(null, itemId)}
       title={`Remover ${label} do contrato?`}
-      description={`${
-        futureCount === 0
-          ? "Não há OMs futuras abertas para este equipamento."
-          : futureCount === 1
-            ? "1 OM futura (aberta ou agendada) será cancelada."
-            : `${futureCount} OMs futuras (abertas ou agendadas) serão canceladas.`
-      } O equipamento fica livre para entrar em outro contrato. A mensalidade não muda: ajuste o valor em Editar dados, se for o caso.`}
+      description={`${openOrdersText(openCount, overdueCount)} O equipamento fica livre para entrar em outro contrato. A mensalidade não muda: ajuste o valor em Editar dados, se for o caso.`}
       confirmLabel="Remover do contrato"
       destructive
       variant="ghost"

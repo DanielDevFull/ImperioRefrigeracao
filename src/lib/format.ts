@@ -109,15 +109,31 @@ export function formatRelative(value: Date | string) {
 
 export const onlyDigits = (v: string | null | undefined) => (v ?? "").replace(/\D/g, "");
 
+/**
+ * CPF/CNPJ sem pontuação e em maiúsculas. Mantém letras porque o CNPJ alfanumérico
+ * (IN RFB 2.229/2024, emitido desde julho de 2026) tem 12 caracteres [0-9A-Z] + 2 dígitos verificadores.
+ */
+export const normalizeDocument = (v: string | null | undefined) => (v ?? "").toUpperCase().replace(/[^0-9A-Z]/g, "");
+
+/** 123.456.789-09 (CPF) ou 12.ABC.345/01DE-35 (CNPJ numérico ou alfanumérico). */
 export function formatDocument(value: string | null | undefined) {
-  const d = onlyDigits(value);
-  if (d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  if (d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+  const d = normalizeDocument(value);
+  if (/^\d{11}$/.test(d)) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  if (/^[0-9A-Z]{12}\d{2}$/.test(d)) return d.replace(/(.{2})(.{3})(.{3})(.{4})(.{2})/, "$1.$2.$3/$4-$5");
   return value ?? "—";
 }
 
-export function formatPhone(value: string | null | undefined) {
+/**
+ * Telefone só com dígitos (DDD + número). Tira o código do país quando o número veio
+ * no formato internacional (+55 11 98765-4321 → 11987654321).
+ */
+export function normalizePhone(value: string | null | undefined) {
   const d = onlyDigits(value);
+  return (d.length === 12 || d.length === 13) && d.startsWith("55") ? d.slice(2) : d;
+}
+
+export function formatPhone(value: string | null | undefined) {
+  const d = normalizePhone(value);
   if (d.length === 11) return d.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   if (d.length === 10) return d.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
   return value ?? "—";
@@ -145,7 +161,9 @@ export function formatBTU(btu: number | null | undefined) {
 export function whatsappLink(phone: string | null | undefined, text?: string) {
   const d = onlyDigits(phone);
   if (!d) return null;
-  const full = d.startsWith("55") ? d : `55${d}`;
+  // DDD + número (10–11 dígitos) ganha o 55; com 12–13 dígitos o código do país já está lá.
+  // Não dá para usar startsWith("55"): 55 também é DDD (RS).
+  const full = d.length === 10 || d.length === 11 ? `55${d}` : d;
   return `https://wa.me/${full}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
 

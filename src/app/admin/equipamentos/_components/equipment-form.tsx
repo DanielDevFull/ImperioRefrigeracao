@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { refrigerants } from "@/lib/labels";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
+import { fitImage, setInputFiles, UPLOAD_BUDGET_BYTES } from "@/lib/upload-client";
 import { cn } from "@/lib/utils";
 import { PendingButton, useFormSubmit } from "../../clientes/_components/form-submit";
 import { saveEquipment, sitesForCustomer } from "../actions";
@@ -79,6 +81,8 @@ export function EquipmentForm({
   const [refrigerant, setRefrigerant] = useState(initial?.refrigerant ?? "");
   const [preview, setPreview] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [preparingPhoto, setPreparingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   useEffect(() => () => {
     if (preview) URL.revokeObjectURL(preview);
@@ -318,15 +322,30 @@ export function EquipmentForm({
                 name="photo"
                 accept="image/*"
                 className="sr-only"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
+                onChange={async (e) => {
+                  const input = e.currentTarget;
+                  const f = input.files?.[0];
                   setRemovePhoto(false);
-                  setPreview(f ? URL.createObjectURL(f) : null);
+                  setPhotoError(null);
+                  if (!f) return setPreview(null);
+                  // reduz no navegador: o envio inteiro precisa caber em MAX_UPLOAD_BYTES
+                  setPreparingPhoto(true);
+                  const ready = await fitImage(f);
+                  setPreparingPhoto(false);
+                  if (ready.size > UPLOAD_BUDGET_BYTES) {
+                    input.value = "";
+                    setPreview(null);
+                    return setPhotoError(`A foto passa de ${MAX_UPLOAD_LABEL} e não pôde ser reduzida. Envie em JPG ou PNG.`);
+                  }
+                  if (ready !== f) setInputFiles(input, [ready]);
+                  setPreview(URL.createObjectURL(ready));
                 }}
               />
             </label>
-            <p className="text-xs text-steel">JPG, PNG, WEBP ou HEIC, até 8 MB.</p>
-            {fe.photo && <p className="text-xs text-gauge-red">{fe.photo}</p>}
+            <p className="text-xs text-steel">
+              {preparingPhoto ? "Reduzindo a foto…" : `JPG, PNG, WEBP ou HEIC, até ${MAX_UPLOAD_LABEL}. Fotos maiores são reduzidas antes do envio.`}
+            </p>
+            {(photoError ?? fe.photo) && <p className="text-xs text-gauge-red">{photoError ?? fe.photo}</p>}
             {initial?.photoUrl && !preview && (
               <label className="flex items-center gap-2 text-xs text-steel">
                 <input
@@ -354,7 +373,7 @@ export function EquipmentForm({
             Cancelar
           </Link>
         </Button>
-        <PendingButton pending={pending} className="px-5">
+        <PendingButton pending={pending} disabled={preparingPhoto} className="px-5">
           {editing ? "Salvar equipamento" : "Cadastrar equipamento"}
         </PendingButton>
       </div>

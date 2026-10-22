@@ -1,17 +1,19 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { ChevronLeft, ChevronRight, ImagePlus, Trash2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { ChevronLeft, ChevronRight, ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { ConfirmAction } from "@/components/system/confirm-action";
 import { EmptyState } from "@/components/system/empty-state";
-import { ActionForm, Field, FormSubmit, nativeSelectClass, useActionToast } from "@/components/system/form";
+import { Field, nativeSelectClass, useActionToast } from "@/components/system/form";
 import { ToneBadge } from "@/components/system/tone-badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { initialActionState } from "@/lib/action";
+import { initialActionState, type ActionState } from "@/lib/action";
 import { formatDateTime } from "@/lib/format";
 import type { Tone } from "@/lib/labels";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
+import { batchBySize, fitImage, isImageFile, UPLOAD_BUDGET_BYTES } from "@/lib/upload-client";
 import { removePhotoAction, uploadPhotosAction } from "../../actions";
 import { PHOTO_KINDS, photoKindLabel } from "../../_lib/constants";
 
@@ -19,11 +21,81 @@ export type PhotoItem = { id: string; url: string; kind: string; caption: string
 
 const KIND_TONE: Record<string, Tone> = { antes: "frost", depois: "mint", problema: "red", outro: "steel" };
 
+const MAX_PHOTOS_PER_UPLOAD = 10;
+
+/**
+ * Fotos chegam do celular com 4–10 MB: reduz cada uma no navegador e envia em lotes que cabem
+ * no limite de uma requisição (MAX_UPLOAD_BYTES), em vez de mandar tudo de uma vez.
+ */
 function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
-  const [state, action, pending] = useActionState(uploadPhotosAction.bind(null, id), initialActionState);
+  const [state, setState] = useState<ActionState>(initialActionState);
+  const [pending, startTransition] = useTransition();
+  const [progress, setProgress] = useState<string | null>(null);
   useActionToast(state, { onSuccess: onDone });
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (pending) return;
+    const fd = new FormData(e.currentTarget);
+    const picked = fd.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
+    if (!picked.length) {
+      setState({ ok: false, error: "Escolha pelo menos uma foto.", fieldErrors: { files: "Escolha uma foto." } });
+      return;
+    }
+    if (picked.length > MAX_PHOTOS_PER_UPLOAD) {
+      const msg = `Envie no máximo ${MAX_PHOTOS_PER_UPLOAD} fotos por vez.`;
+      setState({ ok: false, error: msg, fieldErrors: { files: msg } });
+      return;
+    }
+    const notImage = picked.find((f) => !isImageFile(f));
+    if (notImage) {
+      const msg = `"${notImage.name}" não é uma imagem. Envie JPG, PNG ou WEBP.`;
+      setState({ ok: false, error: msg, fieldErrors: { files: msg } });
+      return;
+    }
+
+    // fora da transição: o aviso aparece já (dentro dela, só quando tudo terminasse)
+    setProgress(picked.length === 1 ? "Reduzindo a foto…" : "Reduzindo as fotos…");
+    startTransition(async () => {
+      const ready: File[] = [];
+      for (const f of picked) ready.push(await fitImage(f)); // uma por vez: poupa memória no celular
+      const tooBig = ready.find((f) => f.size > UPLOAD_BUDGET_BYTES);
+      if (tooBig) {
+        const msg = `"${tooBig.name}" passa de ${MAX_UPLOAD_LABEL} e não pôde ser reduzida. Envie em JPG ou PNG.`;
+        setProgress(null);
+        setState({ ok: false, error: msg, fieldErrors: { files: msg } });
+        return;
+      }
+
+      const batches = batchBySize(ready);
+      let sent = 0;
+      for (const [i, batch] of batches.entries()) {
+        if (batches.length > 1) setProgress(`Enviando ${i + 1} de ${batches.length}…`);
+        const part = new FormData();
+        part.set("kind", String(fd.get("kind") ?? ""));
+        part.set("caption", String(fd.get("caption") ?? ""));
+        for (const f of batch) part.append("files", f, f.name);
+        let r: ActionState;
+        try {
+          r = await uploadPhotosAction(id, initialActionState, part);
+        } catch {
+          r = { ok: false, error: "Não foi possível enviar as fotos. Confira a conexão e tente de novo." };
+        }
+        if (!r.ok) {
+          const done = sent === 1 ? "1 foto foi enviada" : `${sent} fotos foram enviadas`;
+          setProgress(null);
+          setState(sent > 0 ? { ...r, error: `${done}, mas o restante falhou. ${r.error ?? ""}`.trim() } : r);
+          return;
+        }
+        sent += batch.length;
+      }
+      setProgress(null);
+      setState({ ok: true, message: sent === 1 ? "Foto enviada" : `${sent} fotos enviadas` });
+    });
+  }
+
   return (
-    <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
+    <form onSubmit={onSubmit} className="grid grid-cols-1 gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
       <Field label="Tipo" htmlFor="photo-kind" error={state.fieldErrors?.kind}>
         <select id="photo-kind" name="kind" className={nativeSelectClass} defaultValue="antes">
           {PHOTO_KINDS.map((k) => (
@@ -33,19 +105,32 @@ function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
           ))}
         </select>
       </Field>
-      <Field label="Fotos" htmlFor="photo-files" error={state.fieldErrors?.files} hint="JPG, PNG ou WEBP, até 8 MB cada.">
+      <Field
+        label="Fotos"
+        htmlFor="photo-files"
+        error={state.fieldErrors?.files}
+        hint={`JPG, PNG ou WEBP, até ${MAX_PHOTOS_PER_UPLOAD} por vez. Fotos grandes são reduzidas antes do envio.`}
+      >
         <Input id="photo-files" name="files" type="file" accept="image/*" multiple className="h-9 py-1.5 text-sm" required />
       </Field>
       <Field label="Legenda" htmlFor="photo-caption" className="sm:col-span-2">
         <Input id="photo-caption" name="caption" className="h-9" maxLength={200} placeholder="Opcional: o que a foto mostra" />
       </Field>
-      <div className="flex justify-end gap-2 sm:col-span-2">
-        <Button type="button" variant="ghost" onClick={onDone}>
+      <div className="flex flex-wrap items-center justify-end gap-2 sm:col-span-2">
+        {progress && (
+          <p role="status" className="mr-auto text-xs text-steel">
+            {progress}
+          </p>
+        )}
+        <Button type="button" variant="ghost" onClick={onDone} disabled={pending}>
           Voltar
         </Button>
-        <FormSubmit>Enviar fotos</FormSubmit>
+        <Button type="submit" disabled={pending}>
+          {pending && <Loader2 className="animate-spin" />}
+          Enviar fotos
+        </Button>
       </div>
-    </ActionForm>
+    </form>
   );
 }
 

@@ -99,23 +99,27 @@ function EditContractForm({ contract, onDone }: { contract: ContractInfo; onDone
   );
 }
 
+/** Texto da confirmação: quantas OMs abertas ou agendadas (e quantas já atrasadas) serão canceladas. */
+export function openOrdersText(open: number, overdue: number) {
+  if (open === 0) return "Não há OMs abertas ou agendadas para cancelar.";
+  const late = overdue === 0 ? "" : overdue === open ? (open === 1 ? ", já atrasada," : ", todas já atrasadas,") : `, ${overdue} já ${overdue === 1 ? "atrasada" : "atrasadas"},`;
+  return open === 1 ? `1 OM aberta ou agendada${late} será cancelada.` : `${open} OMs abertas ou agendadas${late} serão canceladas.`;
+}
+
 export function ContractStatusActions({
   contract,
   cancelCount,
+  overdueCount,
   activeItems,
 }: {
   contract: ContractInfo;
   cancelCount: number;
+  overdueCount: number;
   activeItems: number;
 }) {
   const closed = contract.status === "cancelado" || contract.status === "encerrado";
   if (closed) return null;
-  const omsText =
-    cancelCount === 0
-      ? "Não há OMs futuras abertas ou agendadas para cancelar."
-      : cancelCount === 1
-        ? "1 OM futura (aberta ou agendada) será cancelada."
-        : `${cancelCount} OMs futuras (abertas ou agendadas) serão canceladas.`;
+  const omsText = openOrdersText(cancelCount, overdueCount);
   return (
     <>
       {contract.status === "ativo" && (

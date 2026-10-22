@@ -26,9 +26,60 @@ export function visitsBetween(item: ScheduleItem, contract: ContractWindow, from
   );
 }
 
-/** Próxima visita prevista a partir de hoje (ou null se o contrato termina antes). */
-export function nextVisit(item: ScheduleItem, contract: ContractWindow, today: ISODate): ISODate | null {
-  return visitsBetween(item, contract, today, addMonths(today, 25))[0] ?? null;
+/**
+ * Próxima visita prevista a partir de hoje (ou null se o contrato termina antes). Com `lastGenerated`,
+ * só conta as datas que o gerador ainda vai criar (as anteriores já viraram OM ou foram puladas).
+ */
+export function nextVisit(item: ScheduleItem, contract: ContractWindow, today: ISODate, lastGenerated?: ISODate | null): ISODate | null {
+  const from = lastGenerated && lastGenerated >= today ? addDays(lastGenerated, 1) : today;
+  return visitsBetween(item, contract, from, addMonths(from, 25))[0] ?? null;
+}
+
+/** A data é uma visita da agenda do item (cai na sequência da âncora e tem tarefa do plano)? */
+export function isPlannedVisit(item: ScheduleItem, due: ISODate) {
+  if (!item.tasks.length) return false;
+  const intervalMonths = visitIntervalMonths(item.tasks);
+  return (
+    dueDatesToGenerate({ anchor: item.anchorDate, intervalMonths, lastGenerated: null, notBefore: due, until: due }).length > 0 &&
+    tasksDueOn(item.tasks, item.anchorDate, due).length > 0
+  );
+}
+
+/**
+ * Valor de `lastGeneratedDueDate` quando a agenda do item recomeça (âncora ou plano alterados, ou o
+ * equipamento volta a um contrato). `last` é o vencimento da última visita que continua valendo
+ * (OM concluída, em andamento ou que não pôde ser cancelada).
+ *
+ * A nova sequência retoma depois dela, sem repetir o ciclo: as datas no mesmo mês de `last` (nos
+ * planos de vários meses, na primeira metade do intervalo, contada em meses) contam como atendidas por
+ * ela. Ex.: visita mensal feita dia 10, agenda passa para o dia 25: a próxima é dia 25 do mês seguinte,
+ * não daqui a 15 dias. Se a nova âncora é posterior a `last`, ela é a primeira visita escolhida pela
+ * equipe e vale como está.
+ */
+export function resumeScheduleAfter(last: ISODate | null, anchor: ISODate, intervalMonths: number): ISODate | null {
+  if (!last || anchor > last) return last;
+  const coveredMonths = Math.ceil(intervalMonths / 2);
+  const covered = dueDatesToGenerate({
+    anchor,
+    intervalMonths,
+    lastGenerated: last,
+    notBefore: addDays(last, 1),
+    until: addDays(startOfMonth(addMonths(last, coveredMonths)), -1),
+  });
+  return covered.length ? covered[covered.length - 1] : last;
+}
+
+/**
+ * Próxima visita depois de mudar a agenda do item, com a mesma regra de updateContractItem:
+ * OMs abertas/agendadas de hoje em diante são canceladas, a agenda retoma após `keptLastDue`
+ * (último vencimento das OMs que ficam) e o gerador ainda cria vencidas dos últimos 15 dias.
+ */
+export function nextVisitAfterChange(item: ScheduleItem, contract: ContractWindow, today: ISODate, keptLastDue: ISODate | null) {
+  if (!item.tasks.length) return null;
+  const resume = resumeScheduleAfter(keptLastDue, item.anchorDate, visitIntervalMonths(item.tasks));
+  const graceStart = addDays(today, -GENERATOR_GRACE_DAYS);
+  const from = resume && resume >= graceStart ? addDays(resume, 1) : graceStart;
+  return visitsBetween(item, contract, from, addMonths(today, 25))[0] ?? null;
 }
 
 /** Datas que o gerador criaria hoje (janela: hoje − 15 dias até hoje + horizonte). */

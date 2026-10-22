@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
   },
   experimental: {
-    serverActions: { bodySizeLimit: "9mb" },
+    // Vercel recusa requisições acima de 4,5 MB; uploads ficam em MAX_UPLOAD_BYTES (4 MB, src/lib/upload.ts)
+    serverActions: { bodySizeLimit: "4.5mb" },
   },
   turbopack: {
     rules: {

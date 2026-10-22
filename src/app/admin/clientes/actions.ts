@@ -18,7 +18,7 @@ import {
 import { auth } from "@/lib/auth";
 import { assertRole } from "@/lib/auth/session";
 import { formValues, runAction, zodFieldErrors, type ActionState } from "@/lib/action";
-import { formatCEP, formatCustomerCode, onlyDigits } from "@/lib/format";
+import { formatCEP, formatCustomerCode, normalizeDocument, normalizePhone, onlyDigits } from "@/lib/format";
 import { documentError } from "./_lib/document";
 
 const STAFF = ["admin", "gestor"] as const;
@@ -62,32 +62,43 @@ const siteSchema = z.object({
     .nullable()
     .refine((v) => !v || /^[A-Z]{2}$/.test(v), "UF com 2 letras (ex.: SP)."),
   accessNotes: optionalText(2000, "Instruções de acesso"),
-  areaM2: z.number().positive("Área deve ser maior que zero.").max(1_000_000).nullable(),
+  areaM2: z
+    .number({ error: "Área: use só números, ex.: 120,5." })
+    .positive("Área deve ser maior que zero.")
+    .max(1_000_000)
+    .nullable(),
   occupants: z.number().int("Ocupantes: número inteiro.").min(0).max(100_000).nullable(),
 });
 
 function readCustomer(fd: FormData) {
   const v = formValues(fd);
   const personType = v.str("personType") === "pj" ? "pj" : "pf";
-  const phone = onlyDigits(v.str("phone")) || null;
+  const phone = normalizePhone(v.str("phone")) || null;
   return {
     personType,
     name: v.str("name"),
     tradeName: personType === "pj" ? v.str("tradeName") : null,
-    document: onlyDigits(v.str("document")) || null,
+    // CPF só números; CNPJ pode ser alfanumérico (letras em maiúsculas)
+    document: normalizeDocument(v.str("document")) || null,
     email: v.str("email")?.toLowerCase() ?? null,
     phone,
-    whatsapp: v.bool("whatsappSame") ? phone : onlyDigits(v.str("whatsapp")) || null,
+    whatsapp: v.bool("whatsappSame") ? phone : normalizePhone(v.str("whatsapp")) || null,
     defaultTechnicianId: v.str("defaultTechnicianId"),
     notes: v.str("notes"),
     status: v.str("status") === "inativo" ? "inativo" : "ativo",
   };
 }
 
+/** "120,5", "120.5" → 120.5; "1.234,5" → 1234.5 (o ponto é decimal quando não há vírgula). Texto inválido vira NaN. */
+function parseArea(raw: string | null) {
+  if (raw == null) return null;
+  const s = raw.replace(/\s|m²|m2/gi, "");
+  return Number(s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s);
+}
+
 function readSite(fd: FormData, prefix = "") {
   const v = formValues(fd);
   const k = (n: string) => `${prefix}${n}`;
-  const area = v.str(k("areaM2"));
   return {
     name: v.str(k("name")),
     zip: onlyDigits(v.str(k("zip"))) || null,
@@ -98,7 +109,7 @@ function readSite(fd: FormData, prefix = "") {
     city: v.str(k("city")),
     state: v.str(k("state"))?.toUpperCase() ?? null,
     accessNotes: v.str(k("accessNotes")),
-    areaM2: area == null ? null : Number(area.replace(/\./g, "").replace(",", ".")),
+    areaM2: parseArea(v.str(k("areaM2"))),
     occupants: v.num(k("occupants")),
   };
 }

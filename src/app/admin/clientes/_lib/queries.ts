@@ -14,7 +14,7 @@ import {
   workOrders,
 } from "@/db/schema";
 import { todayISO } from "@/lib/dates";
-import { onlyDigits } from "@/lib/format";
+import { normalizeDocument, onlyDigits } from "@/lib/format";
 import { activeWorkOrderStatuses, effectiveFinanceStatus } from "@/lib/labels";
 import { PAGE_SIZE } from "@/lib/params";
 
@@ -38,6 +38,9 @@ function searchCondition(q: string | undefined): SQL | undefined {
     const dl = `%${digits}%`;
     parts.push(ilike(customers.document, dl), ilike(customers.phone, dl), ilike(customers.whatsapp, dl));
   }
+  // CNPJ alfanumérico: o documento é salvo normalizado, com as letras
+  const doc = normalizeDocument(term);
+  if (doc !== digits && doc.length >= 3 && /\d/.test(doc)) parts.push(ilike(customers.document, `%${doc}%`));
   const code = /^cli-?0*(\d+)$/i.exec(term)?.[1];
   if (code) parts.push(eq(customers.code, Number(code)));
   return or(...parts);

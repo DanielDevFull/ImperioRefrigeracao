@@ -30,9 +30,9 @@ import {
   activePlansWithTasks,
   activeTechnicians,
   contractReceivables,
+  contractScheduleStats,
   contractWorkOrders,
   customerEquipmentWithCoverage,
-  futureOpenWorkOrderIds,
   getContract,
 } from "../_lib/queries";
 import { requireStaff } from "@/lib/auth/session";
@@ -55,11 +55,11 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
   const c = await getContract(id);
   if (!c) notFound();
   const today = todayISO();
-  const [wos, recs, settings, cancelIds, customerEquipment, plans, technicians] = await Promise.all([
+  const [wos, recs, settings, stats, customerEquipment, plans, technicians] = await Promise.all([
     contractWorkOrders(c.id),
     contractReceivables(c.id),
     getSettings(),
-    futureOpenWorkOrderIds({ contractId: c.id }),
+    contractScheduleStats(c.id),
     customerEquipmentWithCoverage(c.customerId),
     activePlansWithTasks(),
     activeTechnicians(),
@@ -81,15 +81,15 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
   const openAmount = openRecs.reduce((n, r) => n + r.amount - r.discount, 0);
   const overdue = recs.filter((r) => effectiveFinanceStatus(r.status, r.dueDate, today) === "vencido");
 
-  const futureByItem = new Map<string, number>();
   const openByItem = new Map<string, number>();
+  const nextOpenByItem = new Map<string, string>();
   for (const w of wos) {
     if (!w.contractEquipmentId) continue;
-    if (w.status === "aberta" || w.status === "agendada") {
+    if (w.status === "aberta" || w.status === "agendada")
       openByItem.set(w.contractEquipmentId, (openByItem.get(w.contractEquipmentId) ?? 0) + 1);
-      if ((w.scheduledDate ?? w.dueDate ?? "") >= today)
-        futureByItem.set(w.contractEquipmentId, (futureByItem.get(w.contractEquipmentId) ?? 0) + 1);
-    }
+    const date = w.scheduledDate ?? w.dueDate;
+    const known = nextOpenByItem.get(w.contractEquipmentId);
+    if (date && date >= today && (!known || date < known)) nextOpenByItem.set(w.contractEquipmentId, date);
   }
 
   const freeEquipment = customerEquipment
@@ -118,7 +118,10 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
   const items = activeItems.map((i) => {
     const label = [i.equipment.type?.name, i.equipment.location].filter(Boolean).join(", ") || formatEquipmentCode(i.equipment.code);
     const generates = i.plan.active && i.plan.tasks.length > 0 && GENERATES.has(i.equipment.status);
-    const next = generates && isActive ? nextVisit({ anchorDate: i.anchorDate, tasks: i.plan.tasks }, term, today) : null;
+    // a OM em aberto mais próxima ou, se vier antes, a primeira data que o gerador ainda vai criar
+    const planned = generates && isActive ? nextVisit({ anchorDate: i.anchorDate, tasks: i.plan.tasks }, term, today, i.lastGeneratedDueDate) : null;
+    const open = isActive ? (nextOpenByItem.get(i.id) ?? null) : null;
+    const next = open && (!planned || open < planned) ? open : planned;
     const problem = !i.plan.active
       ? "Plano inativo"
       : !i.plan.tasks.length
@@ -150,7 +153,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
           <>
             {!closed && <GenerateNowButton contractId={c.id} disabled={!isActive || activeItems.length === 0} />}
             {!closed && <EditContractButton contract={contractInfo} />}
-            <ContractStatusActions contract={contractInfo} cancelCount={cancelIds.length} activeItems={activeItems.length} />
+            <ContractStatusActions contract={contractInfo} cancelCount={stats.open} overdueCount={stats.overdue} activeItems={activeItems.length} />
           </>
         }
       />
@@ -275,14 +278,23 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                             id: i.id,
                             label: i.label,
                             maintenancePlanId: i.maintenancePlanId,
+                            planTasks: i.plan.tasks,
                             anchorDate: i.anchorDate,
                             preferredTechnicianId: i.preferredTechnicianId,
                             openWorkOrders: openByItem.get(i.id) ?? 0,
+                            futureOpen: stats.byItem.get(i.id)?.future ?? 0,
+                            keptLastDue: stats.byItem.get(i.id)?.keptLastDue ?? null,
                           }}
+                          schedule={{ term, today, contractActive: isActive }}
                           plans={plans}
                           technicians={technicians}
                         />
-                        <RemoveItemButton itemId={i.id} label={i.label} futureCount={futureByItem.get(i.id) ?? 0} />
+                        <RemoveItemButton
+                          itemId={i.id}
+                          label={i.label}
+                          openCount={stats.byItem.get(i.id)?.open ?? 0}
+                          overdueCount={stats.byItem.get(i.id)?.overdue ?? 0}
+                        />
                       </div>
                     )}
                   </div>
@@ -354,14 +366,23 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
                               id: i.id,
                               label: i.label,
                               maintenancePlanId: i.maintenancePlanId,
+                              planTasks: i.plan.tasks,
                               anchorDate: i.anchorDate,
                               preferredTechnicianId: i.preferredTechnicianId,
                               openWorkOrders: openByItem.get(i.id) ?? 0,
+                              futureOpen: stats.byItem.get(i.id)?.future ?? 0,
+                              keptLastDue: stats.byItem.get(i.id)?.keptLastDue ?? null,
                             }}
+                            schedule={{ term, today, contractActive: isActive }}
                             plans={plans}
                             technicians={technicians}
                           />
-                          <RemoveItemButton itemId={i.id} label={i.label} futureCount={futureByItem.get(i.id) ?? 0} />
+                          <RemoveItemButton
+                            itemId={i.id}
+                            label={i.label}
+                            openCount={stats.byItem.get(i.id)?.open ?? 0}
+                            overdueCount={stats.byItem.get(i.id)?.overdue ?? 0}
+                          />
                         </span>
                       )}
                     </TableCell>
@@ -453,7 +474,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
           description={`Geradas ${settings.invoiceLeadDays} dias antes de cada vencimento.`}
           actions={
             <Link
-              href={`/admin/financeiro/receber?q=${encodeURIComponent(c.customer.name)}`}
+              href={`/admin/financeiro/receber?status=todas&q=${encodeURIComponent(c.customer.name)}`}
               className="inline-flex items-center gap-1 text-xs text-ice hover:underline"
             >
               Contas a receber
@@ -531,7 +552,7 @@ export default async function ContratoPage({ params }: PageProps<"/admin/contrat
           {recs.length > 8 && (
             <p className="border-t border-rime px-5 py-3 text-xs text-steel">
               Mostrando as 8 mais recentes.{" "}
-              <Link href={`/admin/financeiro/receber?q=${encodeURIComponent(c.customer.name)}`} className="text-ice hover:underline">
+              <Link href={`/admin/financeiro/receber?status=todas&q=${encodeURIComponent(c.customer.name)}`} className="text-ice hover:underline">
                 Ver todas em contas a receber
               </Link>
             </p>

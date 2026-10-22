@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { initialActionState } from "@/lib/action";
 import { cn } from "@/lib/utils";
+import { fitImage } from "@/lib/upload-client";
 import { EquipmentTile } from "../../_components/bits";
 import { setInputFiles, shrinkImage } from "../../_lib/compress";
-import { MAX_REQUEST_PHOTOS, PROBLEM_CHIPS, UPLOAD_LIMIT_BYTES, URGENCY_OPTIONS } from "../../_lib/copy";
+import { MAX_REQUEST_PHOTOS, PROBLEM_CHIPS, UPLOAD_LIMIT_BYTES, UPLOAD_LIMIT_LABEL, URGENCY_OPTIONS } from "../../_lib/copy";
 import { createServiceRequest } from "./actions";
 
 export type EquipOption = {
@@ -287,13 +288,19 @@ function PhotoPicker({ error }: { error?: string }) {
     if (images.length < picked.length) warning = "Somente imagens (JPG ou PNG).";
     if (images.length > room) warning = `Envie até ${MAX_REQUEST_PHOTOS} fotos.`;
     setBusy(true);
-    const ready = await Promise.all(images.slice(0, Math.max(0, room)).map((f) => shrinkImage(f)));
+    const ready = await Promise.all(
+      images.slice(0, Math.max(0, room)).map(async (f) => {
+        const small = await shrinkImage(f);
+        // o navegador não decodificou como bitmap (ex.: HEIC): tenta de novo pelo <img>
+        return small.size > 1.5 * 1024 * 1024 ? fitImage(f) : small;
+      }),
+    );
     setBusy(false);
     const accepted: File[] = [];
     let total = prev.reduce((s, f) => s + f.size, 0);
     for (const f of ready) {
       if (total + f.size > UPLOAD_LIMIT_BYTES - 64 * 1024) {
-        warning = "As fotos somam mais de 8 MB. Algumas ficaram de fora.";
+        warning = `As fotos somam mais de ${UPLOAD_LIMIT_LABEL}. Algumas ficaram de fora.`;
         continue;
       }
       total += f.size;

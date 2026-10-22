@@ -49,6 +49,7 @@ import {
   mapsLink,
   whatsappLink,
 } from "@/lib/format";
+import { toISODate } from "@/lib/dates";
 import { labelOf, paymentMethod } from "@/lib/labels";
 import { param } from "@/lib/params";
 import { cn } from "@/lib/utils";
@@ -86,7 +87,9 @@ export default async function ClientePage({ params, searchParams }: PageProps<"/
   const activeEquipment = d.equipment.filter((e) => e.status !== "removido");
   const primarySite = d.sites.find((s) => s.isPrimary) ?? d.sites[0] ?? null;
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
-  const workOrders = [...d.workOrders].sort((a, b) => woDate(b).localeCompare(woDate(a)));
+  const workOrders = [...d.workOrders].sort(
+    (a, b) => woDate(b).localeCompare(woDate(a)) || woTime(b) - woTime(a),
+  );
 
   const tabs: TabDef[] = [
     { value: "geral", label: "Visão geral" },
@@ -629,9 +632,17 @@ export default async function ClientePage({ params, searchParams }: PageProps<"/
   );
 }
 
-function woDate(w: { finishedAt: Date | null; scheduledDate: string | null; dueDate: string | null; createdAt: Date }) {
-  if (w.finishedAt) return w.finishedAt.toISOString().slice(0, 10);
-  return w.scheduledDate ?? w.dueDate ?? w.createdAt.toISOString().slice(0, 10);
+type WoDates = { finishedAt: Date | null; scheduledDate: string | null; dueDate: string | null; createdAt: Date };
+
+/** Dia de referência da OM no calendário de São Paulo (toISOString daria o dia em UTC). */
+function woDate(w: WoDates) {
+  if (w.finishedAt) return toISODate(w.finishedAt);
+  return w.scheduledDate ?? w.dueDate ?? toISODate(w.createdAt);
+}
+
+/** Desempate no mesmo dia: a mais recente primeiro. */
+function woTime(w: WoDates) {
+  return (w.finishedAt ?? w.createdAt).getTime();
 }
 
 const ALPHABET = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";

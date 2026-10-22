@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
-import { and, asc, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
-import { db } from "@/db";
+import { and, asc, desc, eq, ilike, inArray, isNotNull, ne, or, sql, type SQL } from "drizzle-orm";
+import { db, type Tx } from "@/db";
 import {
   contractEquipment,
   contracts,
@@ -12,7 +12,7 @@ import {
   technicians,
   workOrders,
 } from "@/db/schema";
-import { todayISO } from "@/lib/dates";
+import { todayISO, type ISODate } from "@/lib/dates";
 import { activeWorkOrderStatuses } from "@/lib/labels";
 import { PAGE_SIZE } from "@/lib/params";
 
@@ -152,22 +152,94 @@ export async function contractWorkOrders(contractId: string) {
     .limit(200);
 }
 
-/** OMs futuras ainda não iniciadas (abertas/agendadas) — são as canceladas junto com o contrato. */
-export async function futureOpenWorkOrderIds({ contractId, contractEquipmentId }: { contractId?: string; contractEquipmentId?: string }) {
-  const today = todayISO();
-  const rows = await db
-    .select({ id: workOrders.id })
+type DbLike = Tx | typeof db;
+const NOT_STARTED = ["aberta", "agendada"] as const;
+
+/**
+ * OMs automáticas ainda não iniciadas (abertas ou agendadas) dos equipamentos do contrato ou de um item.
+ * Sem `from`, inclui as atrasadas: são as canceladas ao remover o equipamento ou cancelar o contrato.
+ * Com `from`, só as de `from` em diante: as refeitas quando a agenda do equipamento muda.
+ */
+export async function openAutoWorkOrders(
+  { contractId, contractEquipmentId, from }: { contractId?: string; contractEquipmentId?: string; from?: ISODate },
+  tx: DbLike = db,
+) {
+  if (!contractId && !contractEquipmentId) throw new Error("Informe o contrato ou o equipamento do contrato.");
+  return tx
+    .select({ id: workOrders.id, number: workOrders.number, dueDate: workOrders.dueDate, scheduledDate: workOrders.scheduledDate })
     .from(workOrders)
     .innerJoin(contractEquipment, eq(contractEquipment.id, workOrders.contractEquipmentId))
     .where(
       and(
         contractId ? eq(contractEquipment.contractId, contractId) : undefined,
         contractEquipmentId ? eq(contractEquipment.id, contractEquipmentId) : undefined,
-        inArray(workOrders.status, ["aberta", "agendada"]),
-        sql`coalesce(${workOrders.scheduledDate}, ${workOrders.dueDate}) >= ${today}`,
+        eq(workOrders.origin, "automatica"),
+        inArray(workOrders.status, [...NOT_STARTED]),
+        from ? sql`coalesce(${workOrders.scheduledDate}, ${workOrders.dueDate}) >= ${from}` : undefined,
+      ),
+    )
+    .orderBy(asc(workOrders.number));
+}
+
+/** Último vencimento entre as OMs automáticas não canceladas do item (a última visita que vale). */
+export async function lastAutoDueDate(tx: DbLike, contractEquipmentId: string): Promise<ISODate | null> {
+  const [row] = await tx
+    .select({ last: sql<string | null>`max(${workOrders.dueDate})::text` })
+    .from(workOrders)
+    .where(
+      and(
+        eq(workOrders.contractEquipmentId, contractEquipmentId),
+        eq(workOrders.origin, "automatica"),
+        ne(workOrders.status, "cancelada"),
       ),
     );
-  return rows.map((r) => r.id);
+  return row?.last ?? null;
+}
+
+/** Último vencimento das OMs automáticas não canceladas de cada equipamento (em qualquer contrato). */
+export async function lastAutoDueByEquipment(equipmentIds: string[]): Promise<Map<string, ISODate>> {
+  if (!equipmentIds.length) return new Map();
+  const rows = await db
+    .select({ equipmentId: workOrders.equipmentId, last: sql<string>`max(${workOrders.dueDate})::text` })
+    .from(workOrders)
+    .where(
+      and(
+        inArray(workOrders.equipmentId, equipmentIds),
+        eq(workOrders.origin, "automatica"),
+        ne(workOrders.status, "cancelada"),
+        isNotNull(workOrders.dueDate),
+      ),
+    )
+    .groupBy(workOrders.equipmentId);
+  return new Map(rows.filter((r) => r.equipmentId && r.last).map((r) => [r.equipmentId as string, r.last]));
+}
+
+/**
+ * Por item do contrato (ativos e removidos): OMs automáticas abertas/agendadas (futuras e atrasadas)
+ * e o último vencimento das OMs que ficam se a agenda do item for refeita hoje.
+ */
+export async function contractScheduleStats(contractId: string) {
+  const today = todayISO();
+  const date = sql`coalesce(${workOrders.scheduledDate}, ${workOrders.dueDate})`;
+  const notStarted = sql`${workOrders.status} in ('aberta', 'agendada')`;
+  const rows = await db
+    .select({
+      itemId: workOrders.contractEquipmentId,
+      open: sql<number>`count(*) filter (where ${notStarted})::int`,
+      overdue: sql<number>`count(*) filter (where ${notStarted} and ${date} < ${today})::int`,
+      future: sql<number>`count(*) filter (where ${notStarted} and ${date} >= ${today})::int`,
+      keptLastDue: sql<string | null>`(max(${workOrders.dueDate}) filter (where not (${notStarted} and ${date} >= ${today})))::text`,
+    })
+    .from(workOrders)
+    .innerJoin(contractEquipment, eq(contractEquipment.id, workOrders.contractEquipmentId))
+    .where(and(eq(contractEquipment.contractId, contractId), eq(workOrders.origin, "automatica"), ne(workOrders.status, "cancelada")))
+    .groupBy(workOrders.contractEquipmentId);
+  const byItem = new Map(rows.filter((r) => r.itemId).map((r) => [r.itemId as string, r]));
+  return {
+    byItem,
+    open: rows.reduce((n, r) => n + r.open, 0),
+    overdue: rows.reduce((n, r) => n + r.overdue, 0),
+  };
 }
 
 export async function contractReceivables(contractId: string) {

@@ -5,6 +5,7 @@ import { CheckCheck, Loader2, WifiOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { cn } from "@/lib/utils";
 import { loadDraft, saveDraft, type ConclusionDraft } from "../_lib/draft";
 import { SignaturePad, type SignaturePadHandle, type SignatureStroke } from "./signature-pad";
@@ -170,12 +171,12 @@ function ConclusionFormBody({
       </div>
 
       {error && (
-        <p role="alert" className="rounded-xl bg-gauge-red/10 px-3.5 py-3 text-sm leading-relaxed text-gauge-red ring-1 ring-gauge-red/30">
+        <p role="alert" className={cn("rounded-xl bg-gauge-red/10 px-3.5 py-3 text-sm leading-relaxed ring-1 ring-gauge-red/30", toneOnTint.red)}>
           {error}
         </p>
       )}
       {!online && (
-        <p className="flex gap-2 rounded-xl bg-brass/10 px-3.5 py-3 text-sm text-brass ring-1 ring-brass/30">
+        <p className={cn("flex gap-2 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30", toneOnTint.brass)}>
           <WifiOff className="mt-0.5 size-4 shrink-0" />
           Sem conexão. Para concluir é preciso internet; o rascunho e a assinatura ficam salvos neste aparelho.
         </p>
@@ -185,7 +186,9 @@ function ConclusionFormBody({
         type="submit"
         disabled={busy || !online}
         className={cn(
-          "flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-b from-mint to-[#22b98f] text-[1.02rem] font-semibold text-abyss shadow-[0_10px_30px_-10px_rgb(62_224_181/0.6)] transition-opacity disabled:opacity-50",
+          "flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-b from-mint to-[#22b98f] text-[1.02rem] font-semibold text-abyss shadow-[0_10px_30px_-10px_var(--glow-mint)] transition-opacity disabled:opacity-50",
+          // claro: verde mais fundo embaixo para a tinta clara passar o contraste (mesma regra da barra de ação)
+          "light:to-[color-mix(in_srgb,var(--mint)_78%,var(--silver))] light:shadow-[0_10px_24px_-10px_var(--glow-mint)]",
         )}
       >
         {busy ? <Loader2 className="size-5 animate-spin" /> : <CheckCheck className="size-5" />}

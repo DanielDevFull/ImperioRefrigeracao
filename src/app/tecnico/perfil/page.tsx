@@ -21,7 +21,8 @@ export default async function TechProfilePage() {
     <div className="space-y-6">
       <header className="flex items-center gap-4 pt-1">
         <span
-          className="grid size-16 shrink-0 place-items-center rounded-full text-xl font-semibold text-abyss ring-4 ring-abyss"
+          // claro: a cor do técnico é um dado (pode ser menta ou latão, claros); tinta azul-marinho passa em todas
+          className="grid size-16 shrink-0 place-items-center rounded-full text-xl font-semibold text-abyss ring-4 ring-abyss light:text-silver light:shadow-[0_10px_24px_-12px_var(--shade-strong)]"
           style={{ background: `linear-gradient(160deg, ${technician.color}, #1677d6)` }}
           aria-hidden
         >
@@ -99,11 +100,11 @@ export default async function TechProfilePage() {
             {latest.map((n) => {
               const body = (
                 <>
-                  <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.read ? "bg-steel/30" : "bg-ice shadow-[0_0_8px_var(--ice)]")} />
+                  <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.read ? "bg-steel/30" : "bg-ice shadow-[0_0_8px_var(--ice)] light:shadow-[0_0_6px_var(--glow-ice)]")} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[0.95rem] text-silver">{n.title}</span>
                     {n.body && <span className="block truncate text-xs text-steel">{n.body}</span>}
-                    <span className="mt-0.5 block text-[0.7rem] text-steel/70">{formatRelative(n.createdAt)}</span>
+                    <span className="mt-0.5 block text-[0.7rem] text-steel/70 light:text-steel">{formatRelative(n.createdAt)}</span>
                   </span>
                   {n.link && <ChevronRight className="mt-1 size-4 shrink-0 text-steel" />}
                 </>

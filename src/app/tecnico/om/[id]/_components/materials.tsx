@@ -8,8 +8,10 @@ import { ConfirmAction } from "@/components/system/confirm-action";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { formatBRL, formatNumber } from "@/lib/format";
 import { productCategory } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 import { addMaterialAction, removeMaterialAction } from "../actions";
 import type { CatalogItem, ExecMaterial } from "../_lib/types";
 
@@ -246,7 +248,7 @@ function AddMaterialSheet({
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <span className="flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm text-brass ring-1 ring-brass/30">
+                  <span className={cn("flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30", toneOnTint.brass)}>
                     <AlertTriangle className="mt-0.5 size-4 shrink-0" />
                     <span>
                       {available > 0
@@ -270,7 +272,7 @@ function AddMaterialSheet({
               <Switch checked={charge} onCheckedChange={setCharge} aria-label="Cobrar do cliente" />
             </label>
             {error && (
-              <p role="alert" className="rounded-xl bg-gauge-red/10 px-3.5 py-2.5 text-sm text-gauge-red ring-1 ring-gauge-red/30">
+              <p role="alert" className={cn("rounded-xl bg-gauge-red/10 px-3.5 py-2.5 text-sm ring-1 ring-gauge-red/30", toneOnTint.red)}>
                 {error}
               </p>
             )}

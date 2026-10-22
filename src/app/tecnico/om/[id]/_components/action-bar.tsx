@@ -52,8 +52,12 @@ const PrimaryButton = forwardRef<
       className={cn(
         "relative flex h-14 min-w-0 flex-1 items-center justify-center overflow-hidden rounded-2xl px-3.5 text-base font-semibold tracking-[-0.005em] text-abyss outline-offset-4 transition-[filter] active:brightness-110 disabled:opacity-80",
         conclude
-          ? "bg-gradient-to-b from-mint to-[#22b98f] shadow-[0_10px_30px_-10px_rgb(62_224_181/0.65)]"
-          : "bg-gradient-to-b from-ice to-ice-deep shadow-[0_10px_30px_-10px_rgb(56_168_255/0.75)]",
+          ? cn(
+              "bg-gradient-to-b from-mint to-[#22b98f] shadow-[0_10px_30px_-10px_color-mix(in_srgb,var(--mint)_65%,transparent)]",
+              // claro: o verde desce para mais fundo (o #22b98f deixaria a tinta clara < 3:1) e o brilho vira sombra suave
+              "light:to-[color-mix(in_srgb,var(--mint)_78%,var(--silver))] light:shadow-[0_10px_24px_-10px_var(--glow-mint)]",
+            )
+          : "bg-gradient-to-b from-ice to-ice-deep shadow-[0_10px_30px_-10px_color-mix(in_srgb,var(--ice)_75%,transparent)] light:shadow-[0_10px_24px_-10px_var(--glow-ice)]",
       )}
     >
       <AnimatePresence mode="popLayout" initial={false}>
@@ -86,7 +90,11 @@ function SuccessCard({ info, reportHref, onClose }: { info: SuccessInfo; reportH
       animate={{ y: 0, opacity: 1, scale: 1 }}
       exit={{ y: 30, opacity: 0 }}
       transition={reduce ? { duration: 0.15 } : { type: "spring", stiffness: 380, damping: 30, delay: 0.12 }}
-      className="frost-edge rounded-3xl bg-gradient-to-b from-glacier to-night p-5 shadow-[0_-12px_48px_-12px_rgb(62_224_181/0.35),0_24px_48px_-20px_rgb(0_0_0/0.8)] ring-1 ring-mint/25"
+      className={cn(
+        "frost-edge rounded-3xl bg-gradient-to-b from-glacier to-night p-5 ring-1 ring-mint/25",
+        "shadow-[0_-12px_48px_-12px_color-mix(in_srgb,var(--mint)_35%,transparent),0_24px_48px_-20px_var(--shade-strong)]",
+        "light:shadow-[0_-10px_40px_-14px_var(--glow-mint),0_24px_48px_-20px_var(--shade-strong)]",
+      )}
     >
       <div className="flex items-center gap-4">
         <span className="relative grid size-14 shrink-0 place-items-center rounded-full bg-mint/15 ring-1 ring-mint/40">
@@ -133,6 +141,9 @@ function SuccessCard({ info, reportHref, onClose }: { info: SuccessInfo; reportH
     </motion.div>
   );
 }
+
+/** Claro: botões secundários brancos e com sombra leve, nítidos sobre o véu gelo da barra (no sol forte). */
+const SECONDARY_LIGHT = "light:bg-night light:shadow-[0_8px_20px_-12px_var(--shade-strong)] light:active:bg-glacier-2";
 
 /** Barra fixa no rodapé: UM botão grande pelo estado da OM + ações secundárias. */
 export function ActionBar({
@@ -187,7 +198,7 @@ export function ActionBar({
                 type="button"
                 onClick={onMore}
                 aria-label="Mais opções"
-                className="grid size-14 shrink-0 place-items-center rounded-2xl bg-glacier text-silver ring-1 ring-rime active:bg-glacier-2"
+                className={cn("grid size-14 shrink-0 place-items-center rounded-2xl bg-glacier text-silver ring-1 ring-rime active:bg-glacier-2", SECONDARY_LIGHT)}
               >
                 <MoreHorizontal className="size-5" />
               </motion.button>
@@ -196,7 +207,7 @@ export function ActionBar({
               <motion.div layout className="shrink-0">
                 <Link
                   href={reportHref}
-                  className="flex h-14 items-center gap-2 rounded-2xl bg-glacier px-4 text-sm font-medium text-silver ring-1 ring-rime active:bg-glacier-2"
+                  className={cn("flex h-14 items-center gap-2 rounded-2xl bg-glacier px-4 text-sm font-medium text-silver ring-1 ring-rime active:bg-glacier-2", SECONDARY_LIGHT)}
                 >
                   <FileText className="size-4 text-ice" />
                   Relatório
@@ -214,7 +225,7 @@ export function ActionBar({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="flex h-14 shrink-0 items-center gap-1.5 rounded-2xl bg-glacier px-4 text-sm font-medium text-silver ring-1 ring-rime active:bg-glacier-2 disabled:opacity-60"
+                  className={cn("flex h-14 shrink-0 items-center gap-1.5 rounded-2xl bg-glacier px-4 text-sm font-medium text-silver ring-1 ring-rime active:bg-glacier-2 disabled:opacity-60", SECONDARY_LIGHT)}
                 >
                   <Pause className="size-4 text-brass" />
                   Pausar

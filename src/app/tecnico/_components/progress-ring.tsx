@@ -28,7 +28,15 @@ export function ProgressRing({
       aria-label={total ? `Checklist: ${done} de ${total} itens` : "Sem checklist"}
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgb(148 190 255 / 0.14)" strokeWidth={stroke} />
+        {/* trilho: no claro o véu de rime some no branco; glacier-2 é o gelo opaco visível no cartão e na página */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          className="stroke-[rgb(148_190_255/0.14)] light:stroke-glacier-2"
+          strokeWidth={stroke}
+        />
         <circle
           cx={size / 2}
           cy={size / 2}

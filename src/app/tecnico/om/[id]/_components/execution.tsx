@@ -11,6 +11,7 @@ import { ToneBadge } from "@/components/system/tone-badge";
 import { compressImage } from "@/lib/offline/image";
 import { flushOutbox, getOutboxItems, onOutboxEvent, pendingPayload, submit, useOutbox } from "@/lib/offline/outbox";
 import { formatDate, formatDateTime, formatDayMonth, formatOM, formatTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { WorkOrderStatus } from "@/server/core/work-order-flow";
 import { OUTBOX_KIND, taskKey } from "../../../_lib/outbox-handlers";
 import type { CompleteState, PhotoPayload, PhotoState, StatusPayload, TaskPayload, TechState } from "../../../_lib/types";
@@ -414,7 +415,8 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
             )}
             {data.signatureUrl && (
               <figure>
-                <div className="rounded-xl bg-[#f4f8fc] p-2">
+                {/* papel: a assinatura é tinta escura em PNG transparente, então fica sobre branco gelo nos dois temas */}
+                <div className="rounded-xl bg-[#f4f8fc] p-2 light:ring-1 light:ring-rime">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={data.signatureUrl} alt={`Assinatura de ${data.signedByName ?? "cliente"}`} className="mx-auto h-28 w-auto object-contain" />
                 </div>
@@ -460,8 +462,12 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
           {!reduce && (
             <motion.span
               key={burst.key}
-              className="absolute left-1/2 top-1/2 size-40 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: "radial-gradient(circle, rgb(62 224 181 / 0.55), rgb(56 168 255 / 0.15) 45%, transparent 70%)" }}
+              className={cn(
+                "absolute left-1/2 top-1/2 size-40 -translate-x-1/2 -translate-y-1/2 rounded-full",
+                "bg-[radial-gradient(circle,color-mix(in_srgb,var(--mint)_55%,transparent),color-mix(in_srgb,var(--ice)_15%,transparent)_45%,transparent_70%)]",
+                // claro: o verde fundo a 55% vira mancha escura no branco; um sopro mais leve do mesmo tom
+                "light:bg-[radial-gradient(circle,color-mix(in_srgb,var(--mint)_28%,transparent),color-mix(in_srgb,var(--ice)_10%,transparent)_45%,transparent_70%)]",
+              )}
               initial={{ scale: 0.4, opacity: 0.9 }}
               animate={{ scale: 2.2, opacity: 0 }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}

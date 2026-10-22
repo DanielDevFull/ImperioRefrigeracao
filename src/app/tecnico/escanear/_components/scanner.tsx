@@ -19,9 +19,14 @@ function haptic(p: number | number[]) {
   }
 }
 
+/*
+ * Câmera: véu escuro fixo nos dois temas (CONVENCOES, Tema claro e escuro). Tudo o que fica por cima do vídeo
+ * usa as cores do tema escuro, fixas (frost #b8e3ff, mint #3ee0b5, ice #38a8ff, brass #e8b04b, abyss #040914,
+ * silver #e6edf5): os tokens virariam tinta azul-marinho sobre a imagem escura no tema claro.
+ */
 function Bracket({ className, found }: { className: string; found: boolean }) {
   return (
-    <svg viewBox="0 0 40 40" className={cn("absolute size-11 transition-colors duration-200", found ? "text-mint" : "text-frost", className)} aria-hidden>
+    <svg viewBox="0 0 40 40" className={cn("absolute size-11 transition-colors duration-200", found ? "text-[#3ee0b5]" : "text-[#b8e3ff]", className)} aria-hidden>
       <path d="M3 22V9a6 6 0 0 1 6-6h13" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" />
     </svg>
   );
@@ -172,7 +177,7 @@ export function Scanner() {
 
   return (
     <div className="space-y-5">
-      <div className="relative -mx-4 overflow-hidden bg-black sm:mx-0 sm:rounded-3xl">
+      <div className={cn("relative -mx-4 overflow-hidden bg-black sm:mx-0 sm:rounded-3xl", !live && "light:ring-1 light:ring-rime")}>
         <div className={cn("relative w-full", live ? "aspect-square" : "aspect-[5/4]")}>
           <video
             ref={videoRef}
@@ -186,7 +191,7 @@ export function Scanner() {
             <div className="absolute inset-0 grid place-items-center">
               {/* máscara escura fora do visor */}
               <div className="relative aspect-square w-[66%] rounded-[1.75rem] shadow-[0_0_0_100vmax_rgb(4_9_20/0.62)]">
-                <div className="absolute inset-0 rounded-[1.75rem] ring-1 ring-frost/25 backdrop-saturate-150" />
+                <div className="absolute inset-0 rounded-[1.75rem] ring-1 ring-[#b8e3ff]/25 backdrop-saturate-150" />
                 <motion.div
                   className="absolute -inset-1"
                   animate={phase === "found" ? { scale: 0.92 } : reduce ? {} : { scale: [1, 0.965, 1] }}
@@ -200,7 +205,7 @@ export function Scanner() {
                 {phase === "scanning" && !reduce && (
                   <motion.span
                     aria-hidden
-                    className="absolute inset-x-5 h-0.5 rounded-full bg-gradient-to-r from-transparent via-ice to-transparent shadow-[0_0_14px_rgb(56_168_255/0.9)]"
+                    className="absolute inset-x-5 h-0.5 rounded-full bg-gradient-to-r from-transparent via-[#38a8ff] to-transparent shadow-[0_0_14px_rgb(56_168_255/0.9)]"
                     initial={{ top: "12%" }}
                     animate={{ top: ["12%", "88%", "12%"] }}
                     transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
@@ -208,7 +213,7 @@ export function Scanner() {
                 )}
                 {(phase === "found" || phase === "starting") && (
                   <span className="absolute inset-0 grid place-items-center">
-                    <Loader2 className="size-8 animate-spin text-frost" />
+                    <Loader2 className="size-8 animate-spin text-[#b8e3ff]" />
                   </span>
                 )}
               </div>
@@ -268,7 +273,7 @@ export function Scanner() {
               aria-live="polite"
               className={cn(
                 "absolute inset-x-4 bottom-4 mx-auto w-fit max-w-[calc(100%-5rem)] rounded-full px-3.5 py-1.5 text-center text-[0.8rem] font-medium backdrop-blur-md",
-                message ? "bg-[#2a1d0a]/90 text-brass" : "bg-abyss/70 text-frost",
+                message ? "bg-[#2a1d0a]/90 text-[#e8b04b]" : "bg-[#040914]/70 text-[#b8e3ff]",
               )}
             >
               {message ?? (phase === "found" ? "Etiqueta lida, abrindo equipamento…" : "Aponte para a etiqueta QR do aparelho")}
@@ -283,7 +288,7 @@ export function Scanner() {
               aria-label={torch.on ? "Desligar lanterna" : "Ligar lanterna"}
               className={cn(
                 "absolute bottom-4 right-4 grid size-12 place-items-center rounded-full backdrop-blur-md ring-1",
-                torch.on ? "bg-frost text-abyss ring-frost" : "bg-abyss/60 text-silver ring-frost/30",
+                torch.on ? "bg-[#b8e3ff] text-[#040914] ring-[#b8e3ff]" : "bg-[#040914]/60 text-[#e6edf5] ring-[#b8e3ff]/30",
               )}
             >
               {torch.on ? <FlashlightOff className="size-5" /> : <Flashlight className="size-5" />}

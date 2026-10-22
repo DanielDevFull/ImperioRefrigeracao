@@ -15,8 +15,18 @@ export type SignaturePadHandle = {
   toDataURL: () => string | null;
 };
 
+/*
+ * Duas tintas: a da TELA acompanha o tema (gelo claro no escuro, azul-marinho no claro, lida da variável
+ * --sig-ink do quadro) e a do PAPEL é sempre azul-marinho num PNG transparente: a assinatura salva vai para o
+ * relatório impresso, que é papel branco nos dois temas.
+ */
 const SCREEN_INK = "#d6ecff";
 const PAPER_INK = "#0b1a33";
+
+function screenInk(el: Element | null) {
+  if (!el) return SCREEN_INK;
+  return getComputedStyle(el).getPropertyValue("--sig-ink").trim() || SCREEN_INK;
+}
 const MAX_W = 3.4;
 const MIN_W = 1.2;
 
@@ -93,15 +103,31 @@ export function SignaturePad({
   const box = useRef({ w: 0, h: 0 });
   const [empty, setEmpty] = useState(!(initialStrokes && initialStrokes.length));
 
+  const ink = useRef(SCREEN_INK);
+
   const context = useCallback(() => canvasRef.current?.getContext("2d") ?? null, []);
 
   const redraw = useCallback(() => {
     const ctx = context();
     if (!ctx) return;
+    ink.current = screenInk(canvasRef.current);
     const { w, h } = box.current;
     ctx.clearRect(0, 0, w, h);
-    paint(ctx, strokes.current, w, h, SCREEN_INK);
+    paint(ctx, strokes.current, w, h, ink.current);
   }, [context]);
+
+  // Troca de tema com o quadro aberto (seletor ou "Automático" seguindo o aparelho): redesenha na tinta nova
+  useEffect(() => {
+    const root = document.documentElement;
+    const mo = new MutationObserver(redraw);
+    mo.observe(root, { attributes: true, attributeFilter: ["class"] });
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", redraw);
+    return () => {
+      mo.disconnect();
+      mq.removeEventListener("change", redraw);
+    };
+  }, [redraw]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,7 +207,7 @@ export function SignaturePad({
     strokes.current.push([[p.x / w, p.y / h, p.w]]);
     const ctx = context();
     if (ctx) {
-      ctx.fillStyle = SCREEN_INK;
+      ctx.fillStyle = ink.current;
       dot(ctx, [p.x / w, p.y / h, p.w], w, h);
     }
     if (empty) setEmpty(false);
@@ -195,7 +221,7 @@ export function SignaturePad({
     const events = typeof e.nativeEvent.getCoalescedEvents === "function" ? e.nativeEvent.getCoalescedEvents() : [];
     const list = events.length ? events : [e.nativeEvent];
     if (!ctx) return;
-    ctx.strokeStyle = SCREEN_INK;
+    ctx.strokeStyle = ink.current;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     for (const ev of list) {
@@ -213,14 +239,22 @@ export function SignaturePad({
     const ctx = context();
     const s = strokes.current[strokes.current.length - 1];
     if (ctx && s) {
-      ctx.strokeStyle = SCREEN_INK;
+      ctx.strokeStyle = ink.current;
       tail(ctx, s, box.current.w, box.current.h);
     }
     onChange?.(strokes.current.map((st) => st.slice()));
   }
 
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl bg-abyss/60 ring-1 ring-steel/30", disabled && "opacity-60", className)}>
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-2xl bg-abyss/60 ring-1 ring-steel/30 [--sig-ink:#d6ecff]",
+        // claro: folha branca com tinta azul-marinho, como a caneta no papel do relatório
+        "light:bg-night light:shadow-[inset_0_1px_3px_var(--shade)] light:[--sig-ink:var(--silver)]",
+        disabled && "opacity-60",
+        className,
+      )}
+    >
       <canvas
         ref={canvasRef}
         aria-label="Área de assinatura. Assine com o dedo."
@@ -236,7 +270,7 @@ export function SignaturePad({
         <span className="h-px flex-1 bg-gradient-to-r from-steel/50 via-steel/30 to-transparent" />
       </div>
       {empty && (
-        <p aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-6 text-center text-sm text-steel/70">
+        <p aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-6 text-center text-sm text-steel/70 light:text-steel">
           Peça para o cliente assinar aqui
         </p>
       )}

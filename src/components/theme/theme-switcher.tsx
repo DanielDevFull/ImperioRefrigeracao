@@ -51,8 +51,9 @@ export function ThemeSegmented({ className, size = "md" }: { className?: string;
             data-value={pref}
             onClick={(e) => !active && setTheme(pref, centerOf(e.currentTarget))}
             className={cn(
-              "relative flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              size === "sm" ? "h-8 text-xs" : "h-10 text-sm",
+              "relative flex min-w-0 items-center justify-center gap-1.5 rounded-lg px-1.5 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              // md: alvo de toque de 44px (app de campo); em telas estreitas o ícone sai para o rótulo caber
+              size === "sm" ? "h-8 text-xs" : "h-11 text-sm max-[380px]:[&>svg]:hidden",
               active ? "text-silver" : "text-steel hover:text-silver",
             )}
           >

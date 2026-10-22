@@ -5,6 +5,7 @@ import { CalendarClock, ChevronRight, KeyRound, MapPin, Navigation } from "lucid
 import { DetailList } from "@/components/system/panel";
 import { PageHeader } from "@/components/system/page-header";
 import { EquipmentStatusBadge, WorkOrderStatusBadge, WorkOrderTypeBadge } from "@/components/system/status";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { requireTechnician } from "@/lib/auth/session";
 import { todayISO } from "@/lib/dates";
 import {
@@ -67,7 +68,7 @@ export default async function TechEquipmentPage({ params }: PageProps<"/tecnico/
           <p className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm leading-relaxed text-silver ring-1 ring-brass/25">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-brass" />
             <span>
-              <span className="font-semibold text-brass">Acesso: </span>
+              <span className={cn("font-semibold", toneOnTint.brass)}>Acesso: </span>
               {site.accessNotes}
             </span>
           </p>

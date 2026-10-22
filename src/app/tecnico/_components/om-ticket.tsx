@@ -59,7 +59,8 @@ export function OmTicket({
       className={cn(
         "panel relative overflow-hidden transition-transform active:scale-[0.99]",
         overdue && "ring-1 ring-gauge-red/45",
-        concluded && "opacity-75",
+        // claro: esmaece menos, senão o texto secundário cai abaixo de 4,5:1 (o check e a etiqueta já dizem "concluída")
+        concluded && "opacity-75 light:opacity-90",
       )}
     >
       <Link
@@ -73,7 +74,7 @@ export function OmTicket({
           {overdue ? (
             <>
               <p className="readout text-lg font-semibold leading-tight text-gauge-red">{formatDayMonth(row.scheduledDate)}</p>
-              <p className="mt-0.5 text-xs text-gauge-red/80">{start ?? "sem hora"}</p>
+              <p className="mt-0.5 text-xs text-gauge-red/80 light:text-gauge-red">{start ?? "sem hora"}</p>
             </>
           ) : start ? (
             <>
@@ -102,7 +103,7 @@ export function OmTicket({
           ) : (
             <span />
           )}
-          <span className="readout text-[0.68rem] text-steel/80">{formatOM(row.number)}</span>
+          <span className="readout text-[0.68rem] text-steel/80 light:text-steel">{formatOM(row.number)}</span>
         </div>
       </div>
       {showAddress && (address || map) && (

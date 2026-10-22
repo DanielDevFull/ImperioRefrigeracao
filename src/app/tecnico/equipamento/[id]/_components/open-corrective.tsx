@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { openCorrectiveAction } from "../actions";
@@ -50,7 +51,7 @@ export function OpenCorrective({ equipmentId, label }: { equipmentId: string; la
       <SheetTrigger asChild>
         <button
           type="button"
-          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-b from-ice to-ice-deep text-[1.02rem] font-semibold text-abyss shadow-[0_10px_30px_-10px_rgb(56_168_255/0.7)]"
+          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-b from-ice to-ice-deep text-[1.02rem] font-semibold text-abyss shadow-[0_10px_30px_-10px_var(--glow-ice)]"
         >
           <Wrench className="size-5" />
           Abrir OM corretiva
@@ -94,9 +95,9 @@ export function OpenCorrective({ equipmentId, label }: { equipmentId: string; la
                     "h-11 rounded-xl text-sm font-medium transition-colors",
                     priority === p.value
                       ? p.value === "urgente"
-                        ? "bg-gauge-red/15 text-gauge-red ring-1 ring-gauge-red/35"
+                        ? cn("bg-gauge-red/15 ring-1 ring-gauge-red/35", toneOnTint.red)
                         : p.value === "alta"
-                          ? "bg-brass/15 text-brass ring-1 ring-brass/35"
+                          ? cn("bg-brass/15 ring-1 ring-brass/35", toneOnTint.brass)
                           : "bg-ice/15 text-silver ring-1 ring-ice/30"
                       : "text-steel",
                   )}
@@ -107,7 +108,7 @@ export function OpenCorrective({ equipmentId, label }: { equipmentId: string; la
             </div>
           </div>
           {error && (
-            <p role="alert" className="rounded-xl bg-gauge-red/10 px-3.5 py-2.5 text-sm text-gauge-red ring-1 ring-gauge-red/30">
+            <p role="alert" className={cn("rounded-xl bg-gauge-red/10 px-3.5 py-2.5 text-sm ring-1 ring-gauge-red/30", toneOnTint.red)}>
               {error}
             </p>
           )}

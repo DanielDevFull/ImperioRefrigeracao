@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2, CloudOff, Loader2, RefreshCw, WifiOff } from "lucide-react";
 import { toast } from "sonner";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { onOutboxEvent, useOutbox } from "@/lib/offline/outbox";
 import { cn } from "@/lib/utils";
 import "../_lib/outbox-handlers";
@@ -112,11 +113,13 @@ export function OfflineLayer() {
             <div
               role="status"
               className={cn(
-                "pointer-events-auto flex min-h-9 max-w-full items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.8rem] font-medium shadow-[0_8px_24px_-8px_rgb(0_0_0/0.7)] ring-1 backdrop-blur-xl",
-                banner.tone === "off" && "bg-[#2a1d0a]/95 text-brass ring-brass/40",
-                banner.tone === "warn" && "bg-[#2a1d0a]/95 text-brass ring-brass/40",
+                "pointer-events-auto flex min-h-9 max-w-full items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.8rem] font-medium shadow-[0_8px_24px_-8px_var(--shade)] ring-1 backdrop-blur-xl",
+                // no claro a faixa vira um aviso opaco do tom sobre o cartão (o marrom/verde-noite do escuro some a tinta)
+                (banner.tone === "off" || banner.tone === "warn") &&
+                  cn("bg-[#2a1d0a]/95 ring-brass/40 light:bg-[color-mix(in_srgb,var(--brass)_12%,var(--night))]", toneOnTint.brass),
                 banner.tone === "sync" && "bg-glacier/95 text-frost ring-ice/30",
-                banner.tone === "ok" && "bg-[#06261f]/95 text-mint ring-mint/35",
+                banner.tone === "ok" &&
+                  cn("bg-[#06261f]/95 ring-mint/35 light:bg-[color-mix(in_srgb,var(--mint)_10%,var(--night))]", toneOnTint.mint),
               )}
             >
               <span className="shrink-0">{banner.icon}</span>

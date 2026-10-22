@@ -84,7 +84,7 @@ export default async function TechEarningsPage({ searchParams }: PageProps<"/tec
           ).map(([k, label, tone], i) => (
             <div key={k} className={cn("px-3 py-3.5 text-center", i > 0 && "border-l border-rime")}>
               <dt className="text-xs text-steel">{label}</dt>
-              <dd className={cn("readout mt-0.5 text-[0.95rem] font-semibold", totals[k] ? tone : "text-steel/70")}>{formatBRL(totals[k])}</dd>
+              <dd className={cn("readout mt-0.5 text-[0.95rem] font-semibold", totals[k] ? tone : "text-steel/70 light:text-steel")}>{formatBRL(totals[k])}</dd>
             </div>
           ))}
         </dl>

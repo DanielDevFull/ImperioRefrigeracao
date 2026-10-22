@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AirVent, ChevronRight, History, KeyRound, MapPin, MessageSquareText, Navigation, Phone } from "lucide-react";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { requireTechnician } from "@/lib/auth/session";
 import { todayISO } from "@/lib/dates";
 import { addressLine, formatBTU, formatDate, formatEquipmentCode, formatOM, mapsLink, onlyDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { endTime } from "../../_lib/board";
 import { customerName, isAtSite, nextWorkOrderId, workOrderForTechnician } from "../../_lib/queries";
 import { Execution } from "./_components/execution";
@@ -107,7 +109,7 @@ export default async function TechWorkOrderPage({ params }: PageProps<"/tecnico/
           <div className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 ring-1 ring-brass/25">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-brass" />
             <p className="text-sm leading-relaxed text-silver">
-              <span className="font-semibold text-brass">Acesso: </span>
+              <span className={cn("font-semibold", toneOnTint.brass)}>Acesso: </span>
               {site.accessNotes}
             </p>
           </div>

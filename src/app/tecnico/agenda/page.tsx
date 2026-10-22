@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarCheck2 } from "lucide-react";
 import { EmptyState } from "@/components/system/empty-state";
 import { PageHeader } from "@/components/system/page-header";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { Button } from "@/components/ui/button";
 import { requireTechnician } from "@/lib/auth/session";
 import { addDays, todayISO, weekday } from "@/lib/dates";
@@ -56,7 +57,9 @@ export default async function TechAgendaPage() {
           const content = (
             <>
               <span className="text-[0.68rem] text-steel">{WEEKDAY_SHORT[weekday(d)]}</span>
-              <span className={cn("readout text-base font-semibold", isToday ? "text-ice" : "text-silver")}>{Number(d.slice(8, 10))}</span>
+              <span className={cn("readout text-base font-semibold", isToday ? toneOnTint.ice : n ? "text-silver" : "text-silver light:text-steel")}>
+                {Number(d.slice(8, 10))}
+              </span>
               <span
                 className={cn(
                   "readout grid h-4 min-w-4 place-items-center rounded-full px-1 text-[0.65rem] font-semibold",
@@ -69,7 +72,7 @@ export default async function TechAgendaPage() {
           );
           const cls = cn(
             "flex min-h-[4.25rem] flex-col items-center justify-center gap-0.5 rounded-xl ring-1",
-            isToday ? "bg-ice/10 ring-ice/35" : "bg-night/50 ring-rime",
+            isToday ? "bg-ice/10 ring-ice/35" : "bg-night/50 ring-rime light:bg-night light:shadow-[0_1px_2px_var(--shade)]",
             n && "active:bg-ice/10",
           );
           return n ? (
@@ -77,7 +80,9 @@ export default async function TechAgendaPage() {
               {content}
             </a>
           ) : (
-            <span key={d} className={cn(cls, "opacity-60")} aria-label={`${dayTitle(d, today)}: livre`}>
+            // dia livre: esmaecido no escuro; no claro a opacidade derruba o texto abaixo de 4,5:1, então o "livre"
+            // vem de fundo vazado e número em steel
+            <span key={d} className={cn(cls, "opacity-60 light:opacity-100", !isToday && "light:bg-transparent light:shadow-none")} aria-label={`${dayTitle(d, today)}: livre`}>
               {content}
             </span>
           );

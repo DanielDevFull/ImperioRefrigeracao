@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Camera, ChevronDown, CloudUpload, Lock, NotebookPen, Ruler } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { cn } from "@/lib/utils";
 import type { ExecTask } from "../_lib/types";
 
@@ -157,8 +158,11 @@ function TaskRow({
     <li
       id={`task-${task.id}`}
       className={cn(
-        "scroll-mt-28 rounded-2xl bg-night/50 ring-1 transition-[box-shadow,background-color] duration-300",
-        highlighted ? "bg-gauge-red/[0.06] ring-2 ring-gauge-red/60" : task.done ? "ring-mint/20" : "ring-rime",
+        "scroll-mt-28 rounded-2xl ring-1 transition-[box-shadow,background-color] duration-300",
+        // claro: cartão branco sólido com sombra leve (o véu de 50% fica acinzentado na página gelo)
+        highlighted
+          ? "bg-gauge-red/[0.06] ring-2 ring-gauge-red/60"
+          : cn("bg-night/50 light:bg-night light:shadow-[0_1px_2px_var(--shade)]", task.done ? "ring-mint/20 light:ring-mint/30" : "ring-rime"),
       )}
     >
       <div className="flex gap-3 p-3">
@@ -186,7 +190,7 @@ function TaskRow({
         <div className="min-w-0 flex-1 pt-0.5">
           <div className="flex items-start gap-2">
             <p className={cn("flex-1 text-[0.98rem] font-medium leading-snug", task.done ? "text-steel" : "text-silver")}>
-              <span className="readout mr-1.5 text-steel/70">{index + 1}.</span>
+              <span className="readout mr-1.5 text-steel/70 light:text-steel">{index + 1}.</span>
               {task.title}
             </p>
             {pending && (
@@ -199,7 +203,7 @@ function TaskRow({
           {(task.measurementUnit || task.requiresPhoto || task.instructions) && (
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               {task.measurementUnit && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-ice/10 px-2 py-0.5 text-xs text-ice ring-1 ring-inset ring-ice/25">
+                <span className={cn("inline-flex items-center gap-1 rounded-full bg-ice/10 px-2 py-0.5 text-xs ring-1 ring-inset ring-ice/25", toneOnTint.ice)}>
                   <Ruler className="size-3" />
                   Medição em {task.measurementUnit}
                 </span>
@@ -211,7 +215,7 @@ function TaskRow({
                   onClick={() => onPhoto(task.id)}
                   className={cn(
                     "-my-1.5 inline-flex h-9 items-center gap-1 rounded-full px-2.5 text-xs ring-1 ring-inset disabled:opacity-50",
-                    hasPhoto ? "bg-mint/12 text-mint ring-mint/30" : "bg-brass/12 text-brass ring-brass/30 active:bg-brass/20",
+                    hasPhoto ? cn("bg-mint/12 ring-mint/30", toneOnTint.mint) : cn("bg-brass/12 ring-brass/30 active:bg-brass/20", toneOnTint.brass),
                   )}
                 >
                   <Camera className="size-3.5" />
@@ -323,7 +327,8 @@ export function Checklist({
           {lockedReason}
         </p>
       )}
-      <ol className={cn("space-y-2.5", locked && lockedReason && "opacity-70")}>
+      {/* claro: esmaece menos (no sol forte o técnico confere o checklist antes de começar) */}
+      <ol className={cn("space-y-2.5", locked && lockedReason && "opacity-70 light:opacity-90")}>
         {tasks.map((t, i) => (
           <TaskRow
             key={t.id}

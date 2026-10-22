@@ -76,6 +76,10 @@ Server Actions de um módulo ficam em `actions.ts` na pasta da rota (com `"use s
 Mutação que envolve mais de uma tabela: `await db.transaction(async (tx) => { … })` e passe `tx` aos serviços.
 Depois de mudar dados, `revalidatePath(...)` das telas afetadas.
 
+Cuidado com o Drizzle: num `select` de uma tabela só (sem join), colunas dentro de `sql\`...\`` saem sem o
+nome da tabela. Numa subconsulta correlacionada, `${tabela.id}` passa a apontar para a tabela de dentro.
+Qualifique explicitamente (ex.: ``sql.raw('"customers"."id"')``) nesses casos.
+
 Datas: sempre `todayISO()` (fuso de São Paulo) e funções de `@/lib/dates`. Exibição: `formatDate`, `formatBRL`,
 `formatOM`, `formatDocument`, `formatPhone`… de `@/lib/format`.
 

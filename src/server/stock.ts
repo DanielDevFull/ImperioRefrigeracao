@@ -12,6 +12,7 @@ import {
   workOrders,
 } from "@/db/schema";
 import { addDays, todayISO } from "@/lib/dates";
+import { formatNumber } from "@/lib/format";
 
 type DbLike = Tx | typeof db;
 
@@ -60,8 +61,10 @@ export async function transferStock(
   if (t.quantity <= 0) throw new Error("Informe uma quantidade maior que zero.");
   if (t.fromId === t.toId) throw new Error("Origem e destino precisam ser diferentes.");
   const group = randomUUID();
-  await moveStock(tx, { ...t, locationId: t.fromId, type: "transferencia", quantity: -t.quantity, transferGroupId: group });
-  await moveStock(tx, { ...t, locationId: t.toId, type: "transferencia", quantity: t.quantity, transferGroupId: group });
+  const product = await tx.query.products.findFirst({ where: eq(products.id, t.productId), columns: { costPrice: true } });
+  const unitCost = product?.costPrice ?? 0;
+  await moveStock(tx, { ...t, locationId: t.fromId, type: "transferencia", quantity: -t.quantity, unitCost, transferGroupId: group });
+  await moveStock(tx, { ...t, locationId: t.toId, type: "transferencia", quantity: t.quantity, unitCost, transferGroupId: group });
 }
 
 /** Saldo total (todos os locais) por produto. */
@@ -128,7 +131,7 @@ export async function ensureReorderRequests(tx: DbLike, opts: { productIds?: str
       productId: p.id,
       quantity,
       reason: "estoque_minimo",
-      notes: `Saldo ${total} abaixo do mínimo ${p.minStock}.`,
+      notes: `Saldo ${formatNumber(total)} ${p.unit} abaixo do mínimo de ${formatNumber(p.minStock)}.`,
       createdById: opts.userId ?? null,
     });
     created++;
@@ -200,7 +203,7 @@ export async function ensureForecastRequests(tx: DbLike, days: number, today = t
       productId: f.productId,
       quantity: Math.max(f.shortage, p?.reorderQty ?? 0),
       reason: "om",
-      notes: `Previsão: ${f.need} ${f.unit} para as OMs dos próximos ${days} dias; saldo ${f.available}.`,
+      notes: `Previsão: ${formatNumber(f.need)} ${f.unit} para as OMs dos próximos ${days} dias; saldo ${formatNumber(f.available)}.`,
     });
     created++;
   }

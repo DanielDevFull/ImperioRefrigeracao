@@ -147,7 +147,7 @@ export const purchaseRequestStatus: LabelMap = {
 
 export const purchaseRequestReason: LabelMap = {
   estoque_minimo: { label: "Estoque mínimo", tone: "brass" },
-  om: { label: "Falta em OM", tone: "red" },
+  om: { label: "Previsão das OMs", tone: "red" },
   manual: { label: "Manual", tone: "frost" },
 };
 

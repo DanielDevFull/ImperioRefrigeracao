@@ -9,6 +9,7 @@ import { formValues, runAction, zodFieldErrors, type ActionState } from "@/lib/a
 import { assertRole } from "@/lib/auth/session";
 import { addMonths, todayISO } from "@/lib/dates";
 import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import { payPayable } from "@/server/billing";
 import { PAYMENT_METHOD_VALUES } from "../_lib/constants";
 
@@ -135,7 +136,7 @@ export async function createPayable(_: ActionState, fd: FormData): Promise<Actio
       if (!ACCEPTED.includes(file.type))
         return { ok: false, error: "Anexo inválido.", fieldErrors: { attachment: "Envie uma imagem (JPG, PNG, WEBP) ou um PDF." } };
       if (file.size > MAX_UPLOAD_BYTES)
-        return { ok: false, error: "Anexo muito grande.", fieldErrors: { attachment: "O arquivo passa de 8 MB. Envie uma versão menor." } };
+        return { ok: false, error: "Anexo muito grande.", fieldErrors: { attachment: `O arquivo passa de ${MAX_UPLOAD_LABEL}. Envie uma versão menor.` } };
     }
 
     const [cat, sup] = await Promise.all([

@@ -10,6 +10,7 @@ import { assertRole } from "@/lib/auth/session";
 import { todayISO } from "@/lib/dates";
 import { formatOM } from "@/lib/format";
 import { dataUrlToBlob, MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import {
   addWorkOrderMaterial,
   changeWorkOrderStatus,
@@ -160,7 +161,7 @@ export async function addPhotoAction(input: PhotoPayload): Promise<PhotoState> {
       }
     }
     const blob = dataUrlToBlob(parsed.data.dataUrl);
-    if (blob.size > MAX_UPLOAD_BYTES) return { ok: false, error: "A foto passou de 8 MB. Tire de novo com menos zoom." };
+    if (blob.size > MAX_UPLOAD_BYTES) return { ok: false, error: `A foto passou de ${MAX_UPLOAD_LABEL}. Tire de novo com menos zoom.` };
     const url = await storeFile("om", blob, `foto.${blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg"}`);
     const photo = await db.transaction(async (tx) => {
       const [p] = await tx

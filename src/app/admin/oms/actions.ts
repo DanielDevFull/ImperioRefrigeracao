@@ -22,6 +22,7 @@ import { type ActionState, formValues, runAction, zodFieldErrors } from "@/lib/a
 import { assertRole, type AppUser } from "@/lib/auth/session";
 import { formatNumber } from "@/lib/format";
 import { MAX_UPLOAD_BYTES, storeFile } from "@/lib/storage";
+import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import type { WorkOrderStatus } from "@/server/core/work-order-flow";
 import {
   addWorkOrderMaterial,
@@ -522,7 +523,7 @@ export async function uploadPhotosAction(id: string, _prev: ActionState, fd: For
     if (files.length > 10) return { ok: false, error: "Envie no máximo 10 fotos por vez." };
     for (const f of files) {
       if (!f.type.startsWith("image/")) return { ok: false, error: `"${f.name}" não é uma imagem. Envie JPG, PNG ou WEBP.` };
-      if (f.size > MAX_UPLOAD_BYTES) return { ok: false, error: `"${f.name}" passa de 8 MB. Reduza a foto e tente de novo.` };
+      if (f.size > MAX_UPLOAD_BYTES) return { ok: false, error: `"${f.name}" passa de ${MAX_UPLOAD_LABEL}. Reduza a foto e tente de novo.` };
     }
     const urls: string[] = [];
     for (const f of files) urls.push(await storeFile("om", f, f.name));

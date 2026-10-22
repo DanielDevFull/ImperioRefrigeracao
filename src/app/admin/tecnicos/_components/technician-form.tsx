@@ -99,7 +99,7 @@ export function TechnicianForm({ technician }: { technician?: TechnicianFormValu
             </Field>
             <Field label="CPF" htmlFor="document" error={err("document")}>
               <MaskedInput
-                mask="cpfcnpj"
+                mask="cpf"
                 id="document"
                 name="document"
                 defaultValue={technician?.document ?? undefined}

@@ -97,8 +97,10 @@ export function OmTicket({
         <div className="flex shrink-0 flex-col items-end justify-between">
           {concluded ? (
             <CheckCircle2 className="size-7 text-mint" aria-label="Concluída" />
-          ) : (
+          ) : total > 0 ? (
             <ProgressRing done={done} total={total} size={42} />
+          ) : (
+            <span />
           )}
           <span className="readout text-[0.68rem] text-steel/80">{formatOM(row.number)}</span>
         </div>

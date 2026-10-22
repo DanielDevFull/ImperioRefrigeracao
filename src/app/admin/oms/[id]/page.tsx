@@ -305,13 +305,17 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
                 <dd className="readout text-silver">{formatBRL(materialsCharged)}</dd>
               </div>
               <div className="flex justify-between gap-3 border-t border-rime pt-2.5">
-                <dt className="text-silver">{status === "concluida" ? "Total cobrado" : "Total previsto"}</dt>
-                <dd className="readout text-lg font-semibold text-silver">{formatBRL(status === "concluida" ? wo.totalAmount : estimatedTotal)}</dd>
+                <dt className="text-silver">{status === "concluida" ? "Total cobrado" : status === "cancelada" ? "Total" : "Total previsto"}</dt>
+                <dd className="readout text-lg font-semibold text-silver">
+                  {formatBRL(status === "concluida" ? wo.totalAmount : status === "cancelada" ? 0 : estimatedTotal)}
+                </dd>
               </div>
               <p className="text-xs text-steel">
-                {wo.billable
-                  ? "Faturável: gera conta a receber ao concluir."
-                  : "Não faturável: coberto pelo contrato. Só materiais cobrados geram cobrança."}
+                {status === "cancelada"
+                  ? "OM cancelada: nenhuma cobrança é gerada."
+                  : wo.billable
+                    ? "Faturável: gera conta a receber ao concluir."
+                    : "Não faturável: coberto pelo contrato. Só materiais cobrados geram cobrança."}
               </p>
             </dl>
             {wo.receivable && (
@@ -333,7 +337,11 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
           <Panel flush title="Comissão">
             {commissions.length === 0 ? (
               <p className="px-5 py-4 text-sm text-steel">
-                {status === "concluida" ? "Nenhuma regra de comissão se aplicou a esta OM." : "A comissão é calculada quando a OM é concluída."}
+                {status === "concluida"
+                  ? "Nenhuma regra de comissão se aplicou a esta OM."
+                  : status === "cancelada"
+                    ? "OM cancelada: sem comissão."
+                    : "A comissão é calculada quando a OM é concluída."}
               </p>
             ) : (
               <ul className="divide-y divide-rime/70">

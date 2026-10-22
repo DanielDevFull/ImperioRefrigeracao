@@ -114,7 +114,7 @@ export function OmChip({
               {item.priority === "urgente" ? "Urgente" : "Alta"}
             </span>
           )}
-          {locked && <Lock className={cn("size-3 shrink-0 text-steel", !urgent && "ml-auto")} aria-hidden />}
+          {locked && !compact && <Lock className={cn("size-3 shrink-0 text-steel", !urgent && "ml-auto")} aria-hidden />}
         </div>
         {!compact && <p className="mt-0.5 truncate font-medium text-silver">{item.customerName}</p>}
         <div className="mt-0.5 flex items-center gap-1.5">

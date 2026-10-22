@@ -50,7 +50,26 @@ export function OrderItems({
   const showReceived = !editable;
   return (
     <div>
-      <div className="overflow-x-auto">
+      {/* Celular, pedido já enviado: linhas empilhadas */}
+      {!editable && (
+        <ul className="divide-y divide-rime md:hidden">
+          {items.map((it) => (
+            <li key={it.id} className="px-4 py-3">
+              <div className="flex items-start justify-between gap-3">
+                <ProductCell item={it} />
+                <span className="shrink-0 text-sm tabular-nums text-silver">{formatBRL(round2(it.quantity * it.unitCost))}</span>
+              </div>
+              <div className="mt-1.5 flex items-center justify-between gap-3 text-xs text-steel">
+                <span className="tabular-nums">
+                  {formatQty(it.quantity, it.unit)} a {formatBRL(it.unitCost)}
+                </span>
+                <ReceivedCell item={it} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className={cn("relative overflow-x-auto", !editable && "hidden md:block")}>
         <table className="w-full min-w-[640px] text-sm">
           <thead>
             <tr className="border-b border-rime text-left text-steel">

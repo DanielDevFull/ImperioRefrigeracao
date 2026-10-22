@@ -236,7 +236,7 @@ export default async function OmReportPage({ params }: PageProps<"/relatorios/om
         )}
 
         {/* Materiais */}
-        {(wo.materials.length > 0 || labor > 0) && (
+        {(wo.materials.length > 0 || (labor > 0 && wo.status !== "cancelada")) && (
           <Section title="Materiais e valores">
             {wo.materials.length > 0 && (
               <table className="w-full border-collapse text-[0.78rem]">
@@ -262,7 +262,7 @@ export default async function OmReportPage({ params }: PageProps<"/relatorios/om
                 </tbody>
               </table>
             )}
-            {(labor > 0 || chargedTotal > 0) && (
+            {wo.status !== "cancelada" && (labor > 0 || chargedTotal > 0) && (
               <dl className="ml-auto mt-3 w-full max-w-64 space-y-1 text-[0.8rem]">
                 {labor > 0 && (
                   <div className="flex justify-between gap-4">

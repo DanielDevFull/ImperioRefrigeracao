@@ -261,9 +261,14 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
     clearDraft(data.id);
     setConcludeOpen(false);
     setOptimisticStatus("concluida");
-    setBurst({ key: Date.now(), rect: primaryRef.current?.getBoundingClientRect() ?? null });
-    setSuccess({ commission: r.commission ?? null, commissionPending: r.commissionStatus === "pendente", nextId: r.nextId ?? null });
+    const rect = primaryRef.current?.getBoundingClientRect() ?? null;
+    const info: SuccessInfo = { commission: r.commission ?? null, commissionPending: r.commissionStatus === "pendente", nextId: r.nextId ?? null };
     haptic([16, 60, 30]);
+    // espera a folha de conclusão sair da frente (≈160 ms) para o gelo estourar sobre o botão
+    setTimeout(() => {
+      setBurst({ key: Date.now(), rect });
+      setSuccess(info);
+    }, 160);
   }
 
   const primary = primaryFor(status, data.atSite, data.nextId);
@@ -304,7 +309,7 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
             <h1 className="font-display text-silver-brushed text-[1.65rem] font-semibold leading-tight">{data.customerName}</h1>
             <p className="mt-1.5 text-[0.95rem] leading-snug text-frost/85">{data.title}</p>
           </div>
-          <ProgressRing done={done} total={tasks.length} size={64} stroke={5} />
+          {tasks.length > 0 && <ProgressRing done={done} total={tasks.length} size={64} stroke={5} />}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <AnimatePresence mode="popLayout" initial={false}>
@@ -445,7 +450,7 @@ export function Execution({ data, children }: { data: ExecutionData; children: R
       {burst && (
         <div
           aria-hidden
-          className="pointer-events-none fixed z-40"
+          className="pointer-events-none fixed z-[60]"
           style={
             burst.rect
               ? { left: burst.rect.left, top: burst.rect.top, width: burst.rect.width, height: burst.rect.height }

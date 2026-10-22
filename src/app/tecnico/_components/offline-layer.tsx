@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
@@ -19,8 +19,6 @@ const plural = (n: number) => (n === 1 ? "1 alteração" : `${n} alterações`);
 export function OfflineLayer() {
   const { online, pending, flushing, stalled, authRequired, ready, flush } = useOutbox();
   const pathname = usePathname();
-  const [justSynced, setJustSynced] = useState(false);
-  const hadPending = useRef(false);
 
   // Erros de itens reenviados em segundo plano (ninguém na tela esperando a resposta)
   useEffect(
@@ -33,21 +31,32 @@ export function OfflineLayer() {
     [],
   );
 
-  // "Tudo enviado" por 2,5 s quando a fila esvazia depois de ter tido pendências
+  // Com internet boa, o envio é instantâneo: só mostra "Enviando…" se demorar mais de 1,2 s
+  const hasPending = pending > 0;
+  const [slow, setSlow] = useState(false);
   useEffect(() => {
-    if (pending > 0) {
-      hadPending.current = true;
-      return;
-    }
-    if (!hadPending.current || !online) return;
-    hadPending.current = false;
-    const show = setTimeout(() => setJustSynced(true), 0);
-    const hide = setTimeout(() => setJustSynced(false), 2500);
+    if (!hasPending) return;
+    const t = setTimeout(() => setSlow(true), 1200);
     return () => {
-      clearTimeout(show);
-      clearTimeout(hide);
+      clearTimeout(t);
+      setSlow(false);
     };
-  }, [pending, online]);
+  }, [hasPending]);
+
+  // "Tudo enviado" só depois de um acúmulo real (sem sinal, sinal fraco ou envio demorado)
+  const troubled = hasPending && (!online || stalled || authRequired || slow);
+  const [backlog, setBacklog] = useState(false);
+  const [justSynced, setJustSynced] = useState(false);
+  if (troubled && !backlog) setBacklog(true);
+  if (backlog && !hasPending && online) {
+    setBacklog(false);
+    setJustSynced(true);
+  }
+  useEffect(() => {
+    if (!justSynced) return;
+    const t = setTimeout(() => setJustSynced(false), 2500);
+    return () => clearTimeout(t);
+  }, [justSynced]);
 
   let banner: { tone: "off" | "sync" | "warn" | "ok"; icon: React.ReactNode; text: string; action?: React.ReactNode } | null = null;
   if (!ready) banner = null;
@@ -82,7 +91,7 @@ export function OfflineLayer() {
         </button>
       ),
     };
-  } else if (pending) {
+  } else if (pending && slow) {
     banner = { tone: "sync", icon: <Loader2 className="size-4 animate-spin" />, text: `Enviando ${plural(pending)}…` };
   } else if (justSynced) {
     banner = { tone: "ok", icon: <CheckCircle2 className="size-4" />, text: "Tudo enviado" };

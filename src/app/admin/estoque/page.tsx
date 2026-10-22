@@ -289,91 +289,24 @@ async function LocationsSection({ locations }: { locations: Awaited<ReturnType<t
         />
       ) : (
         <>
-        <ul className="divide-y divide-rime md:hidden">
-          {locations.map((l) => (
-            <li key={l.id} className={cn("px-4 py-3", !l.active && "opacity-60")}>
-              <div className="flex items-start justify-between gap-3">
-                <Link href={`/admin/estoque?local=${l.id}`} className="min-w-0 text-sm font-medium text-silver">
-                  {l.name}
-                </Link>
-                <span className="shrink-0 text-sm tabular-nums text-silver">{formatBRL(l.value)}</span>
-              </div>
-              <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-steel">
-                <ToneBadge tone={l.type === "almoxarifado" ? "ice" : "violet"}>
-                  {l.type === "almoxarifado" ? "Almoxarifado" : "Veículo"}
-                </ToneBadge>
-                {!l.active && <ToneBadge tone="steel">Inativo</ToneBadge>}
-                <span className="tabular-nums">
-                  {l.items} {l.items === 1 ? "item" : "itens"} com saldo
-                </span>
-                <span className="ml-auto flex items-center gap-1">
-                  <LocationDialog
-                    technicians={technicians}
-                    location={{ id: l.id, name: l.name, type: l.type, technicianId: l.technicianId }}
-                  />
-                  <ConfirmAction
-                    action={setLocationActive.bind(null, l.id, !l.active)}
-                    title={l.active ? `Desativar ${l.name}?` : `Reativar ${l.name}?`}
-                    description={
-                      l.active
-                        ? "O local some das listas de movimentação. Só é possível desativar um local sem saldo."
-                        : "O local volta a aparecer nas entradas, transferências e ajustes."
-                    }
-                    confirmLabel={l.active ? "Desativar local" : "Reativar local"}
-                    destructive={l.active}
-                    variant="ghost"
-                  >
-                    {l.active ? "Desativar" : "Reativar"}
-                  </ConfirmAction>
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="hidden md:block">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="pl-5">Local</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead className="hidden sm:table-cell">Técnico</TableHead>
-              <TableHead className="text-right">Itens com saldo</TableHead>
-              <TableHead className="text-right">Valor</TableHead>
-              <TableHead className="hidden sm:table-cell">Situação</TableHead>
-              <TableHead className="pr-5 text-right">
-                <span className="sr-only">Ações</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+          <ul className="divide-y divide-rime md:hidden">
             {locations.map((l) => (
-              <TableRow key={l.id} className={cn(!l.active && "opacity-60")}>
-                <TableCell className="pl-5">
-                  <Link href={`/admin/estoque?local=${l.id}`} className="font-medium text-silver hover:text-frost">
+              <li key={l.id} className={cn("px-4 py-3", !l.active && "opacity-60")}>
+                <div className="flex items-start justify-between gap-3">
+                  <Link href={`/admin/estoque?local=${l.id}`} className="min-w-0 text-sm font-medium text-silver">
                     {l.name}
                   </Link>
-                </TableCell>
-                <TableCell>
+                  <span className="shrink-0 text-sm tabular-nums text-silver">{formatBRL(l.value)}</span>
+                </div>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-steel">
                   <ToneBadge tone={l.type === "almoxarifado" ? "ice" : "violet"}>
                     {l.type === "almoxarifado" ? "Almoxarifado" : "Veículo"}
                   </ToneBadge>
-                </TableCell>
-                <TableCell className="hidden sm:table-cell">
-                  {l.technicianId ? (
-                    <Link href={`/admin/tecnicos/${l.technicianId}`} className="text-steel hover:text-frost">
-                      {l.technicianName}
-                    </Link>
-                  ) : (
-                    <span className="text-steel/60">—</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right tabular-nums text-silver">{l.items}</TableCell>
-                <TableCell className="text-right tabular-nums text-silver">{formatBRL(l.value)}</TableCell>
-                <TableCell className="hidden sm:table-cell">
-                  <ToneBadge tone={l.active ? "mint" : "steel"}>{l.active ? "Ativo" : "Inativo"}</ToneBadge>
-                </TableCell>
-                <TableCell className="pr-5">
-                  <div className="flex items-center justify-end gap-1">
+                  {!l.active && <ToneBadge tone="steel">Inativo</ToneBadge>}
+                  <span className="tabular-nums">
+                    {l.items} {l.items === 1 ? "item" : "itens"} com saldo
+                  </span>
+                  <span className="ml-auto flex items-center gap-1">
                     <LocationDialog
                       technicians={technicians}
                       location={{ id: l.id, name: l.name, type: l.type, technicianId: l.technicianId }}
@@ -392,13 +325,80 @@ async function LocationsSection({ locations }: { locations: Awaited<ReturnType<t
                     >
                       {l.active ? "Desativar" : "Reativar"}
                     </ConfirmAction>
-                  </div>
-                </TableCell>
-              </TableRow>
+                  </span>
+                </div>
+              </li>
             ))}
-          </TableBody>
-        </Table>
-        </div>
+          </ul>
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="pl-5">Local</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead className="hidden sm:table-cell">Técnico</TableHead>
+                  <TableHead className="text-right">Itens com saldo</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="hidden sm:table-cell">Situação</TableHead>
+                  <TableHead className="pr-5 text-right">
+                    <span className="sr-only">Ações</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {locations.map((l) => (
+                  <TableRow key={l.id} className={cn(!l.active && "opacity-60")}>
+                    <TableCell className="pl-5">
+                      <Link href={`/admin/estoque?local=${l.id}`} className="font-medium text-silver hover:text-frost">
+                        {l.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <ToneBadge tone={l.type === "almoxarifado" ? "ice" : "violet"}>
+                        {l.type === "almoxarifado" ? "Almoxarifado" : "Veículo"}
+                      </ToneBadge>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {l.technicianId ? (
+                        <Link href={`/admin/tecnicos/${l.technicianId}`} className="text-steel hover:text-frost">
+                          {l.technicianName}
+                        </Link>
+                      ) : (
+                        <span className="text-steel/60">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-silver">{l.items}</TableCell>
+                    <TableCell className="text-right tabular-nums text-silver">{formatBRL(l.value)}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <ToneBadge tone={l.active ? "mint" : "steel"}>{l.active ? "Ativo" : "Inativo"}</ToneBadge>
+                    </TableCell>
+                    <TableCell className="pr-5">
+                      <div className="flex items-center justify-end gap-1">
+                        <LocationDialog
+                          technicians={technicians}
+                          location={{ id: l.id, name: l.name, type: l.type, technicianId: l.technicianId }}
+                        />
+                        <ConfirmAction
+                          action={setLocationActive.bind(null, l.id, !l.active)}
+                          title={l.active ? `Desativar ${l.name}?` : `Reativar ${l.name}?`}
+                          description={
+                            l.active
+                              ? "O local some das listas de movimentação. Só é possível desativar um local sem saldo."
+                              : "O local volta a aparecer nas entradas, transferências e ajustes."
+                          }
+                          confirmLabel={l.active ? "Desativar local" : "Reativar local"}
+                          destructive={l.active}
+                          variant="ghost"
+                        >
+                          {l.active ? "Desativar" : "Reativar"}
+                        </ConfirmAction>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </>
       )}
     </Panel>

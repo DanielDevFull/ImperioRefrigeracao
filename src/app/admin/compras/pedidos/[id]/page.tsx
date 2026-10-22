@@ -210,7 +210,7 @@ export default async function PedidoPage({ params }: PageProps<"/admin/compras/p
                   const reason = labelOf(purchaseRequestReason, r.reason);
                   return (
                     <li key={r.id} className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-5 py-3 text-sm">
-                      <Link href={`/admin/estoque/${r.productId}`} className="min-w-0 flex-1 truncate text-silver hover:text-frost">
+                      <Link href={`/admin/estoque/${r.productId}`} className="w-full min-w-0 truncate text-silver hover:text-frost sm:w-auto sm:flex-1">
                         {r.product.name}
                       </Link>
                       <span className="tabular-nums text-steel">{formatQty(r.quantity, r.product.unit)}</span>

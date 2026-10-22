@@ -11,7 +11,7 @@ import { useUrlParams } from "./use-url-params";
 const FILTER_KEYS = ["tipo", "tecnico", "origem", "de", "ate", "filtro"] as const;
 
 const dateClass =
-  "h-7 w-[8.4rem] rounded-md bg-transparent px-1.5 text-sm text-silver outline-none focus-visible:ring-2 focus-visible:ring-ring/50 [color-scheme:dark]";
+  "h-7 min-w-0 flex-1 rounded-md bg-transparent px-1.5 text-sm text-silver outline-none focus-visible:ring-2 focus-visible:ring-ring/50 md:w-[8.4rem] md:flex-none";
 
 export function ListFilters({
   technicians,
@@ -84,8 +84,13 @@ export function ListFilters({
           ))}
         </select>
 
-        <div className="flex h-9 w-full items-center gap-1 rounded-md px-2 ring-1 ring-input md:w-auto" role="group" aria-label="Período agendado">
-          <span className="pr-1 text-sm text-steel">Agendada de</span>
+        <div
+          className="flex w-full flex-wrap items-center gap-1 rounded-md px-2 py-1 ring-1 ring-input md:h-9 md:w-auto md:flex-nowrap md:py-0"
+          role="group"
+          aria-label="Período agendado"
+        >
+          {/* no celular o rótulo fica numa linha e as duas datas dividem a de baixo */}
+          <span className="basis-full pr-1 text-sm text-steel md:basis-auto">Agendada de</span>
           <input
             type="date"
             aria-label="Agendada a partir de"

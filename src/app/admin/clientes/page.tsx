@@ -222,7 +222,7 @@ function PortalCell({ has }: { has: boolean }) {
         <span
           className={cn(
             "inline-grid size-7 place-items-center rounded-full",
-            has ? "bg-ice/12 text-ice ring-1 ring-ice/25" : "text-steel/40",
+            has ? "bg-ice/12 text-ice ring-1 ring-ice/25" : "text-steel/40 light:text-steel/70",
           )}
           aria-label={has ? "Tem acesso ao portal" : "Sem acesso ao portal"}
         >

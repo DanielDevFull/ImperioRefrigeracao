@@ -175,7 +175,7 @@
     /* no claro o cartão é branco: estados "muted" do shadcn (hover de linha, skeleton, rodapé de diálogo) usam glacier */
     --muted: var(--glacier);
     --primary-foreground: #ffffff;
-    --input: rgb(20 50 100 / 0.2);
+    --input: rgb(20 50 100 / 0.26);
     --sidebar: rgb(255 255 255 / 0.8);
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: rgb(23 105 201 / 0.08);
@@ -378,8 +378,8 @@
     background: var(--glass-bg);
     border: 1px solid var(--rime);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    /* via utilitários: a forma escrita à mão perdia o backdrop-filter sem prefixo na compilação */
+    @apply backdrop-blur-[14px] backdrop-saturate-[1.4];
   }
 
   /* Painel sólido (tabelas e formulários) */
@@ -441,6 +441,25 @@
 :root.theme-switching::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/*
+ * Avisos (sonner) no claro: as cores "rich" padrão ficam abaixo de 4,5:1 e fora da paleta;
+ * usam os fundos de aviso e a tinta mais funda de cada tom (mesma regra do toneOnTint).
+ */
+html [data-sonner-toaster][data-sonner-theme="light"] {
+  --success-bg: var(--notice-mint);
+  --success-border: color-mix(in srgb, var(--mint) 25%, transparent);
+  --success-text: color-mix(in srgb, var(--mint) 85%, var(--silver));
+  --info-bg: var(--notice-ice);
+  --info-border: color-mix(in srgb, var(--ice) 25%, transparent);
+  --info-text: color-mix(in srgb, var(--ice) 85%, var(--silver));
+  --warning-bg: var(--notice-brass);
+  --warning-border: color-mix(in srgb, var(--brass) 30%, transparent);
+  --warning-text: color-mix(in srgb, var(--brass) 85%, var(--silver));
+  --error-bg: var(--notice-red);
+  --error-border: color-mix(in srgb, var(--gauge-red) 25%, transparent);
+  --error-text: color-mix(in srgb, var(--gauge-red) 85%, var(--silver));
 }
 
 @media (prefers-reduced-motion: reduce) {

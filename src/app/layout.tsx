@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   description: "Gestão de clientes, planos de manutenção, OMs, estoque e financeiro da Imperium Tec Refrigeração.",
   applicationName: "Imperium",
   appleWebApp: { capable: true, title: "Imperium", statusBarStyle: "black-translucent" },
-  icons: { apple: "/icons/apple-touch-icon.png" },
+  icons: { icon: "/brand/emblem-64.png", apple: "/icons/apple-touch-icon.png" },
 };
 
 export async function generateViewport(): Promise<Viewport> {

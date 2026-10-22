@@ -122,7 +122,7 @@ function DayTrack({ orders, range, now, today }: { orders: FieldOrder[]; range: 
         return (
           <span key={o.id} title={`${label}: ${late ? "horário passou sem início" : "agendada"}`}>
             <span
-              className={cn("absolute top-1/2 h-1.5 -translate-y-1/2 rounded-r-full", late ? "bg-brass/20" : "bg-violet/25")}
+              className={cn("absolute top-1/2 h-1.5 -translate-y-1/2 rounded-r-full", late ? "bg-brass/20 light:bg-[color-mix(in_srgb,var(--brass)_35%,var(--night))]" : "bg-violet/25")}
               style={{ left: pct(sched, range), width: `calc(${pct(sched + (o.minutes ?? 60), range)} - ${pct(sched, range)})` }}
             />
             <span
@@ -152,7 +152,9 @@ function Scale({ range, now }: { range: Range; now: number }) {
     <div className="relative mx-5 mt-4 h-5 text-[0.7rem] text-steel/70 light:text-steel/85" aria-hidden>
       {marks.map((m, i) => {
         const pos = ((m - range.start) / (range.end - range.start)) * 100;
-        if (showNow && Math.abs(pos - nowPos) < 6) return null;
+        // a pílula "Agora HH:MM" tem ~80px: some a hora que encostaria nela (no celular, num raio maior)
+        const near = showNow ? Math.abs(pos - nowPos) : 100;
+        if (near < 11) return null;
         return (
           <span
             key={m}
@@ -160,7 +162,7 @@ function Scale({ range, now }: { range: Range; now: number }) {
               "absolute top-0 -translate-x-1/2 tabular-nums",
               pos < 3 && "translate-x-0",
               pos > 97 && "-translate-x-full",
-              i % 2 === 1 && "max-sm:hidden",
+              (i % 2 === 1 || near < 20) && "max-sm:hidden",
             )}
             style={{ left: `${pos}%` }}
           >
@@ -171,7 +173,7 @@ function Scale({ range, now }: { range: Range; now: number }) {
       {showNow && (
         <span
           className={cn(
-            "absolute -top-0.5 -translate-x-1/2 whitespace-nowrap rounded-full bg-frost/12 px-1.5 py-px font-medium text-frost tabular-nums ring-1 ring-frost/25",
+            "absolute -top-0.5 -translate-x-1/2 whitespace-nowrap rounded-full bg-[color-mix(in_srgb,var(--frost)_12%,var(--night))] px-1.5 py-px font-medium text-frost tabular-nums ring-1 ring-frost/25",
             nowPos > 92 && "-translate-x-full",
             nowPos < 8 && "translate-x-0",
           )}

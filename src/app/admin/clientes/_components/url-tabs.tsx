@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +38,7 @@ export function UrlTabs({
       <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
         <TabsList
           variant="line"
-          className="h-auto w-full min-w-max justify-start gap-0 rounded-none border-b border-rime p-0"
+          className="h-auto w-full min-w-max justify-start gap-0 rounded-none border-b border-rime p-0 group-data-horizontal/tabs:h-auto"
         >
           {tabs.map((t) => (
             <TabsTrigger
@@ -50,7 +51,7 @@ export function UrlTabs({
                 <span
                   className={cn(
                     "ml-0.5 rounded-full px-1.5 text-[0.7rem] tabular-nums",
-                    t.alert ? "bg-gauge-red/15 text-gauge-red" : "bg-ice/10 text-frost/80",
+                    t.alert ? cn("bg-gauge-red/15", toneOnTint.red) : "bg-ice/10 text-frost/80",
                   )}
                 >
                   {t.count}

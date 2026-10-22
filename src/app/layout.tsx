@@ -60,6 +60,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </MotionProvider>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
+        {/* App instalado no iPhone: relógio e bateria ficam sempre brancos (black-translucent).
+            No tema claro, uma faixa azul-noite do tamanho da barra de status os mantém legíveis. */}
+        <div
+          aria-hidden
+          className="no-print pointer-events-none fixed inset-x-0 top-0 z-[60] hidden h-[env(safe-area-inset-top)] bg-[#0b1730] light:block"
+        />
       </body>
     </html>
   );

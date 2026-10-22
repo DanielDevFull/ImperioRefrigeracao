@@ -99,6 +99,29 @@ texto `silver`, secundário `steel`, bordas `rime`. Estados: `mint` (ok), `brass
 `violet` (agendado). Classes: `.panel` (painéis sólidos), `.glass` (vidro só em destaques, nunca em listas),
 `.frost-edge`, `.text-silver-brushed` (títulos), `.readout` (números tabulares).
 
+### Tema claro e escuro
+
+O sistema tem três opções por usuário: **Claro**, **Escuro** e **Automático** (segue o aparelho). A escolha fica
+na conta (`user.theme`) e no aparelho (cookie `tema`); o servidor já entrega `<html class="light|dark|theme-system">`.
+Seletor: menu do usuário (admin e portal) e Perfil do técnico (`src/components/theme`).
+
+- **Os tokens são papéis, não cores.** `text-silver` é "texto principal" (prata no escuro, azul-marinho no claro),
+  `bg-abyss` é "fundo da página", `bg-night` é "cartão". Use sempre os tokens e as opacidades deles
+  (`bg-ice/10`, `ring-rime`): eles já mudam com o tema. **Não use hex/rgb fixos** em telas.
+- Sombras, brilhos e névoas têm variáveis próprias, com valor por tema (valor escuro entre parênteses):
+  `--shade` (preto 70%), `--shade-strong` (preto 80%), `--glow-ice` (ice 70%), `--glow-mint` (mint 60%),
+  `--haze-ice` (ice 22%), `--haze-deep` (ice-deep 30%), `--haze-mint` (mint 10%), `--haze-brass` (brass 13%).
+  Ex.: `shadow-[0_20px_40px_-12px_var(--shade)]`, `shadow-[0_0_12px_var(--glow-ice)]`.
+  Para outra intensidade, misture o token: `color-mix(in_srgb,var(--ice)_45%,transparent)`.
+- Exceções pontuais: variantes `light:` e `dark:` (respeitam o Automático).
+- `.force-dark`: ilha sempre escura (painel de marca do login). Só para momentos de marca.
+- **Documentos** (relatório da OM, PMOC, recibo, pedido de compra, etiquetas) são papel: branco e tinta escura
+  nos dois temas e na impressão. Só a moldura da tela em volta acompanha o tema.
+- QR Code sempre em fundo branco. Câmera (leitor de QR) usa véu escuro fixo.
+- Gráficos: `SERIES`/`CHART` de `src/components/charts/theme.ts` (variáveis `--series-n`, validadas nos dois temas).
+- Conferir nos dois temas: `node scripts/dev/screenshot.mjs <rota> <saida.png> --scheme light` (e `--scheme dark`)
+  e `node scripts/dev/contrast-audit.mjs <rota> --scheme light` (contraste WCAG pelo axe-core).
+
 Tipografia: **Cinzel** (`font-display`) só para títulos de página/seção ≥ 20px e marca; **IBM Plex Sans** no resto.
 Números com `tabular-nums`.
 
@@ -121,7 +144,8 @@ Regras:
 ```bash
 pnpm typecheck 2>&1 | grep -E "<suas pastas>"   # zero erros nos seus arquivos
 npx eslint <suas pastas>
-node scripts/dev/screenshot.mjs /admin/clientes /tmp/x.png --as admin   # e --mobile; olhe a imagem
+node scripts/dev/screenshot.mjs /admin/clientes /tmp/x.png --as admin --scheme light   # e --scheme dark, --mobile
+node scripts/dev/contrast-audit.mjs /admin/clientes --as admin --scheme light
 ```
 
 Acessos de demonstração (`pnpm db:seed`): admin@imperiumtec.com.br / imperium123 · financeiro@imperiumtec.com.br /

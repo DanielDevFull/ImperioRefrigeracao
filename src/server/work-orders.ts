@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { db, type Tx } from "@/db";
 import {
   equipment,
@@ -160,6 +160,24 @@ export async function createWorkOrder(
   return wo;
 }
 
+/** Volta o equipamento para "ativo" se nenhuma outra OM estiver em execução nele. */
+async function releaseEquipmentIfIdle(tx: DbLike, equipmentId: string | null, exceptWorkOrderId: string) {
+  if (!equipmentId) return;
+  const busy = await tx.query.workOrders.findFirst({
+    where: and(
+      eq(workOrders.equipmentId, equipmentId),
+      ne(workOrders.id, exceptWorkOrderId),
+      inArray(workOrders.status, ["em_execucao", "pausada"]),
+    ),
+    columns: { id: true },
+  });
+  if (busy) return;
+  await tx
+    .update(equipment)
+    .set({ status: "ativo" })
+    .where(and(eq(equipment.id, equipmentId), eq(equipment.status, "em_manutencao")));
+}
+
 export async function getWorkOrderOrThrow(tx: DbLike, id: string) {
   const wo = await tx.query.workOrders.findFirst({ where: eq(workOrders.id, id) });
   if (!wo) throw new Error("OM não encontrada.");
@@ -195,7 +213,10 @@ export async function changeWorkOrderStatus(
   const [updated] = await tx.update(workOrders).set(patch).where(eq(workOrders.id, id)).returning();
   await logEvent(tx, id, { kind: "status", fromStatus: from, toStatus: to, message: note ?? null, actor });
 
-  if (to === "cancelada") await cancelCommissionsForWorkOrder(tx, id);
+  if (to === "cancelada") {
+    await cancelCommissionsForWorkOrder(tx, id);
+    await releaseEquipmentIfIdle(tx, wo.equipmentId, id);
+  }
   if (to === "em_execucao" && wo.equipmentId) {
     await tx.update(equipment).set({ status: "em_manutencao" }).where(and(eq(equipment.id, wo.equipmentId), eq(equipment.status, "ativo")));
   }
@@ -282,9 +303,7 @@ export async function completeWorkOrder(tx: DbLike, id: string, input: CompleteI
     updated.receivableId = rec.id;
   }
 
-  if (wo.equipmentId) {
-    await tx.update(equipment).set({ status: "ativo" }).where(and(eq(equipment.id, wo.equipmentId), eq(equipment.status, "em_manutencao")));
-  }
+  await releaseEquipmentIfIdle(tx, wo.equipmentId, id);
   await logEvent(tx, id, { kind: "status", fromStatus: wo.status as WorkOrderStatus, toStatus: "concluida", message: "OM concluída.", actor });
   await createCommissionForWorkOrder(tx, id);
   await notifyCustomer(tx, wo.customerId, {

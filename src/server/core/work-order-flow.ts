@@ -16,7 +16,8 @@ export const TRANSITIONS: Record<WorkOrderStatus, WorkOrderStatus[]> = {
   em_execucao: ["pausada", "aguardando_material", "concluida"],
   pausada: ["em_execucao", "em_deslocamento", "aguardando_material", "cancelada"],
   aguardando_material: ["agendada", "em_deslocamento", "em_execucao", "cancelada"],
-  concluida: ["em_execucao"],
+  // reabrir uma OM concluída só por reopenWorkOrder (estorna a comissão)
+  concluida: [],
   cancelada: ["aberta"],
 };
 

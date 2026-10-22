@@ -7,6 +7,7 @@ import {
   commissionRules,
   financeCategories,
   payables,
+  receivables,
   technicians,
   workOrderMaterials,
   workOrders,
@@ -48,7 +49,12 @@ export async function createCommissionForWorkOrder(tx: DbLike, workOrderId: stri
   if (amount <= 0) return null;
 
   const settings = await getSettings(tx);
-  const waitsPayment = settings.commissionTrigger === "recebimento" && wo.billable && wo.totalAmount > 0;
+  let waitsPayment = settings.commissionTrigger === "recebimento" && wo.billable && wo.totalAmount > 0;
+  if (waitsPayment && wo.receivableId) {
+    // a cobrança já foi recebida (ex.: OM reaberta e concluída de novo): libera direto
+    const rec = await tx.query.receivables.findFirst({ where: eq(receivables.id, wo.receivableId), columns: { status: true } });
+    if (rec?.status === "pago") waitsPayment = false;
+  }
   const status = waitsPayment ? "pendente" : "aprovada";
   const finished = wo.finishedAt ? todayISO(wo.finishedAt) : todayISO();
 
@@ -68,7 +74,8 @@ export async function createCommissionForWorkOrder(tx: DbLike, workOrderId: stri
     .onConflictDoUpdate({
       target: [commissionEntries.workOrderId, commissionEntries.technicianId],
       set: { ruleId: rule.id, basis: rule.basis, baseAmount: base, rate: rule.rate, amount, status, updatedAt: new Date() },
-      where: ne(commissionEntries.status, "paga"),
+      // nunca altera comissão já paga ou dentro de um fechamento
+      where: and(ne(commissionEntries.status, "paga"), isNull(commissionEntries.payoutId)),
     })
     .returning();
 
@@ -117,14 +124,19 @@ export async function closeCommissionPayout(
   tx: DbLike,
   { technicianId, period }: { technicianId: string; period: string },
 ) {
-  const entries = await tx.query.commissionEntries.findMany({
-    where: and(
-      eq(commissionEntries.technicianId, technicianId),
-      eq(commissionEntries.status, "aprovada"),
-      isNull(commissionEntries.payoutId),
-      lte(commissionEntries.period, period),
-    ),
-  });
+  // trava as linhas: dois cliques simultâneos em "Fechar comissão" não geram dois fechamentos
+  const entries = await tx
+    .select()
+    .from(commissionEntries)
+    .where(
+      and(
+        eq(commissionEntries.technicianId, technicianId),
+        eq(commissionEntries.status, "aprovada"),
+        isNull(commissionEntries.payoutId),
+        lte(commissionEntries.period, period),
+      ),
+    )
+    .for("update");
   if (!entries.length) throw new Error("Não há comissões liberadas para fechar neste período.");
   const total = round2(entries.reduce((s, e) => s + e.amount, 0));
   const tech = await tx.query.technicians.findFirst({ where: eq(technicians.id, technicianId) });
@@ -144,17 +156,26 @@ export async function closeCommissionPayout(
     })
     .returning();
   await tx.update(commissionPayouts).set({ payableId: payable.id }).where(eq(commissionPayouts.id, payout.id));
-  await tx
+  const linked = await tx
     .update(commissionEntries)
     .set({ payoutId: payout.id, updatedAt: new Date() })
-    .where(inArray(commissionEntries.id, entries.map((e) => e.id)));
+    .where(and(inArray(commissionEntries.id, entries.map((e) => e.id)), isNull(commissionEntries.payoutId)))
+    .returning({ id: commissionEntries.id });
+  if (linked.length !== entries.length) {
+    throw new Error("Outra pessoa acabou de fechar estas comissões. Atualize a página.");
+  }
   return { payout, payable, count: entries.length, total };
 }
 
 /** Chamado quando a conta a pagar de um fechamento é paga. */
 export async function markPayoutPaid(tx: DbLike, payoutId: string) {
   const now = new Date();
-  await tx.update(commissionPayouts).set({ status: "pago", paidAt: now }).where(eq(commissionPayouts.id, payoutId));
+  const [paid] = await tx
+    .update(commissionPayouts)
+    .set({ status: "pago", paidAt: now })
+    .where(and(eq(commissionPayouts.id, payoutId), eq(commissionPayouts.status, "aberto")))
+    .returning({ id: commissionPayouts.id });
+  if (!paid) throw new Error("Este fechamento de comissão foi desfeito. Atualize a página.");
   await tx
     .update(commissionEntries)
     .set({ status: "paga", updatedAt: now })
@@ -167,4 +188,14 @@ export async function markPayoutPaid(tx: DbLike, payoutId: string) {
       link: "/tecnico/ganhos",
     });
   }
+}
+
+/** Comissão da OM que está num fechamento ainda não pago (impede reabrir/cancelar sem desfazer o fechamento). */
+export async function commissionInOpenPayout(tx: DbLike, workOrderId: string) {
+  const rows = await tx
+    .select({ payoutId: commissionEntries.payoutId, status: commissionPayouts.status })
+    .from(commissionEntries)
+    .innerJoin(commissionPayouts, eq(commissionPayouts.id, commissionEntries.payoutId))
+    .where(and(eq(commissionEntries.workOrderId, workOrderId), eq(commissionPayouts.status, "aberto")));
+  return rows.length > 0;
 }

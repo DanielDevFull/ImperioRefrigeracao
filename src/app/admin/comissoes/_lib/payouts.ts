@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import type { Tx } from "@/db";
 import { commissionEntries, commissionPayouts, payables } from "@/db/schema";
 
@@ -21,16 +21,20 @@ export async function undoCommissionPayout(tx: Tx, payoutId: string) {
   await tx
     .update(commissionEntries)
     .set({ payoutId: null, updatedAt: new Date() })
-    .where(and(eq(commissionEntries.payoutId, payoutId), eq(commissionEntries.status, "aprovada")));
+    .where(and(eq(commissionEntries.payoutId, payoutId), ne(commissionEntries.status, "paga")));
   if (payout.payableId) {
-    await tx
+    const [payableCancelled] = await tx
       .update(payables)
       .set({ status: "cancelado", notes: "Fechamento de comissão desfeito." })
-      .where(and(eq(payables.id, payout.payableId), eq(payables.status, "aberto")));
+      .where(and(eq(payables.id, payout.payableId), eq(payables.status, "aberto")))
+      .returning({ id: payables.id });
+    if (!payableCancelled) throw new Error("A conta a pagar deste fechamento acabou de ser paga. Atualize a página.");
   }
-  await tx
+  const [cancelled] = await tx
     .update(commissionPayouts)
     .set({ status: "cancelado", notes: "Fechamento desfeito." })
-    .where(eq(commissionPayouts.id, payoutId));
+    .where(and(eq(commissionPayouts.id, payoutId), eq(commissionPayouts.status, "aberto")))
+    .returning({ id: commissionPayouts.id });
+  if (!cancelled) throw new Error("Este fechamento acabou de ser pago ou alterado. Atualize a página.");
   return payout;
 }

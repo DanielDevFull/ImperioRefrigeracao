@@ -20,6 +20,7 @@ import { round2 } from "./core/billing";
 import { canTransition, type WorkOrderStatus } from "./core/work-order-flow";
 import {
   cancelCommissionsForWorkOrder,
+  commissionInOpenPayout,
   createCommissionForWorkOrder,
   materialsChargedFor,
 } from "./commissions";
@@ -224,7 +225,22 @@ export async function changeWorkOrderStatus(
     patch.checkInLng = actor.lng ?? null;
   }
   if (to === "agendada" && !wo.technicianId) throw new Error("Atribua um técnico antes de agendar.");
-  if (to === "cancelada") await reverseWorkOrderMaterials(tx, wo.id, actor);
+  if (to === "cancelada") {
+    if (await commissionInOpenPayout(tx, wo.id)) {
+      throw new Error("A comissão desta OM está num fechamento ainda não pago. Desfaça o fechamento em Comissões antes de cancelar.");
+    }
+    if (wo.receivableId) {
+      const rec = await tx.query.receivables.findFirst({ where: eq(receivables.id, wo.receivableId), columns: { status: true } });
+      if (rec?.status === "pago") {
+        throw new Error("O serviço desta OM já foi pago pelo cliente. Combine a devolução antes de cancelar.");
+      }
+      await tx
+        .update(receivables)
+        .set({ status: "cancelado", notes: "OM cancelada." })
+        .where(and(eq(receivables.id, wo.receivableId), inArray(receivables.status, ["aberto", "em_analise"])));
+    }
+    await reverseWorkOrderMaterials(tx, wo.id, actor);
+  }
 
   const [updated] = await tx.update(workOrders).set(patch).where(eq(workOrders.id, id)).returning();
   await logEvent(tx, id, { kind: "status", fromStatus: from, toStatus: to, message: note ?? null, actor });
@@ -298,6 +314,18 @@ export async function completeWorkOrder(tx: DbLike, id: string, input: CompleteI
       .set({ amount: total })
       .where(and(eq(receivables.id, wo.receivableId), eq(receivables.status, "aberto")));
   }
+  if (total === 0 && wo.receivableId) {
+    // reaberta e concluída sem cobrança: a conta avulsa aberta deixa de existir
+    const cancelled = await tx
+      .update(receivables)
+      .set({ status: "cancelado", notes: "OM concluída sem cobrança avulsa." })
+      .where(and(eq(receivables.id, wo.receivableId), inArray(receivables.status, ["aberto", "em_analise"])))
+      .returning({ id: receivables.id });
+    if (cancelled.length) {
+      await tx.update(workOrders).set({ receivableId: null }).where(eq(workOrders.id, id));
+      updated.receivableId = null;
+    }
+  }
   if (total > 0 && !wo.receivableId) {
     const settings = await getSettings(tx);
     const cat = await tx.query.financeCategories.findFirst({
@@ -334,6 +362,9 @@ export async function completeWorkOrder(tx: DbLike, id: string, input: CompleteI
 export async function reopenWorkOrder(tx: DbLike, id: string, actor: Actor, reason: string) {
   const wo = await getWorkOrderOrThrow(tx, id);
   if (wo.status !== "concluida") throw new Error("Só OMs concluídas podem ser reabertas.");
+  if (await commissionInOpenPayout(tx, id)) {
+    throw new Error("A comissão desta OM está num fechamento ainda não pago. Desfaça o fechamento em Comissões antes de reabrir.");
+  }
   await tx.update(workOrders).set({ status: "em_execucao", finishedAt: null }).where(eq(workOrders.id, id));
   await cancelCommissionsForWorkOrder(tx, id);
   await logEvent(tx, id, { kind: "status", fromStatus: "concluida", toStatus: "em_execucao", message: `Reaberta: ${reason}`, actor });

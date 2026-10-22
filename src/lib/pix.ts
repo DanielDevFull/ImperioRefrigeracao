@@ -42,7 +42,10 @@ export type PixInput = {
 export function buildPixPayload({ key, merchantName, merchantCity, amount, txid, description }: PixInput) {
   const gui = field("00", "br.gov.bcb.pix");
   const keyField = field("01", key.trim());
-  const desc = description ? field("02", sanitizePixText(description, 40)) : "";
+  // o campo 26 inteiro não pode passar de 99 caracteres: a descrição usa só o espaço que sobra
+  const room = 99 - gui.length - keyField.length - 4;
+  const cleanDesc = description ? sanitizePixText(description, Math.min(40, Math.max(0, room))) : "";
+  const desc = cleanDesc ? field("02", cleanDesc) : "";
   const merchantAccount = field("26", gui + keyField + desc);
   const cleanTxid = (txid ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 25) || "***";
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, inArray, lt, lte, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lt, lte, ne, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import {
   bankAccounts,
@@ -293,7 +293,17 @@ function receivableStatusCond(tab: ReceivableTab, today: ISODate): SQL | undefin
 function receivableBaseConds(f: Omit<ReceivableFilters, "tab" | "page">) {
   const conds: (SQL | undefined)[] = [];
   if (f.month) {
-    conds.push(gte(receivables.dueDate, `${f.month}-01`), lte(receivables.dueDate, endOfMonth(`${f.month}-01`)));
+    // pagas: mês do pagamento (regime de caixa, igual à visão geral); demais: mês do vencimento
+    conds.push(
+      or(
+        and(eq(receivables.status, "pago"), sql`${recPaidMonth} = ${f.month}`),
+        and(
+          ne(receivables.status, "pago"),
+          gte(receivables.dueDate, `${f.month}-01`),
+          lte(receivables.dueDate, endOfMonth(`${f.month}-01`)),
+        ),
+      ),
+    );
   }
   if (f.kind === "mensalidade" || f.kind === "servico" || f.kind === "outro") conds.push(eq(receivables.kind, f.kind));
   if (f.q) {
@@ -445,7 +455,14 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 function payableBaseConds(f: Omit<PayableFilters, "tab" | "page">) {
   const conds: (SQL | undefined)[] = [];
-  if (f.month) conds.push(gte(payables.dueDate, `${f.month}-01`), lte(payables.dueDate, endOfMonth(`${f.month}-01`)));
+  if (f.month) {
+    conds.push(
+      or(
+        and(eq(payables.status, "pago"), sql`${payPaidMonth} = ${f.month}`),
+        and(ne(payables.status, "pago"), gte(payables.dueDate, `${f.month}-01`), lte(payables.dueDate, endOfMonth(`${f.month}-01`))),
+      ),
+    );
+  }
   if (f.categoryId && UUID_RE.test(f.categoryId)) conds.push(eq(payables.categoryId, f.categoryId));
   if (f.supplierId && UUID_RE.test(f.supplierId)) conds.push(eq(payables.supplierId, f.supplierId));
   if (f.q) {

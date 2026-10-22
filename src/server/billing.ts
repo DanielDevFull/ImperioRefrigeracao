@@ -117,6 +117,10 @@ export async function confirmReceivable(
     ? { fine: 0, interest: 0, total: base }
     : lateCharges({ amount: base, dueDate: rec.dueDate, paidOn, finePercent: s.lateFinePercent, interestMonthlyPercent: s.lateInterestMonthlyPercent });
   const paidAmount = input.paidAmount ?? late.total;
+  // multa e juros registrados só até o que foi efetivamente pago acima do valor original
+  const excess = Math.max(0, round2(paidAmount - base));
+  const fine = Math.min(late.fine, excess);
+  const interest = Math.min(late.interest, round2(excess - fine));
 
   const [updated] = await tx
     .update(receivables)
@@ -124,14 +128,15 @@ export async function confirmReceivable(
       status: "pago",
       paidAt: new Date(`${paidOn}T12:00:00-03:00`),
       paidAmount,
-      fine: late.fine,
-      interest: late.interest,
+      fine,
+      interest,
       paymentMethod: input.method ?? rec.paymentMethod ?? "pix",
       bankAccountId: input.bankAccountId ?? rec.bankAccountId,
       confirmedById: input.userId,
     })
-    .where(eq(receivables.id, id))
+    .where(and(eq(receivables.id, id), inArray(receivables.status, ["aberto", "em_analise"])))
     .returning();
+  if (!updated) throw new Error("Esta conta acabou de ser alterada por outra pessoa. Atualize a página.");
   await releaseCommissionsForReceivable(tx, id);
   await notifyCustomer(tx, rec.customerId, {
     title: "Pagamento confirmado",
@@ -187,8 +192,9 @@ export async function payPayable(
       paymentMethod: input.method ?? "pix",
       bankAccountId: input.bankAccountId ?? p.bankAccountId,
     })
-    .where(eq(payables.id, id))
+    .where(and(eq(payables.id, id), eq(payables.status, "aberto")))
     .returning();
+  if (!updated) throw new Error("Esta conta acabou de ser alterada por outra pessoa. Atualize a página.");
   if (p.commissionPayoutId) await markPayoutPaid(tx, p.commissionPayoutId);
   return updated;
 }

@@ -25,9 +25,10 @@ function apply(mask: Mask, raw: string) {
     case "cep":
       return d.slice(0, 8).replace(/(\d{5})(\d{1,3})$/, "$1-$2");
     case "money": {
-      if (!d) return "";
+      if (!d) return raw.trim().startsWith("-") ? "-" : "";
       const n = Number(d) / 100;
-      return n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const sign = raw.trim().startsWith("-") ? "-" : "";
+      return sign + n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
   }
 }

@@ -24,10 +24,10 @@ type Range = { start: number; end: number };
 
 const pct = (m: number, r: Range) => `${((Math.min(Math.max(m, r.start), r.end) - r.start) / (r.end - r.start)) * 100}%`;
 
-/** Trecho de equipamento do título ("Plano · Split — Sala 1" → "Split — Sala 1"). */
-function equipmentPart(title: string) {
-  const i = title.lastIndexOf(" · ");
-  return i >= 0 ? title.slice(i + 3) : title;
+/** Equipamento da OM ("Split hi-wall — Sala 1"); sem equipamento, o título. */
+function equipmentPart(o: { title: string; equipmentType: string | null; equipmentLocation: string | null }) {
+  const label = [o.equipmentType, o.equipmentLocation].filter(Boolean).join(" — ");
+  return label || o.title;
 }
 
 function isLate(o: FieldOrder, now: number) {
@@ -237,7 +237,7 @@ function LaneRow({ lane, range, now, today }: { lane: Lane; range: Range; now: n
                 <span className="truncate text-sm text-silver">{o.customer}</span>
                 <span className="hidden truncate text-xs text-steel @md:block">
                   <span className="mr-2.5 hidden tabular-nums text-steel/60 @2xl:inline">{formatOM(o.number)}</span>
-                  {equipmentPart(o.title)}
+                  {equipmentPart(o)}
                 </span>
                 <span className="justify-self-end">
                   <WorkOrderStatusBadge status={o.status} />

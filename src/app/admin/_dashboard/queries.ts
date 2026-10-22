@@ -5,6 +5,8 @@ import {
   contractEquipment,
   contracts,
   customers,
+  equipment,
+  equipmentTypes,
   jobRuns,
   maintenancePlans,
   pmocDocuments,
@@ -190,10 +192,14 @@ export async function getFieldToday(today: ISODate) {
         finishedAt: sql<string | null>`to_char(${workOrders.finishedAt} at time zone '${sql.raw(TZ)}', 'YYYY-MM-DD HH24:MI')`,
         customer: sql<string>`coalesce(${customers.tradeName}, ${customers.name})`,
         minutes: maintenancePlans.estimatedMinutes,
+        equipmentType: equipmentTypes.name,
+        equipmentLocation: equipment.location,
       })
       .from(workOrders)
       .innerJoin(customers, eq(customers.id, workOrders.customerId))
       .leftJoin(maintenancePlans, eq(maintenancePlans.id, workOrders.maintenancePlanId))
+      .leftJoin(equipment, eq(equipment.id, workOrders.equipmentId))
+      .leftJoin(equipmentTypes, eq(equipmentTypes.id, equipment.typeId))
       .where(and(eq(workOrders.scheduledDate, today), ne(workOrders.status, "cancelada")))
       .orderBy(sql`${workOrders.scheduledTime} asc nulls last`, asc(workOrders.number)),
   ]);

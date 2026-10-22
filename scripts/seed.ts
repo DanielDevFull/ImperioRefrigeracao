@@ -512,7 +512,7 @@ async function main() {
           technicianId: tech.id,
           dueDate: day,
           scheduledDate: day,
-          title: `${ce.plan.name} · ${ce.equipment.location ?? "equipamento"}`,
+          title: ce.plan.name,
           startedAt,
           finishedAt,
           travelStartedAt: new Date(startedAt.getTime() - int(15, 40) * 60000),

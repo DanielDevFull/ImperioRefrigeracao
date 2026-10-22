@@ -117,8 +117,6 @@ export async function generateWorkOrders({
           if (techId && isTechnicianAbsent(absencesByTech.get(techId) ?? [], scheduled)) techId = null;
           if (!techId) summary.withoutTechnician++;
 
-          const eqLabel = [ce.equipment.type?.name, ce.equipment.location].filter(Boolean).join(" — ") ||
-            formatEquipmentCode(ce.equipment.code);
           const wo = await createWorkOrder(
             tx,
             {
@@ -132,7 +130,8 @@ export async function generateWorkOrders({
               technicianId: techId,
               scheduledDate: scheduled,
               dueDate: due,
-              title: `${ce.plan.name} · ${eqLabel}`,
+              // o equipamento aparece ao lado em todas as telas; o título é o plano
+              title: ce.plan.name,
               description: `Visita prevista no plano "${ce.plan.name}" (contrato ${ce.contract.name}).`,
             },
             { userId: null },

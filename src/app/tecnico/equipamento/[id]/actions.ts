@@ -51,7 +51,7 @@ export async function openCorrectiveAction(input: z.input<typeof schema>): Promi
           equipmentId: eq_.id,
           technicianId: technician.id,
           scheduledDate: todayISO(),
-          title: `Corretiva · ${what}`,
+          title: `Corretiva: ${what}`,
           description: `Aberta pelo técnico em campo: ${parsed.data.description}`,
           billable: true,
         },

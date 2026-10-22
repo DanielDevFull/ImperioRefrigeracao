@@ -22,6 +22,7 @@ para acompanhar equipamentos, atendimentos e pagar mensalidades.
 | **Portal do cliente** | Equipamentos do plano, próximas visitas, histórico com fotos e relatório, mensalidades com Pix copia e cola + envio de comprovante, abertura de chamados e avaliação do atendimento. |
 | **PMOC** | Documento do Plano de Manutenção, Operação e Controle (Lei 13.589/2018, Portaria 3.523/98) com cronograma anual, registros de execução e responsável técnico. |
 | **QR code** | Cada aparelho tem uma etiqueta; o técnico escaneia e abre o equipamento; qualquer pessoa vê a última manutenção e pode pedir atendimento. |
+| **Tema claro e escuro** | Cada pessoa escolhe Claro, Escuro ou Automático (segue o aparelho) no menu do usuário ou no Perfil do app; a escolha vale em qualquer aparelho. Documentos impressos continuam em papel branco. |
 
 ## Tecnologia
 

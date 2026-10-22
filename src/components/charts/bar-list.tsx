@@ -33,9 +33,10 @@ export function BarList({
             <motion.div
               className="h-full rounded-full"
               style={{ background: it.color ?? color }}
-              initial={reduce ? false : { width: 0 }}
+              // sempre parte de 0 (servidor e cliente iguais na hidratação); movimento reduzido = sem duração
+              initial={{ width: 0 }}
               animate={{ width: `${(it.value / max) * 100}%` }}
-              transition={{ duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              transition={reduce ? { duration: 0 } : { duration: 0.8, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
         </li>

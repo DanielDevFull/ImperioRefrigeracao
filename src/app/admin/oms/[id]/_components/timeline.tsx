@@ -68,7 +68,7 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
                 </div>
               )}
               {e.message && <p className="mt-1 text-xs leading-relaxed text-steel">{e.message}</p>}
-              <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[0.72rem] text-steel/80">
+              <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[0.72rem] text-steel/80 light:text-steel">
                 <time dateTime={e.createdAt.toISOString()} title={formatDateTime(e.createdAt)}>
                   {formatRelative(e.createdAt)}
                 </time>

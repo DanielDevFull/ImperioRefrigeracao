@@ -29,7 +29,7 @@ export const metadata: Metadata = { title: "PMOC para impressão", robots: { ind
 const UUID = /^[0-9a-f-]{36}$/i;
 
 const CSS = `
-.pmoc-paper { --ink:#0b1730; --ink-2:#4b5b75; --line:#d5dce8; --tint:#f2f5fa; --accent:#1677d6; --ok:#0f8a64; --bad:#c23548;
+.pmoc-paper { --ink:#0b1730; --ink-2:#4b5b75; --line:#d5dce8; --tint:#f2f5fa; --accent:#1677d6; --ok:#0b7a58; --bad:#c23548;
   color: var(--ink); font-size: 10.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .pmoc-paper h2 { font-size: 11.5pt; font-weight: 600; display: flex; align-items: baseline; gap: 8px;
   padding-bottom: 5px; border-bottom: 1.5px solid var(--ink); margin: 0 0 10px; break-after: avoid; }
@@ -154,7 +154,7 @@ export default async function PrintPmocPage({ params }: PageProps<"/pmoc/[id]/im
         </div>
       </div>
 
-      <article className="pmoc-paper mx-auto w-full max-w-[210mm] rounded-sm bg-white px-5 py-8 shadow-[0_30px_80px_-20px_rgb(0_0_0/0.7)] sm:px-[14mm] sm:py-[16mm]">
+      <article className="pmoc-paper mx-auto w-full max-w-[210mm] rounded-sm bg-white px-5 py-8 shadow-[0_30px_80px_-20px_var(--shade)] light:ring-1 light:ring-rime sm:px-[14mm] sm:py-[16mm]">
         {/* Cabeçalho */}
         <header className="keep flex flex-col gap-5 border-b-2 border-[var(--ink)] pb-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">

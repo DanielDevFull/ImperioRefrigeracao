@@ -20,7 +20,7 @@ export function TechLabel({
   }
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-1.5 text-silver", className)}>
-      <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color ?? "#38a8ff" }} />
+      <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color ?? "var(--ice)" }} />
       <span className="truncate">{name}</span>
     </span>
   );

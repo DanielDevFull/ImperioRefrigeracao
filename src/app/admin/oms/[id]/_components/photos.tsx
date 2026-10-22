@@ -204,7 +204,7 @@ export function Photos({ id, photos, canUpload }: { id: string; photos: PhotoIte
                   {current.taskTitle && current.caption ? `, item "${current.taskTitle}"` : ""}
                 </DialogDescription>
               </DialogHeader>
-              <div className="relative overflow-hidden rounded-lg bg-black">
+              <div className="relative overflow-hidden rounded-lg bg-black light:bg-glacier">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={current.url} alt={current.caption ?? "Foto da OM"} className="mx-auto max-h-[70vh] w-auto object-contain" />
                 {photos.length > 1 && (
@@ -213,7 +213,7 @@ export function Photos({ id, photos, canUpload }: { id: string; photos: PhotoIte
                       type="button"
                       aria-label="Foto anterior"
                       onClick={() => setIndex((i) => ((i ?? 0) - 1 + photos.length) % photos.length)}
-                      className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-abyss/70 text-silver backdrop-blur hover:bg-abyss"
+                      className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-abyss/70 text-silver backdrop-blur hover:bg-abyss light:bg-night/85 light:shadow-[0_2px_10px_var(--shade)] light:ring-1 light:ring-rime light:hover:bg-night"
                     >
                       <ChevronLeft className="size-5" />
                     </button>
@@ -221,7 +221,7 @@ export function Photos({ id, photos, canUpload }: { id: string; photos: PhotoIte
                       type="button"
                       aria-label="Próxima foto"
                       onClick={() => setIndex((i) => ((i ?? 0) + 1) % photos.length)}
-                      className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-abyss/70 text-silver backdrop-blur hover:bg-abyss"
+                      className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-abyss/70 text-silver backdrop-blur hover:bg-abyss light:bg-night/85 light:shadow-[0_2px_10px_var(--shade)] light:ring-1 light:ring-rime light:hover:bg-night"
                     >
                       <ChevronRight className="size-5" />
                     </button>

@@ -53,7 +53,7 @@ function byTime(a: BoardItem, b: BoardItem) {
 }
 
 const hatch = {
-  backgroundImage: "repeating-linear-gradient(135deg, rgb(232 176 75 / 0.13) 0 6px, transparent 6px 13px)",
+  backgroundImage: "repeating-linear-gradient(135deg, var(--haze-brass) 0 6px, transparent 6px 13px)",
 };
 
 function useDropZone(onDropId: (id: string, e: React.DragEvent<HTMLElement>) => void) {
@@ -141,7 +141,7 @@ function Cell({
         </div>
       ))}
       {nowIndex === items.length && items.length > 0 && <NowLine label={nowLabel} />}
-      {minutes > 0 && <span className="readout mt-auto self-end text-[0.65rem] text-steel/80">{formatHours(minutes)}</span>}
+      {minutes > 0 && <span className="readout mt-auto self-end text-[0.65rem] text-steel/80 light:text-steel">{formatHours(minutes)}</span>}
     </div>
   );
 }
@@ -149,7 +149,7 @@ function Cell({
 function NowLine({ label }: { label: string | null }) {
   return (
     <div className="relative flex items-center gap-1" aria-label={`Agora, ${label}`}>
-      <span className="size-1.5 rounded-full bg-gauge-red shadow-[0_0_6px_var(--gauge-red)]" />
+      <span className="size-1.5 rounded-full bg-gauge-red shadow-[0_0_6px_var(--gauge-red)] light:shadow-[0_0_5px_color-mix(in_srgb,var(--gauge-red)_45%,transparent)]" />
       <span className="h-px flex-1 bg-gauge-red/80" />
       <span className="readout text-[0.62rem] font-semibold text-gauge-red">agora {label}</span>
     </div>
@@ -252,7 +252,7 @@ function DayRow({
         {isToday && nowMinutes != null && nowMinutes >= DAY_START && nowMinutes <= DAY_END && (
           <span
             aria-hidden
-            className="absolute inset-y-0 z-10 w-0.5 bg-gauge-red/90 shadow-[0_0_8px_var(--gauge-red)]"
+            className="absolute inset-y-0 z-10 w-0.5 bg-gauge-red/90 shadow-[0_0_8px_var(--gauge-red)] light:shadow-[0_0_6px_color-mix(in_srgb,var(--gauge-red)_35%,transparent)]"
             style={{ left: `${((nowMinutes - DAY_START) / (DAY_END - DAY_START)) * 100}%` }}
           />
         )}
@@ -438,7 +438,7 @@ export function DispatchBoard({
                   <span className="flex items-center gap-2">
                     <span className={cn("readout text-sm font-semibold", isToday ? "text-silver" : "text-silver/90")}>{d.label}</span>
                     {isToday && (
-                      <span className="readout inline-flex items-center gap-1 rounded-full bg-gauge-red/12 px-1.5 text-[0.65rem] font-semibold text-gauge-red ring-1 ring-gauge-red/30">
+                      <span className="readout inline-flex items-center gap-1 rounded-full bg-gauge-red/12 px-1.5 text-[0.65rem] font-semibold text-gauge-red ring-1 ring-gauge-red/30 light:bg-gauge-red/[0.06]">
                         <span className="size-1.5 animate-breathe rounded-full bg-gauge-red" />
                         Hoje{now ? `, ${now.label}` : ""}
                       </span>

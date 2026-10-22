@@ -99,7 +99,8 @@ export function OmChip({
           "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
           TYPE_BAR[item.type] ?? "before:bg-steel",
           late ? "bg-gauge-red/10 ring-gauge-red/50" : "bg-glacier/80 ring-rime hover:ring-ice/40",
-          locked ? "cursor-pointer opacity-90" : "cursor-grab active:cursor-grabbing",
+          // no claro a opacidade baixaria o contraste do texto: o cadeado e o fundo já dizem "bloqueada"
+          locked ? "cursor-pointer opacity-90 light:opacity-100" : "cursor-grab active:cursor-grabbing",
           item.status === "concluida" && "bg-night/70",
           dragging && "opacity-40",
         )}

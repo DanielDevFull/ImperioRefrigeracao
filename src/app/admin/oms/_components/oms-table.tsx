@@ -42,7 +42,7 @@ function ScheduleCell({ row }: { row: OmRow }) {
   return (
     <span className={cn("readout whitespace-nowrap", row.late ? "text-gauge-red" : "text-silver")}>
       {formatDate(row.scheduledDate)}
-      {row.scheduledTime && <span className={cn("ml-1.5", row.late ? "text-gauge-red/80" : "text-steel")}>{formatTime(row.scheduledTime)}</span>}
+      {row.scheduledTime && <span className={cn("ml-1.5", row.late ? "text-gauge-red/80 light:text-gauge-red" : "text-steel")}>{formatTime(row.scheduledTime)}</span>}
       {row.late && <span className="mt-0.5 block text-[0.7rem] font-medium">Atrasada</span>}
     </span>
   );

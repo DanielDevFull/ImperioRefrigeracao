@@ -149,7 +149,7 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
             <>
               <p className="truncate font-medium text-silver">{site.name}</p>
               <p className="text-xs text-steel">{addressLine(site) || "Endereço não informado"}</p>
-              {site.accessNotes && <p className="text-xs text-brass/90">{site.accessNotes}</p>}
+              {site.accessNotes && <p className="text-xs text-brass/90 light:text-brass">{site.accessNotes}</p>}
               {route && (
                 <a href={route} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-ice hover:text-frost">
                   <Navigation className="size-3" />

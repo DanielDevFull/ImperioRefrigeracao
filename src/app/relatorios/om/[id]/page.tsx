@@ -122,7 +122,7 @@ export default async function OmReportPage({ params }: PageProps<"/relatorios/om
         <PrintButton />
       </div>
 
-      <article className="report-paper mx-auto max-w-[210mm] rounded-sm bg-white px-[8mm] py-[10mm] text-[#0a1428] shadow-[0_30px_80px_-20px_rgb(0_0_0/0.7)] sm:px-[14mm] sm:py-[14mm]">
+      <article className="report-paper mx-auto max-w-[210mm] rounded-sm bg-white px-[8mm] py-[10mm] text-[#0a1428] shadow-[0_30px_80px_-20px_var(--shade)] light:ring-1 light:ring-rime sm:px-[14mm] sm:py-[14mm]">
         {/* Cabeçalho */}
         <header className="flex flex-col gap-5 border-b-2 border-[#0a1428] pb-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3.5">
@@ -310,7 +310,7 @@ export default async function OmReportPage({ params }: PageProps<"/relatorios/om
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={wo.signatureUrl} alt={`Assinatura de ${wo.signedByName ?? "cliente"}`} className="max-h-24 w-auto object-contain" />
                 ) : (
-                  <span className="pb-2 text-[0.72rem] text-[#9aa8bb]">Sem assinatura registrada</span>
+                  <span className="pb-2 text-[0.72rem] text-[#5b6b82]">Sem assinatura registrada</span>
                 )}
               </div>
               <p className="mt-1.5 text-[0.78rem] font-medium">{wo.signedByName ?? "Responsável pelo local"}</p>

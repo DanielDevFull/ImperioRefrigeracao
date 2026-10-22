@@ -111,12 +111,12 @@ export function ListFilters({
           onClick={() => set({ filtro: lateOn ? null : "atrasadas" })}
           className={cn(
             "inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm ring-1 transition-colors",
-            lateOn ? "bg-gauge-red/15 text-gauge-red ring-gauge-red/40" : "text-steel ring-rime hover:text-silver hover:ring-ice/30",
+            lateOn ? "bg-gauge-red/15 text-gauge-red ring-gauge-red/40 light:bg-gauge-red/[0.06]" : "text-steel ring-rime hover:text-silver hover:ring-ice/30",
           )}
         >
           <AlarmClock className="size-4" />
           Atrasadas
-          <span className={cn("readout text-xs", lateOn || overdue ? "text-gauge-red" : "text-steel/70")}>{overdue}</span>
+          <span className={cn("readout text-xs", lateOn || overdue ? "text-gauge-red" : "text-steel/70 light:text-steel")}>{overdue}</span>
         </button>
         {activeCount > 0 && (
           <button

@@ -7,8 +7,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toneOnTint } from "@/components/system/tone-badge";
 import { authClient } from "@/lib/auth/client";
 import { safeInternalPath } from "@/lib/safe-redirect";
+import { cn } from "@/lib/utils";
 
 export function LoginForm({ back, initialError }: { back?: string; initialError?: string }) {
   const router = useRouter();
@@ -89,7 +91,7 @@ export function LoginForm({ back, initialError }: { back?: string; initialError?
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             role="alert"
-            className="rounded-lg border border-gauge-red/30 bg-gauge-red/10 px-3 py-2 text-sm text-gauge-red"
+            className={cn("rounded-lg border border-gauge-red/30 bg-gauge-red/10 px-3 py-2 text-sm", toneOnTint.red)}
           >
             {error}
           </motion.p>

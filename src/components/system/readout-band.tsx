@@ -37,7 +37,7 @@ export function ReadoutBand({ items, className }: { items: Readout[]; className?
                 it.tone ? toneText[it.tone] : "text-silver",
               )}
             />
-            {it.hint && <span className="mt-1 block text-xs text-steel/80">{it.hint}</span>}
+            {it.hint && <span className="mt-1 block text-xs text-steel/80 light:text-steel">{it.hint}</span>}
           </>
         );
         const cls = cn(

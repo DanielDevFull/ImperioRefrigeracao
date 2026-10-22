@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { ChevronLeft, ChevronRight, Loader2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { toneOnTint } from "./tone-badge";
 
 function useSetParam() {
   const router = useRouter();
@@ -92,7 +93,7 @@ export function FilterTabs({
             )}
           >
             {o.label}
-            {o.count != null && <span className={cn("ml-1.5 text-xs", active ? "text-ice" : "text-steel/70")}>{o.count}</span>}
+            {o.count != null && <span className={cn("ml-1.5 text-xs", active ? toneOnTint.ice : "text-steel/70 light:text-steel")}>{o.count}</span>}
           </button>
         );
       })}

@@ -236,7 +236,7 @@ function NextVisit({ value }: { value: EquipmentRow["nextVisit"] }) {
       <span className={cn("block tabular-nums", value.kind === "atrasada" ? "text-brass" : "text-silver/90")}>
         {formatDate(value.date)}
       </span>
-      <span className={cn("block text-xs", value.kind === "atrasada" ? "text-brass/80" : "text-steel")}>
+      <span className={cn("block text-xs", value.kind === "atrasada" ? "text-brass/80 light:text-brass" : "text-steel")}>
         {NEXT_LABEL[value.kind]}
       </span>
     </>

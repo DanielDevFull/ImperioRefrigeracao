@@ -26,7 +26,7 @@ export function BarList({
             <span className="truncate text-silver">{it.label}</span>
             <span className="shrink-0 tabular-nums text-steel">
               {formatValue(it.value, format)}
-              {it.hint && <span className="ml-1.5 text-xs text-steel/70">{it.hint}</span>}
+              {it.hint && <span className="ml-1.5 text-xs text-steel/70 light:text-steel">{it.hint}</span>}
             </span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-ice/8">

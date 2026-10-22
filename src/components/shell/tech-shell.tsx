@@ -50,7 +50,7 @@ export function TechShell({ topbar, children }: { topbar: React.ReactNode; child
                     )}
                   >
                     {it.primary ? (
-                      <span className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-b from-ice to-ice-deep text-abyss shadow-[0_8px_24px_-6px_rgb(56_168_255/0.7)] ring-4 ring-abyss">
+                      <span className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-b from-ice to-ice-deep text-abyss shadow-[0_8px_24px_-6px_var(--glow-ice)] ring-4 ring-abyss">
                         <Icon className="size-6" />
                       </span>
                     ) : (

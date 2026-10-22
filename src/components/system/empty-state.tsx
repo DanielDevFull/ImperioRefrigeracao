@@ -18,7 +18,7 @@ export function EmptyState({
   return (
     <div className={cn("flex flex-col items-center justify-center px-6 py-14 text-center", className)}>
       <div className="relative mb-4 grid size-14 place-items-center rounded-full bg-ice/8 ring-1 ring-ice/20">
-        <span aria-hidden className="absolute inset-0 rounded-full animate-breathe shadow-[0_0_30px_rgb(56_168_255/0.25)]" />
+        <span aria-hidden className="absolute inset-0 rounded-full animate-breathe shadow-[0_0_30px_color-mix(in_srgb,var(--ice)_25%,transparent)] light:shadow-[0_0_28px_color-mix(in_srgb,var(--ice)_16%,transparent)]" />
         {icon ?? <IceCrystalIcon className="size-6 text-frost" />}
       </div>
       <p className="text-sm font-medium text-silver">{title}</p>

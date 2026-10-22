@@ -114,6 +114,8 @@ Seletor: menu do usuário (admin e portal) e Perfil do técnico (`src/components
   Ex.: `shadow-[0_20px_40px_-12px_var(--shade)]`, `shadow-[0_0_12px_var(--glow-ice)]`.
   Para outra intensidade, misture o token: `color-mix(in_srgb,var(--ice)_45%,transparent)`.
 - Exceções pontuais: variantes `light:` e `dark:` (respeitam o Automático).
+- Texto no tom sobre fundo do mesmo tom (ex.: `bg-mint/10` com texto mint): use `toneOnTint[tone]`
+  de `@/components/system/tone-badge` (tinta mais funda só no claro, para passar no contraste).
 - `.force-dark`: ilha sempre escura (painel de marca do login). Só para momentos de marca.
 - **Documentos** (relatório da OM, PMOC, recibo, pedido de compra, etiquetas) são papel: branco e tinta escura
   nos dois temas e na impressão. Só a moldura da tela em volta acompanha o tema.

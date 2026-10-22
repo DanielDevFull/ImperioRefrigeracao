@@ -271,7 +271,7 @@ export function CustomerForm({
         </Panel>
       )}
 
-      <div className="sticky bottom-3 z-10 flex flex-wrap items-center justify-end gap-2 rounded-2xl border border-rime bg-night/90 px-3 py-2.5 shadow-[0_20px_40px_-12px_rgb(0_0_0/0.7)] backdrop-blur-xl sm:px-4 sm:py-3">
+      <div className="sticky bottom-3 z-10 flex flex-wrap items-center justify-end gap-2 rounded-2xl border border-rime bg-night/90 px-3 py-2.5 shadow-[0_20px_40px_-12px_var(--shade)] backdrop-blur-xl sm:px-4 sm:py-3">
         {state.error && !state.ok && (
           <p role="alert" className="w-full text-sm text-gauge-red sm:mr-auto sm:w-auto">
             {state.error}

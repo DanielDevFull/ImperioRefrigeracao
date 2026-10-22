@@ -47,7 +47,7 @@ export function MonthStrip({ cells, max, className }: { cells: StripCell[]; max?
               )}
             </div>
             <span className="mt-1.5 text-[0.7rem] capitalize text-steel">{monthAbbr(c.month)}</span>
-            <span className={cn("text-[0.62rem] tabular-nums", showYear ? "text-steel/70" : "text-transparent")} aria-hidden={!showYear}>
+            <span className={cn("text-[0.62rem] tabular-nums", showYear ? "text-steel/70 light:text-steel/85" : "text-transparent")} aria-hidden={!showYear}>
               {year}
             </span>
             <span className="sr-only">{c.title}</span>

@@ -18,7 +18,7 @@ import { db } from "@/db";
 import { contractEquipment, customers, equipment, maintenancePlanTasks, workOrders } from "@/db/schema";
 import { Emblem } from "@/components/brand/emblem";
 import { SnowField } from "@/components/brand/snow-field";
-import { ToneBadge } from "@/components/system/tone-badge";
+import { ToneBadge, toneOnTint } from "@/components/system/tone-badge";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth/session";
 import { todayISO } from "@/lib/dates";
@@ -150,10 +150,10 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
     <main className="relative min-h-dvh overflow-hidden">
       <div aria-hidden className="absolute inset-x-0 top-0 h-[460px]">
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 light:opacity-40"
           style={{
             background:
-              "radial-gradient(80% 70% at 50% 20%, rgb(22 119 214 / 0.38), transparent 70%), radial-gradient(40% 40% at 50% 18%, rgb(56 168 255 / 0.2), transparent 70%)",
+              "radial-gradient(80% 70% at 50% 20%, color-mix(in srgb, var(--ice-deep) 38%, transparent), transparent 70%), radial-gradient(40% 40% at 50% 18%, color-mix(in srgb, var(--ice) 20%, transparent), transparent 70%)",
           }}
         />
         <SnowField density="calm" />
@@ -261,7 +261,7 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
           <div className="mt-3 flex items-center gap-3 rounded-2xl bg-mint/8 px-4 py-3 ring-1 ring-mint/25">
             <ShieldCheck className="size-5 shrink-0 text-mint" />
             <div>
-              <p className="text-sm font-medium text-mint">PMOC vigente até {formatDate(pmoc.validUntil)}</p>
+              <p className={cn("text-sm font-medium", toneOnTint.mint)}>PMOC vigente até {formatDate(pmoc.validUntil)}</p>
               <p className="text-xs text-steel">Plano de Manutenção, Operação e Controle (Lei 13.589/2018)</p>
             </div>
           </div>
@@ -334,7 +334,7 @@ export default async function PublicEquipmentPage({ params }: PageProps<"/e/[qrT
         <footer className="mt-10 border-t border-rime pt-5 text-center text-xs text-steel">
           <p className="text-silver/80">{settings.companyName}</p>
           {contact && <p className="mt-0.5 tabular-nums">WhatsApp {formatPhone(contact)}</p>}
-          <p className="mt-2 text-steel/70">Etiqueta {code}</p>
+          <p className="mt-2 text-steel/70 light:text-steel">Etiqueta {code}</p>
         </footer>
       </div>
     </main>

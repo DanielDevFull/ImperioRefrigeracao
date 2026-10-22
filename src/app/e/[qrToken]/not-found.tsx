@@ -15,7 +15,7 @@ export default async function EtiquetaNaoEncontrada() {
       <div aria-hidden className="absolute inset-0">
         <div
           className="absolute inset-0"
-          style={{ background: "radial-gradient(70% 50% at 50% 25%, rgb(22 119 214 / 0.3), transparent 70%)" }}
+          style={{ background: "radial-gradient(70% 50% at 50% 25%, var(--haze-deep), transparent 70%)" }}
         />
         <SnowField density="whisper" />
       </div>

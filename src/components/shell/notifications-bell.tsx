@@ -39,11 +39,11 @@ export function NotificationsBell({ unread, items }: { unread: number; items: No
           {items.map((n) => {
             const body = (
               <div className="flex gap-3 px-4 py-3">
-                <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.read ? "bg-transparent" : "bg-ice shadow-[0_0_8px_var(--ice)]")} />
+                <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.read ? "bg-transparent" : "bg-ice shadow-[0_0_8px_var(--ice)] light:shadow-[0_0_6px_var(--glow-ice)]")} />
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-silver">{n.title}</p>
                   {n.body && <p className="mt-0.5 line-clamp-2 text-xs text-steel">{n.body}</p>}
-                  <p className="mt-1 text-[0.7rem] text-steel/70">{formatRelative(n.createdAt)}</p>
+                  <p className="mt-1 text-[0.7rem] text-steel/70 light:text-steel">{formatRelative(n.createdAt)}</p>
                 </div>
               </div>
             );

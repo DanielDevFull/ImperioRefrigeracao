@@ -122,7 +122,7 @@ export default async function EtiquetasPage({ searchParams }: PageProps<"/admin/
       ) : (
         <div className="sheets -mx-4 flex flex-col items-center gap-8 overflow-x-auto px-4 pb-10 md:mx-0 md:px-0">
           {sheets.map((sheet, si) => (
-            <div key={si} className="label-sheet shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]" data-format={format}>
+            <div key={si} className="label-sheet shadow-[0_30px_60px_-20px_var(--shade)] light:ring-1 light:ring-rime" data-format={format}>
               {sheet.map((e) => (
                 <Label
                   key={e.id}

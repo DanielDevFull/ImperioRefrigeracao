@@ -19,7 +19,7 @@ export default function PaginaNaoEncontrada() {
       <div
         aria-hidden
         className="absolute inset-0"
-        style={{ background: "radial-gradient(70% 50% at 50% 20%, rgb(22 119 214 / 0.22), transparent 70%)" }}
+        style={{ background: "radial-gradient(70% 50% at 50% 20%, color-mix(in srgb, var(--haze-deep) 73.33%, transparent), transparent 70%)" }}
       />
       <div className="relative w-full max-w-md">
         <Emblem size={72} halo priority className="mx-auto mb-6 grid" />

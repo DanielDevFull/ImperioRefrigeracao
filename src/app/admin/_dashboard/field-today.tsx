@@ -63,7 +63,7 @@ function DayTrack({ orders, range, now, today }: { orders: FieldOrder[]; range: 
     <div className="relative mt-3 h-4" aria-hidden>
       <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-ice/8">
         {hours.map((m) => (
-          <span key={m} className="absolute inset-y-0 w-px bg-abyss/70" style={{ left: pct(m, range) }} />
+          <span key={m} className="absolute inset-y-0 w-px bg-abyss/70 light:bg-night" style={{ left: pct(m, range) }} />
         ))}
       </div>
       {orders.map((o) => {
@@ -110,7 +110,7 @@ function DayTrack({ orders, range, now, today }: { orders: FieldOrder[]; range: 
               <span
                 className={cn(
                   "absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-night",
-                  o.status === "pausada" ? "bg-brass" : "bg-ice shadow-[0_0_10px_rgb(56_168_255/0.7)]",
+                  o.status === "pausada" ? "bg-brass" : "bg-ice shadow-[0_0_10px_var(--glow-ice)]",
                 )}
                 style={{ left: pct(Math.max(now, from), range) }}
               />
@@ -149,7 +149,7 @@ function Scale({ range, now }: { range: Range; now: number }) {
   const showNow = now >= range.start && now <= range.end;
   const nowPos = ((now - range.start) / (range.end - range.start)) * 100;
   return (
-    <div className="relative mx-5 mt-4 h-5 text-[0.7rem] text-steel/70" aria-hidden>
+    <div className="relative mx-5 mt-4 h-5 text-[0.7rem] text-steel/70 light:text-steel/85" aria-hidden>
       {marks.map((m, i) => {
         const pos = ((m - range.start) / (range.end - range.start)) * 100;
         if (showNow && Math.abs(pos - nowPos) < 6) return null;
@@ -236,7 +236,7 @@ function LaneRow({ lane, range, now, today }: { lane: Lane; range: Range; now: n
                 </span>
                 <span className="truncate text-sm text-silver">{o.customer}</span>
                 <span className="hidden truncate text-xs text-steel @md:block">
-                  <span className="mr-2.5 hidden tabular-nums text-steel/60 @2xl:inline">{formatOM(o.number)}</span>
+                  <span className="mr-2.5 hidden tabular-nums text-steel/60 light:text-steel/85 @2xl:inline">{formatOM(o.number)}</span>
                   {equipmentPart(o)}
                 </span>
                 <span className="justify-self-end">

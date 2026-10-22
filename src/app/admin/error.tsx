@@ -30,7 +30,7 @@ export default function AdminError({ error, retry }: { error: unknown; retry: ()
                 <Link href="/admin">Voltar ao painel</Link>
               </Button>
             </div>
-            {digest && <p className="readout text-xs text-steel/80">Código do erro: {digest}</p>}
+            {digest && <p className="readout text-xs text-steel/80 light:text-steel">Código do erro: {digest}</p>}
           </div>
         }
       />

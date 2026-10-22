@@ -196,7 +196,7 @@ export default async function EquipamentoPage({ params }: PageProps<"/admin/equi
               </a>
             </div>
             <div className="mt-4 flex flex-col items-center">
-              <div className="rounded-2xl bg-white p-3 shadow-[0_0_40px_rgb(56_168_255/0.18)]">
+              <div className="rounded-2xl bg-white p-3 shadow-[0_0_40px_color-mix(in_srgb,var(--ice)_18%,transparent)] light:ring-1 light:ring-rime">
                 <QrCode value={publicUrl} size={176} className="rounded-none" />
               </div>
               <p className="mt-3 font-mono text-sm tracking-wider text-silver">{formatEquipmentCode(item.code)}</p>
@@ -427,7 +427,7 @@ function ForecastPanel({ d }: { d: EquipmentDetail }) {
                     {formatLongDate(shown).split(",")[0]}, {days === 0 ? "hoje" : days === 1 ? "amanhã" : days === -1 ? "ontem" : days < 0 ? `há ${-days} dias` : `em ${days} dias`}
                   </p>
                   {shown !== v.date && (
-                    <p className="text-[0.7rem] text-steel/80">Vencimento do plano {formatDayMonth(v.date)}</p>
+                    <p className="text-[0.7rem] text-steel/80 light:text-steel">Vencimento do plano {formatDayMonth(v.date)}</p>
                   )}
                 </div>
                 <div className="min-w-0">
@@ -523,8 +523,8 @@ function HistoryPanel({ d }: { d: EquipmentDetail }) {
                 <span
                   aria-hidden
                   className={cn(
-                    "absolute -left-[31px] top-1 size-3 rounded-full ring-4 ring-abyss",
-                    i === 0 ? "bg-mint shadow-[0_0_12px_rgb(62_224_181/0.6)]" : "bg-steel/60",
+                    "absolute -left-[31px] top-1 size-3 rounded-full ring-4 ring-abyss light:ring-night",
+                    i === 0 ? "bg-mint shadow-[0_0_12px_var(--glow-mint)]" : "bg-steel/60",
                   )}
                 />
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

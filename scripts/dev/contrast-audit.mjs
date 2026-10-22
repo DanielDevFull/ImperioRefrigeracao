@@ -56,6 +56,11 @@ if (creds[who] && page.url().includes("/login")) {
   await page.goto(base + route, { waitUntil: "networkidle" });
 }
 await page.waitForTimeout(Number(opt("--wait", "1500")));
+// Gradientes suaves (névoa do <body>, .panel e .glass) fazem o axe marcar quase tudo como
+// indeterminado; para medir, viram a cor sólida equivalente (página ou cartão), diferença desprezível.
+await page.addStyleTag({
+  content: "body{background-image:none!important} .panel,.glass{background:var(--night)!important}",
+});
 await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
 const result = await page.evaluate(async () => {
   const r = await axe.run(document, { runOnly: { type: "rule", values: ["color-contrast"] }, resultTypes: ["violations", "incomplete"] });

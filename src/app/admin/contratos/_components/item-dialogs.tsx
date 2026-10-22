@@ -223,12 +223,13 @@ export function EditItemButton({
 }
 
 /** O que acontece com as OMs se a agenda mudar (mesma regra de updateContractItem). */
-function scheduleChangeText(item: EditableItem, schedule: ScheduleContext, anchorDate: string, tasks: ScheduleTask[]) {
+function scheduleChangeText(item: EditableItem, schedule: ScheduleContext, anchorDate: string, tasks: ScheduleTask[], planActive: boolean) {
   const cancel =
     item.futureOpen > 0
       ? `${plural(item.futureOpen, "OM aberta ou agendada", "OMs abertas ou agendadas")} de hoje em diante ${item.futureOpen === 1 ? "será cancelada" : "serão canceladas"}.`
       : "Nenhuma OM aberta de hoje em diante para cancelar.";
   if (!schedule.contractActive) return `${cancel} A nova agenda é gerada quando o contrato for reativado.`;
+  if (!planActive) return `${cancel} O plano está inativo: a nova agenda só gera OMs depois que ele for reativado.`;
   const next = nextVisitAfterChange({ anchorDate, tasks }, schedule.term, schedule.today, item.keptLastDue);
   if (!next) return `${cancel} Nenhuma visita prevista na nova agenda.`;
   return `${cancel} Próxima visita na nova agenda: ${formatDate(next)}${next < schedule.today ? " (já vencida, entra na agenda de hoje)" : ""}.`;
@@ -285,7 +286,7 @@ function EditItemForm({
       </div>
       {scheduleChanged && (
         <p role="status" className="rounded-lg border border-brass/30 bg-brass/10 p-3 text-sm text-brass">
-          {scheduleChangeText(item, schedule, anchor, tasks)}
+          {scheduleChangeText(item, schedule, anchor, tasks, plans.some((p) => p.id === planId))}
         </p>
       )}
       {item.openWorkOrders > 0 && tech !== (item.preferredTechnicianId ?? "") && (

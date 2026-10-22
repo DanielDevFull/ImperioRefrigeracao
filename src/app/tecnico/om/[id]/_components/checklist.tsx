@@ -65,15 +65,15 @@ function MeasureField({
   const unit = task.measurementUnit!;
   const fields = dual ? dual : [null];
   return (
-    <div className={cn("mt-3 grid gap-2", dual && "grid-cols-2")}>
+    <div className={cn("mt-3 grid gap-2", dual ? "grid-cols-[repeat(2,minmax(0,1fr))]" : "grid-cols-[minmax(0,1fr)]")}>
       {fields.map((label, i) => (
-        <label key={i} className="block">
+        <label key={i} className="block min-w-0">
           {label && <span className="mb-1 block text-xs text-steel">{label}</span>}
           <span
             className={cn(
               "flex h-12 items-center rounded-xl bg-abyss/50 ring-1 transition-shadow focus-within:ring-2 focus-within:ring-ice",
-              invalid ? "ring-gauge-red/60" : "ring-steel/30",
-              disabled && "opacity-50",
+              invalid ? "ring-gauge-red/60" : "ring-steel/30 light:ring-steel/70",
+              disabled && "opacity-50 light:opacity-80",
             )}
           >
             <input
@@ -175,7 +175,7 @@ function TaskRow({
           onClick={toggle}
           className={cn(
             "relative grid size-12 shrink-0 place-items-center rounded-xl ring-2 transition-colors",
-            task.done ? "bg-mint text-abyss ring-mint" : "bg-abyss/40 text-transparent ring-steel/45 active:bg-ice/10 disabled:opacity-50",
+            task.done ? "bg-mint text-abyss ring-mint" : "bg-abyss/40 text-transparent ring-steel/45 light:ring-steel/80 active:bg-ice/10 disabled:opacity-50",
           )}
         >
           <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>

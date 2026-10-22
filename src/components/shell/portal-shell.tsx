@@ -20,7 +20,7 @@ export function PortalShell({ topbar, children }: { topbar: React.ReactNode; chi
   const pathname = usePathname();
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-20 border-b border-rime bg-abyss/75 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-rime bg-abyss/75 backdrop-blur-xl [padding-top:env(safe-area-inset-top)]">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 md:px-6">
           <Link href="/portal" className="flex items-center gap-3">
             <Emblem size={38} />

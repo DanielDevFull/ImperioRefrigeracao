@@ -32,7 +32,7 @@ export function NotificationsBell({ unread, items }: { unread: number; items: No
           )}
         </AnimatePresence>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[22rem] p-0">
+      <PopoverContent align="end" collisionPadding={16} className="w-[min(22rem,calc(100vw-2rem))] p-0">
         <div className="border-b border-rime px-4 py-3 text-sm font-semibold">Notificações</div>
         <ul className="max-h-96 overflow-y-auto">
           {items.length === 0 && <li className="px-4 py-8 text-center text-sm text-steel">Nenhuma notificação por enquanto.</li>}

@@ -72,7 +72,7 @@ export function AdminShell({ topbar, children }: { topbar: React.ReactNode; chil
         <SidebarNav />
       </aside>
 
-      <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-rime bg-abyss/70 px-4 backdrop-blur-xl md:px-8">
+      <header className="sticky top-0 z-20 flex h-[calc(4rem+env(safe-area-inset-top))] items-center gap-3 border-b border-rime bg-abyss/70 px-4 backdrop-blur-xl [padding-top:env(safe-area-inset-top)] md:px-8">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger className="grid size-10 place-items-center rounded-lg text-steel hover:bg-ice/10 hover:text-frost lg:hidden" aria-label="Abrir menu">
             <Menu className="size-5" />

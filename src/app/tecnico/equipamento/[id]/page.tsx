@@ -65,7 +65,7 @@ export default async function TechEquipmentPage({ params }: PageProps<"/tecnico/
           </div>
         </div>
         {site?.accessNotes && (
-          <p className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm leading-relaxed text-silver ring-1 ring-brass/25">
+          <p className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm leading-relaxed text-silver ring-1 ring-brass/25 light:bg-notice-brass">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-brass" />
             <span>
               <span className={cn("font-semibold", toneOnTint.brass)}>Acesso: </span>

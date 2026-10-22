@@ -438,6 +438,10 @@
 :root.theme-switching *::after {
   transition: none !important;
 }
+:root.theme-switching::view-transition {
+  /* toques durante a animação chegam à página (e trocam de novo), em vez de sumirem */
+  pointer-events: none;
+}
 :root.theme-switching::view-transition-old(root),
 :root.theme-switching::view-transition-new(root) {
   animation: none;

@@ -106,7 +106,7 @@ export default async function TechWorkOrderPage({ params }: PageProps<"/tecnico/
           </div>
         </div>
         {site?.accessNotes && (
-          <div className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 ring-1 ring-brass/25">
+          <div className="mx-4 mb-4 flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 ring-1 ring-brass/25 light:bg-notice-brass">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-brass" />
             <p className="text-sm leading-relaxed text-silver">
               <span className={cn("font-semibold", toneOnTint.brass)}>Acesso: </span>

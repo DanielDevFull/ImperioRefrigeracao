@@ -248,7 +248,7 @@ export function SignaturePad({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl bg-abyss/60 ring-1 ring-steel/30 [--sig-ink:#d6ecff]",
+        "relative overflow-hidden rounded-2xl bg-abyss/60 ring-1 ring-steel/30 light:ring-steel/70 [--sig-ink:#d6ecff]",
         // claro: folha branca com tinta azul-marinho, como a caneta no papel do relatório
         "light:bg-night light:shadow-[inset_0_1px_3px_var(--shade)] light:[--sig-ink:var(--silver)]",
         disabled && "opacity-60",

@@ -22,7 +22,7 @@ export function TechShell({ topbar, children }: { topbar: React.ReactNode; child
   const inOrder = pathname.startsWith("/tecnico/om/");
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col">
-      <header className="sticky top-0 z-20 flex h-14 items-center gap-2.5 border-b border-rime bg-abyss/80 px-4 backdrop-blur-xl [padding-top:env(safe-area-inset-top)]">
+      <header className="sticky top-0 z-20 flex h-[calc(3.5rem+env(safe-area-inset-top))] items-center gap-2.5 border-b border-rime bg-abyss/80 px-4 backdrop-blur-xl [padding-top:env(safe-area-inset-top)]">
         <Link href="/tecnico" className="flex items-center gap-2">
           <Emblem size={30} />
           <span className="font-display text-silver-brushed text-[0.95rem] font-bold tracking-[0.06em]">Imperium</span>

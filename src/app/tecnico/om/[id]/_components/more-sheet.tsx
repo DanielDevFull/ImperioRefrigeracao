@@ -106,7 +106,7 @@ export function MoreSheet({
                       onClick={() => setReason(r.value)}
                       className={cn(
                         "flex min-h-16 w-full items-center gap-3 rounded-2xl px-4 py-3 text-left ring-1 transition-colors",
-                        active ? "bg-brass/10 ring-brass/45" : "bg-night ring-rime active:bg-ice/5",
+                        active ? "bg-brass/10 ring-brass/45 light:bg-notice-brass" : "bg-night ring-rime active:bg-ice/5",
                       )}
                     >
                       <Icon className={cn("size-5 shrink-0", active ? "text-brass" : "text-steel")} />
@@ -114,7 +114,7 @@ export function MoreSheet({
                         <span className="block text-[0.95rem] font-medium text-silver">{r.title}</span>
                         <span className="block text-xs text-steel">{r.hint}</span>
                       </span>
-                      <span className={cn("size-5 shrink-0 rounded-full ring-2", active ? "bg-brass ring-brass" : "ring-steel/50")} />
+                      <span className={cn("size-5 shrink-0 rounded-full ring-2", active ? "bg-brass ring-brass" : "ring-steel/50 light:ring-steel/80")} />
                     </button>
                   );
                 })}

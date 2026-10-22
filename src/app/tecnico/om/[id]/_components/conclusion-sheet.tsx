@@ -176,7 +176,7 @@ function ConclusionFormBody({
         </p>
       )}
       {!online && (
-        <p className={cn("flex gap-2 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30", toneOnTint.brass)}>
+        <p className={cn("flex gap-2 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30 light:bg-notice-brass", toneOnTint.brass)}>
           <WifiOff className="mt-0.5 size-4 shrink-0" />
           Sem conexão. Para concluir é preciso internet; o rascunho e a assinatura ficam salvos neste aparelho.
         </p>

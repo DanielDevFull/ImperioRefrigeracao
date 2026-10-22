@@ -32,7 +32,9 @@ export function ThemeSegmented({ className, size = "md" }: { className?: string;
         const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
         if (!step) return;
         e.preventDefault();
-        const next = ORDER[(ORDER.indexOf(theme) + step + ORDER.length) % ORDER.length];
+        // parte do botão focado (o estado do React pode estar um passo atrás em toques rápidos)
+        const current = (e.target as HTMLElement).closest<HTMLElement>("[data-value]")?.dataset.value as ThemePref | undefined;
+        const next = ORDER[(ORDER.indexOf(current ?? theme) + step + ORDER.length) % ORDER.length];
         const btn = e.currentTarget.querySelector<HTMLButtonElement>(`[data-value="${next}"]`);
         btn?.focus();
         setTheme(next, centerOf(btn));
@@ -64,8 +66,9 @@ export function ThemeSegmented({ className, size = "md" }: { className?: string;
                 transition={{ type: "spring", stiffness: 420, damping: 34 }}
               />
             )}
-            <Icon className="relative size-4" aria-hidden />
-            <span className="relative">{themeLabel[pref]}</span>
+            {/* z-10: a pílula que desliza nunca cobre o rótulo do botão por onde passa */}
+            <Icon className="relative z-10 size-4" aria-hidden />
+            <span className="relative z-10">{themeLabel[pref]}</span>
           </button>
         );
       })}

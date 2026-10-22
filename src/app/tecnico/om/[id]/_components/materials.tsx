@@ -228,7 +228,7 @@ function AddMaterialSheet({
                   value={qty}
                   onChange={(e) => setQty(e.target.value.replace(/[^\d.,]/g, "").slice(0, 8))}
                   aria-label="Quantidade"
-                  className="readout h-14 min-w-0 flex-1 rounded-2xl bg-abyss/50 text-center text-2xl font-semibold text-silver outline-none ring-1 ring-steel/30 focus:ring-2 focus:ring-ice"
+                  className="readout h-14 min-w-0 flex-1 rounded-2xl bg-abyss/50 text-center text-2xl font-semibold text-silver outline-none ring-1 ring-steel/30 light:ring-steel/70 focus:ring-2 focus:ring-ice"
                 />
                 <button
                   type="button"
@@ -248,7 +248,7 @@ function AddMaterialSheet({
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <span className={cn("flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30", toneOnTint.brass)}>
+                  <span className={cn("flex gap-2.5 rounded-xl bg-brass/10 px-3.5 py-3 text-sm ring-1 ring-brass/30 light:bg-notice-brass", toneOnTint.brass)}>
                     <AlertTriangle className="mt-0.5 size-4 shrink-0" />
                     <span>
                       {available > 0

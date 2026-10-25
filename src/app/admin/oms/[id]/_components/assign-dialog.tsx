@@ -5,10 +5,10 @@ import { CalendarClock, TriangleAlert, UserRoundPlus } from "lucide-react";
 import { ActionForm, Field, FormSubmit, nativeSelectClass, useActionToast } from "@/components/system/form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { initialActionState } from "@/lib/action";
 import { formatDate } from "@/lib/format";
 import { assignOmAction } from "../../actions";
+import { DateField, SelectField, TimeField } from "@/components/system/fields";
 
 export type Absence = { technicianId: string; startDate: string; endDate: string; reason: string | null };
 
@@ -35,21 +35,21 @@ function AssignForm({
   return (
     <ActionForm action={action} pending={pending} className="grid grid-cols-1 gap-4">
       <Field label="Técnico" htmlFor="assign-tech" error={state.fieldErrors?.technicianId}>
-        <select id="assign-tech" name="technicianId" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
+        <SelectField id="assign-tech" name="technicianId" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
           <option value="">Sem técnico</option>
           {technicians.map((t) => (
             <option key={t.id} value={t.id}>
               {t.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-3">
         <Field label="Data" htmlFor="assign-date" error={state.fieldErrors?.scheduledDate}>
-          <Input id="assign-date" name="scheduledDate" type="date" className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
+          <DateField id="assign-date" name="scheduledDate" className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
         </Field>
         <Field label="Horário" htmlFor="assign-time" error={state.fieldErrors?.scheduledTime}>
-          <Input id="assign-time" name="scheduledTime" type="time" className="h-9" defaultValue={initial.scheduledTime?.slice(0, 5) ?? ""} />
+          <TimeField id="assign-time" name="scheduledTime" className="h-9" defaultValue={initial.scheduledTime?.slice(0, 5) ?? ""} />
         </Field>
       </div>
       {conflict && (

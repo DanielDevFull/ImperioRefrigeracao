@@ -7,6 +7,7 @@ import { nativeSelectClass } from "@/components/system/form";
 import { addCompetence } from "@/lib/dates";
 import { formatCompetence } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SelectField } from "@/components/system/fields";
 
 function useParamNav() {
   const router = useRouter();
@@ -85,7 +86,7 @@ export function ParamSelect({
 }) {
   const { set } = useParamNav();
   return (
-    <select
+    <SelectField
       aria-label={label}
       value={value}
       onChange={(e) => set({ [param]: e.target.value || null })}
@@ -97,6 +98,6 @@ export function ParamSelect({
           {o.label}
         </option>
       ))}
-    </select>
+    </SelectField>
   );
 }

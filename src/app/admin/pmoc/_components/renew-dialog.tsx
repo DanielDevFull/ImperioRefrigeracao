@@ -18,6 +18,7 @@ import { addDays, addMonths } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
 import { PendingButton, useFormAction } from "@/app/admin/configuracoes/_components/form-kit";
 import { renewPmoc } from "../actions";
+import { DateField } from "@/components/system/fields";
 
 const plus12 = (from: string) => (/^\d{4}-\d{2}-\d{2}$/.test(from) ? addDays(addMonths(from, 12), -1) : "");
 
@@ -86,10 +87,9 @@ function RenewForm({
           <Input id="rn-art" name="artNumber" className="tabular-nums" aria-invalid={fe.artNumber ? true : undefined} autoFocus />
         </Field>
         <Field label="Válido a partir de" htmlFor="rn-from" error={fe.validFrom} required>
-          <Input
+          <DateField
             id="rn-from"
             name="validFrom"
-            type="date"
             value={from}
             onChange={(e) => {
               setFrom(e.target.value);
@@ -98,7 +98,7 @@ function RenewForm({
           />
         </Field>
         <Field label="Válido até" htmlFor="rn-until" error={fe.validUntil} required>
-          <Input id="rn-until" name="validUntil" type="date" value={until} onChange={(e) => setUntil(e.target.value)} />
+          <DateField id="rn-until" name="validUntil" value={until} onChange={(e) => setUntil(e.target.value)} />
         </Field>
       </div>
       <DialogFooter>

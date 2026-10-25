@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmAction } from "@/components/system/confirm-action";
@@ -20,6 +19,7 @@ import { DialogActions, FormDialog } from "../../estoque/_components/form-dialog
 import { formatQty } from "../../estoque/_lib/stock-format";
 import { cancelRequest, createOrderFromRequests } from "../actions";
 import type { OpenRequest } from "../_lib/queries";
+import { DateField, SelectField } from "@/components/system/fields";
 
 type SupplierOpt = { id: string; name: string; active: boolean };
 
@@ -303,7 +303,7 @@ function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppli
             : undefined
         }
       >
-        <select
+        <SelectField
           id="fr-supplier"
           name="supplierId"
           value={supplierId}
@@ -318,10 +318,10 @@ function FromRequestsForm({ chosen, suppliers }: { chosen: OpenRequest[]; suppli
               {s.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <Field label="Previsão de entrega" error={e.expectedDate} htmlFor="fr-expected">
-        <Input id="fr-expected" name="expectedDate" type="date" className="h-9" />
+        <DateField id="fr-expected" name="expectedDate" className="h-9" />
       </Field>
       <Field label="Observações" htmlFor="fr-notes">
         <Textarea id="fr-notes" name="notes" rows={2} placeholder="Condição de pagamento, forma de entrega…" />

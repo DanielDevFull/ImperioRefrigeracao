@@ -14,6 +14,7 @@ import { EquipmentTile } from "../../_components/bits";
 import { setInputFiles, shrinkImage } from "../../_lib/compress";
 import { MAX_REQUEST_PHOTOS, PROBLEM_CHIPS, UPLOAD_LIMIT_BYTES, UPLOAD_LIMIT_LABEL, URGENCY_OPTIONS } from "../../_lib/copy";
 import { createServiceRequest } from "./actions";
+import { SelectField } from "@/components/system/fields";
 
 export type EquipOption = {
   id: string;
@@ -93,14 +94,14 @@ export function RequestForm({
             <label htmlFor="siteId" className="text-sm font-medium text-silver">
               Em qual endereço?
             </label>
-            <select id="siteId" name="siteId" defaultValue={sites[0]?.id} className={cn(nativeSelectClass, "h-11")}>
+            <SelectField id="siteId" name="siteId" defaultValue={sites[0]?.id} className={cn(nativeSelectClass, "h-11")}>
               {sites.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                   {s.address ? ` — ${s.address}` : ""}
                 </option>
               ))}
-            </select>
+            </SelectField>
             {fe.siteId && <p className="text-xs text-gauge-red">{fe.siteId}</p>}
           </div>
         ) : (

@@ -11,6 +11,7 @@ import { frequencyMonths as frequencyLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { effectiveFrequency, FREQUENCY_OPTIONS, frequencyText, UNIT_SUGGESTIONS } from "../_lib/preview";
 import type { DraftTask } from "./types";
+import { SelectField } from "@/components/system/fields";
 
 const spring = { type: "spring" as const, stiffness: 520, damping: 42, mass: 0.8 };
 
@@ -95,7 +96,7 @@ export function TaskEditor({
                         {titleError && <p className="mt-1 text-xs text-gauge-red">{titleError}</p>}
                       </div>
                       <div className="sm:w-40">
-                        <select
+                        <SelectField
                           value={t.frequencyMonths}
                           onChange={(e) => onChange(t.key, { frequencyMonths: Number(e.target.value) })}
                           className={nativeSelectClass}
@@ -106,7 +107,7 @@ export function TaskEditor({
                               {frequencyLabels[f]}
                             </option>
                           ))}
-                        </select>
+                        </SelectField>
                         {freqError && <p className="mt-1 text-xs text-gauge-red">{freqError}</p>}
                       </div>
                     </div>

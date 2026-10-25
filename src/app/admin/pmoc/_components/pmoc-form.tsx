@@ -12,6 +12,7 @@ import type { ActionState } from "@/lib/action";
 import { addDays, addMonths } from "@/lib/dates";
 import { PendingButton, useFormAction } from "@/app/admin/configuracoes/_components/form-kit";
 import type { CustomerOption, SiteOption } from "../_lib/form-data";
+import { DateField, SelectField } from "@/components/system/fields";
 
 export type PmocFormValues = {
   customerId: string;
@@ -71,7 +72,7 @@ export function PmocForm({
         <Panel title="Ambiente climatizado" description="O cliente e o local (edificação) cobertos por este plano.">
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Cliente" htmlFor="customerId" error={fe.customerId} required>
-              <select
+              <SelectField
                 id="customerId"
                 name="customerId"
                 value={customerId}
@@ -98,7 +99,7 @@ export function PmocForm({
                     </option>
                   ))}
                 </optgroup>
-              </select>
+              </SelectField>
             </Field>
             <Field
               label="Local"
@@ -106,7 +107,7 @@ export function PmocForm({
               error={fe.siteId}
               hint={site?.address || (customerId && customerSitesList.length === 0 ? "Este cliente ainda não tem local cadastrado." : undefined)}
             >
-              <select
+              <SelectField
                 id="siteId"
                 name="siteId"
                 value={siteId}
@@ -122,7 +123,7 @@ export function PmocForm({
                     {s.isPrimary ? " (principal)" : ""}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
           </div>
         </Panel>
@@ -144,10 +145,9 @@ export function PmocForm({
         <Panel title="Vigência" description="O PMOC é revisado a cada 12 meses, com nova ART.">
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Válido a partir de" htmlFor="validFrom" error={fe.validFrom} required>
-              <Input
+              <DateField
                 id="validFrom"
                 name="validFrom"
-                type="date"
                 value={validFrom}
                 onChange={(e) => {
                   setValidFrom(e.target.value);
@@ -157,10 +157,9 @@ export function PmocForm({
               />
             </Field>
             <Field label="Válido até" htmlFor="validUntil" error={fe.validUntil} hint={untilTouched ? undefined : "Calculado para 12 meses."} required>
-              <Input
+              <DateField
                 id="validUntil"
                 name="validUntil"
-                type="date"
                 value={validUntil}
                 onChange={(e) => {
                   setValidUntil(e.target.value);

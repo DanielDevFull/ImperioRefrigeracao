@@ -10,13 +10,13 @@ import { PriorityBadge, WorkOrderStatusBadge, WorkOrderTypeBadge } from "@/compo
 import { nativeSelectClass } from "@/components/system/form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate, formatOM, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { bulkAssignAction } from "../actions";
 import { NOT_ASSIGNABLE } from "../_lib/constants";
 import { TechLabel } from "./tech-label";
+import { DateField, SelectField, TimeField } from "@/components/system/fields";
 
 export type OmRow = {
   id: string;
@@ -242,22 +242,22 @@ export function OmsTable({
               </div>
               <label className="min-w-40 flex-1 space-y-1">
                 <span className="text-xs text-steel">Técnico</span>
-                <select className={nativeSelectClass} value={techId} onChange={(e) => setTechId(e.target.value)}>
+                <SelectField className={nativeSelectClass} value={techId} onChange={(e) => setTechId(e.target.value)}>
                   <option value="">Escolha o técnico</option>
                   {technicians.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name}
                     </option>
                   ))}
-                </select>
+                </SelectField>
               </label>
               <label className="w-[calc(50%-0.375rem)] space-y-1 sm:w-40">
                 <span className="text-xs text-steel">Data</span>
-                <Input type="date" className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
+                <DateField className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
               </label>
               <label className="w-[calc(50%-0.375rem)] space-y-1 sm:w-28">
                 <span className="text-xs text-steel">Horário</span>
-                <Input type="time" className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
+                <TimeField className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
               </label>
               <div className="flex w-full gap-2 sm:w-auto">
                 <Button onClick={submit} disabled={pending} className="h-9 flex-1 sm:flex-none">

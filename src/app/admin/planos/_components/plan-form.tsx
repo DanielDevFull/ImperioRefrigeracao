@@ -19,6 +19,7 @@ import { MaterialsEditor } from "./materials-editor";
 import { PlanPreview } from "./plan-preview";
 import { TaskEditor } from "./task-editor";
 import { parseQty, type DraftMaterial, type DraftTask, type PlanInitial, type ProductOption } from "./types";
+import { SelectField } from "@/components/system/fields";
 
 export function PlanForm({
   planId,
@@ -164,14 +165,14 @@ export function PlanForm({
               htmlFor="equipmentTypeId"
               hint="Sugerido ao incluir equipamentos deste tipo em um contrato."
             >
-              <select id="equipmentTypeId" name="equipmentTypeId" defaultValue={initial.equipmentTypeId} className={nativeSelectClass}>
+              <SelectField id="equipmentTypeId" name="equipmentTypeId" defaultValue={initial.equipmentTypeId} className={nativeSelectClass}>
                 <option value="">Qualquer tipo</option>
                 {types.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
             <Field
               label="Duração estimada da visita"

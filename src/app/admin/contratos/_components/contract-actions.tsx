@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { initialActionState } from "@/lib/action";
 import { cancelContract, generateContractWorkOrders, reactivateContract, suspendContract, updateContract } from "../actions";
+import { DateField } from "@/components/system/fields";
 
 type ContractInfo = {
   id: string;
@@ -87,7 +88,7 @@ function EditContractForm({ contract, onDone }: { contract: ContractInfo; onDone
         <Input id="ec-day" name="billingDay" type="number" min={1} max={28} defaultValue={contract.billingDay} className="h-9 tabular-nums" />
       </Field>
       <Field label="Término" htmlFor="ec-end" error={fe.endDate} hint="Deixe vazio para renovar todo mês." className="sm:col-span-2">
-        <Input id="ec-end" name="endDate" type="date" min={contract.startDate} defaultValue={contract.endDate ?? ""} className="h-9 sm:w-48" />
+        <DateField id="ec-end" name="endDate" min={contract.startDate} defaultValue={contract.endDate ?? ""} className="h-9 sm:w-48" />
       </Field>
       <Field label="Observações" htmlFor="ec-notes" error={fe.notes} className="sm:col-span-2">
         <Textarea id="ec-notes" name="notes" defaultValue={contract.notes ?? ""} rows={3} maxLength={2000} />

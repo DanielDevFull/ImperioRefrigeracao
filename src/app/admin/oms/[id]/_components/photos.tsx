@@ -16,6 +16,7 @@ import { MAX_UPLOAD_LABEL } from "@/lib/upload";
 import { batchBySize, fitImage, isImageFile, UPLOAD_BUDGET_BYTES } from "@/lib/upload-client";
 import { removePhotoAction, uploadPhotosAction } from "../../actions";
 import { PHOTO_KINDS, photoKindLabel } from "../../_lib/constants";
+import { SelectField } from "@/components/system/fields";
 
 export type PhotoItem = { id: string; url: string; kind: string; caption: string | null; createdAt: string; taskTitle: string | null };
 
@@ -97,13 +98,13 @@ function UploadForm({ id, onDone }: { id: string; onDone: () => void }) {
   return (
     <form onSubmit={onSubmit} className="grid grid-cols-1 gap-3 border-t border-rime px-5 py-4 sm:grid-cols-[9rem_minmax(0,1fr)]">
       <Field label="Tipo" htmlFor="photo-kind" error={state.fieldErrors?.kind}>
-        <select id="photo-kind" name="kind" className={nativeSelectClass} defaultValue="antes">
+        <SelectField id="photo-kind" name="kind" className={nativeSelectClass} defaultValue="antes">
           {PHOTO_KINDS.map((k) => (
             <option key={k.value} value={k.value}>
               {k.label}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <Field
         label="Fotos"

@@ -83,7 +83,7 @@ export function Field({
   );
 }
 
-/** Classe padrão para <select> nativo no tema. */
+/** Classe padrão para a caixa de seleção (SelectField de @/components/system/fields). */
 export const nativeSelectClass =
   "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm text-silver shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 [&>option]:bg-night";
 

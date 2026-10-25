@@ -18,6 +18,7 @@ import { createTechnician, updateTechnician } from "../actions";
 import { DEFAULT_TECH_COLOR, SKILL_PRESETS, TECH_COLORS, normalizePlate, vehicleLocationName } from "../_lib/constants";
 import { FormError, PendingButton, TempPasswordInput, generatePassword, useFormAction } from "./form-kit";
 import { PlateTag, TechAvatar } from "./tech-avatar";
+import { DateField } from "@/components/system/fields";
 
 export type TechnicianFormValues = {
   id?: string;
@@ -109,7 +110,7 @@ export function TechnicianForm({ technician }: { technician?: TechnicianFormValu
               />
             </Field>
             <Field label="Data de admissão" htmlFor="admissionDate" error={err("admissionDate")}>
-              <Input id="admissionDate" name="admissionDate" type="date" defaultValue={technician?.admissionDate ?? ""} />
+              <DateField id="admissionDate" name="admissionDate" defaultValue={technician?.admissionDate ?? ""} />
             </Field>
           </div>
         </Panel>

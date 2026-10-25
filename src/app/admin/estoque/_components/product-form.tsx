@@ -13,6 +13,7 @@ import { formatPercent } from "@/lib/format";
 import { saveProduct } from "../actions";
 import { categoryOptions, unitOptions } from "../_lib/stock-format";
 import type { PickerLocation } from "../_lib/types";
+import { SelectField } from "@/components/system/fields";
 
 export type ProductFormValues = {
   id: string;
@@ -71,22 +72,22 @@ export function ProductForm({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Categoria" required error={e.category} htmlFor="pf-cat">
-          <select id="pf-cat" name="category" defaultValue={product?.category ?? "peca"} className={nativeSelectClass}>
+          <SelectField id="pf-cat" name="category" defaultValue={product?.category ?? "peca"} className={nativeSelectClass}>
             {categoryOptions.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.label}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Unidade" required error={e.unit} htmlFor="pf-unit">
-          <select id="pf-unit" name="unit" defaultValue={product?.unit ?? "un"} className={nativeSelectClass}>
+          <SelectField id="pf-unit" name="unit" defaultValue={product?.unit ?? "un"} className={nativeSelectClass}>
             {unitOptions.map((u) => (
               <option key={u.value} value={u.value}>
                 {u.label}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Código de barras" error={e.barcode} htmlFor="pf-barcode">
           <Input id="pf-barcode" name="barcode" defaultValue={product?.barcode ?? ""} className="h-9" inputMode="numeric" />
@@ -129,7 +130,7 @@ export function ProductForm({
           <Input id="pf-reorder" name="reorderQty" inputMode="decimal" defaultValue={qtyText(product?.reorderQty)} className="h-9 tabular-nums" placeholder="0" />
         </Field>
         <Field label="Fornecedor preferido" error={e.preferredSupplierId} htmlFor="pf-supplier">
-          <select id="pf-supplier" name="preferredSupplierId" defaultValue={product?.preferredSupplierId ?? ""} className={nativeSelectClass}>
+          <SelectField id="pf-supplier" name="preferredSupplierId" defaultValue={product?.preferredSupplierId ?? ""} className={nativeSelectClass}>
             <option value="">Sem preferência</option>
             {suppliers
               .filter((s) => s.active || s.id === product?.preferredSupplierId)
@@ -138,7 +139,7 @@ export function ProductForm({
                   {s.name}
                 </option>
               ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
 
@@ -151,13 +152,13 @@ export function ProductForm({
               <Input id="pf-iq" name="initialQty" inputMode="decimal" className="h-9 tabular-nums" placeholder="0" />
             </Field>
             <Field label="Local" htmlFor="pf-il">
-              <select id="pf-il" name="initialLocationId" className={nativeSelectClass} defaultValue={locations.find((l) => l.type === "almoxarifado")?.id}>
+              <SelectField id="pf-il" name="initialLocationId" className={nativeSelectClass} defaultValue={locations.find((l) => l.type === "almoxarifado")?.id}>
                 {locations.map((l) => (
                   <option key={l.id} value={l.id}>
                     {l.name}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
           </div>
         </fieldset>

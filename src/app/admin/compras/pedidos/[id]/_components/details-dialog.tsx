@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { MaskedInput } from "@/components/system/masked-input";
@@ -11,6 +10,7 @@ import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../../../estoque/_components/form-dialog";
 import type { PickerLocation } from "../../../../estoque/_lib/types";
 import { updateOrderDetails } from "../actions";
+import { DateField, SelectField } from "@/components/system/fields";
 
 type Details = {
   id: string;
@@ -71,7 +71,7 @@ function DetailsForm({
         htmlFor="od-supplier"
         hint={draft ? undefined : "O fornecedor não muda depois que o pedido é enviado."}
       >
-        <select
+        <SelectField
           id="od-supplier"
           name="supplierId"
           defaultValue={order.supplierId ?? ""}
@@ -88,24 +88,24 @@ function DetailsForm({
                 {s.name}
               </option>
             ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Previsão de entrega" error={e.expectedDate} htmlFor="od-expected">
-          <Input id="od-expected" name="expectedDate" type="date" defaultValue={order.expectedDate ?? ""} className="h-9" />
+          <DateField id="od-expected" name="expectedDate" defaultValue={order.expectedDate ?? ""} className="h-9" />
         </Field>
         <Field label="Frete" error={e.freight} htmlFor="od-freight">
           <MaskedInput id="od-freight" name="freight" mask="money" defaultValue={order.freight} className="h-9 tabular-nums" />
         </Field>
       </div>
       <Field label="Local de recebimento" required error={e.locationId} htmlFor="od-loc">
-        <select id="od-loc" name="locationId" defaultValue={order.locationId ?? locations[0]?.id} className={nativeSelectClass}>
+        <SelectField id="od-loc" name="locationId" defaultValue={order.locationId ?? locations[0]?.id} className={nativeSelectClass}>
           {locations.map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <Field label="Observações" htmlFor="od-notes">
         <Textarea id="od-notes" name="notes" rows={3} defaultValue={order.notes ?? ""} />

@@ -7,6 +7,7 @@ import { nativeSelectClass } from "@/components/system/form";
 import { addCompetence } from "@/lib/dates";
 import { formatCompetence } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SelectField } from "@/components/system/fields";
 
 function useUrlParams() {
   const router = useRouter();
@@ -97,7 +98,7 @@ export function MonthFilter({
   );
 }
 
-/** <select> nativo ligado a um parâmetro da URL. */
+/** <SelectField> nativo ligado a um parâmetro da URL. */
 export function ParamSelect({
   param,
   options,
@@ -113,7 +114,7 @@ export function ParamSelect({
 }) {
   const { params, set } = useUrlParams();
   return (
-    <select
+    <SelectField
       aria-label={label}
       className={cn(nativeSelectClass, "w-full sm:w-auto sm:min-w-44", className)}
       value={params.get(param) ?? ""}
@@ -125,6 +126,6 @@ export function ParamSelect({
           {o.label}
         </option>
       ))}
-    </select>
+    </SelectField>
   );
 }

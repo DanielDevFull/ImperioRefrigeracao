@@ -13,6 +13,7 @@ import { formatDate, formatDayMonth } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { addAbsence, deleteAbsence } from "../actions";
 import { FormError, PendingButton, useFormAction } from "./form-kit";
+import { DateField } from "@/components/system/fields";
 
 export type AbsenceItem = {
   id: string;
@@ -126,10 +127,10 @@ export function Absences({
       <form ref={formRef} onSubmit={onSubmit} className="mt-5 space-y-3 border-t border-rime pt-4" noValidate>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Início" htmlFor="abs-start" required error={err("startDate")}>
-            <Input id="abs-start" name="startDate" type="date" />
+            <DateField id="abs-start" name="startDate" />
           </Field>
           <Field label="Fim" htmlFor="abs-end" required error={err("endDate")}>
-            <Input id="abs-end" name="endDate" type="date" />
+            <DateField id="abs-end" name="endDate" />
           </Field>
         </div>
         <Field label="Motivo" htmlFor="abs-reason" error={err("reason")}>

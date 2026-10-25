@@ -7,9 +7,9 @@ import { Field, nativeSelectClass } from "@/components/system/form";
 import { WorkOrderStatusBadge, WorkOrderTypeBadge } from "@/components/system/status";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { formatDate, formatOM } from "@/lib/format";
 import { LOCKED, absenceOn, type BoardItem, type BoardTechnician } from "../_lib/board";
+import { DateField, SelectField, TimeField } from "@/components/system/fields";
 
 export type MoveTarget = { technicianId: string | null; date: string | null; time?: string | null };
 
@@ -41,21 +41,21 @@ function MoveForm({
       }}
     >
       <Field label="Técnico" htmlFor="move-tech">
-        <select id="move-tech" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
+        <SelectField id="move-tech" className={nativeSelectClass} value={tech} onChange={(e) => setTech(e.target.value)}>
           <option value="">Sem técnico (volta para a fila)</option>
           {technicians.map((x) => (
             <option key={x.id} value={x.id}>
               {x.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-3">
         <Field label="Data" htmlFor="move-date">
-          <Input id="move-date" type="date" className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
+          <DateField id="move-date" className="h-9" value={date} onChange={(e) => setDate(e.target.value)} />
         </Field>
         <Field label="Horário" htmlFor="move-time">
-          <Input id="move-time" type="time" className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
+          <TimeField id="move-time" className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
         </Field>
       </div>
       {abs && (

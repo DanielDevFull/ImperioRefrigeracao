@@ -7,11 +7,12 @@ import { nativeSelectClass } from "@/components/system/form";
 import { cn } from "@/lib/utils";
 import { ORIGINS, WORK_ORDER_TYPES } from "../_lib/constants";
 import { useUrlParams } from "./use-url-params";
+import { DateField, SelectField } from "@/components/system/fields";
 
 const FILTER_KEYS = ["tipo", "tecnico", "origem", "de", "ate", "filtro"] as const;
 
 const dateClass =
-  "h-7 min-w-0 flex-1 rounded-md bg-transparent px-1.5 text-sm text-silver outline-none focus-visible:ring-2 focus-visible:ring-ring/50 md:w-[8.4rem] md:flex-none";
+  "h-7 min-w-0 flex-1 rounded-md border-0 bg-transparent px-1.5 text-sm shadow-none dark:bg-transparent text-silver outline-none focus-visible:ring-2 focus-visible:ring-ring/50 md:w-[8.4rem] md:flex-none";
 
 export function ListFilters({
   technicians,
@@ -43,7 +44,7 @@ export function ListFilters({
       </div>
 
       <div className={cn("w-full flex-wrap items-center gap-2 md:contents", open ? "flex" : "hidden")}>
-        <select
+        <SelectField
           aria-label="Tipo de OM"
           className={cn(nativeSelectClass, "w-[calc(50%-0.25rem)] md:w-36")}
           value={value("tipo")}
@@ -55,8 +56,8 @@ export function ListFilters({
               {t.label}
             </option>
           ))}
-        </select>
-        <select
+        </SelectField>
+        <SelectField
           aria-label="Técnico"
           className={cn(nativeSelectClass, "w-[calc(50%-0.25rem)] md:w-44")}
           value={value("tecnico")}
@@ -69,8 +70,8 @@ export function ListFilters({
               {t.name}
             </option>
           ))}
-        </select>
-        <select
+        </SelectField>
+        <SelectField
           aria-label="Origem"
           className={cn(nativeSelectClass, "w-[calc(50%-0.25rem)] md:w-40")}
           value={value("origem")}
@@ -82,7 +83,7 @@ export function ListFilters({
               {o.label}
             </option>
           ))}
-        </select>
+        </SelectField>
 
         <div
           className="flex w-full flex-wrap items-center gap-1 rounded-md px-2 py-1 ring-1 ring-input md:h-9 md:w-auto md:flex-nowrap md:py-0"
@@ -91,8 +92,7 @@ export function ListFilters({
         >
           {/* no celular o rótulo fica numa linha e as duas datas dividem a de baixo */}
           <span className="basis-full pr-1 text-sm text-steel md:basis-auto">Agendada de</span>
-          <input
-            type="date"
+          <DateField
             aria-label="Agendada a partir de"
             className={dateClass}
             value={value("de")}
@@ -100,8 +100,7 @@ export function ListFilters({
             onChange={(e) => set({ de: e.target.value })}
           />
           <span className="text-sm text-steel">até</span>
-          <input
-            type="date"
+          <DateField
             aria-label="Agendada até"
             className={dateClass}
             value={value("ate")}

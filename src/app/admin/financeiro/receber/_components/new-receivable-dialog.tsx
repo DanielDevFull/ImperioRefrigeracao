@@ -23,6 +23,7 @@ import { OptionPicker } from "../../_components/option-picker";
 import type { CategoryOption } from "../../_lib/constants";
 import { createReceivable } from "../actions";
 import { ActionForm, FormSubmit } from "../../_components/action-form";
+import { DateField, SelectField } from "@/components/system/fields";
 
 export function NewReceivableDialog({
   customers,
@@ -87,20 +88,20 @@ function NewReceivableForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Categoria" htmlFor="categoryId" error={e.categoryId} required>
-          <select id="categoryId" name="categoryId" defaultValue={defaultCategory} className={nativeSelectClass} required>
+          <SelectField id="categoryId" name="categoryId" defaultValue={defaultCategory} className={nativeSelectClass} required>
             {categories.length === 0 && <option value="">Crie uma categoria de receita</option>}
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Tipo" htmlFor="kind" error={e.kind} required>
-          <select id="kind" name="kind" defaultValue="servico" className={nativeSelectClass}>
+          <SelectField id="kind" name="kind" defaultValue="servico" className={nativeSelectClass}>
             <option value="servico">Serviço avulso</option>
             <option value="outro">Outra receita</option>
-          </select>
+          </SelectField>
         </Field>
       </div>
 
@@ -110,7 +111,7 @@ function NewReceivableForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Vencimento" htmlFor="dueDate" error={e.dueDate} required>
-          <Input id="dueDate" name="dueDate" type="date" defaultValue={addDays(today, 5)} required />
+          <DateField id="dueDate" name="dueDate" defaultValue={addDays(today, 5)} required />
         </Field>
         <Field label="Valor" htmlFor="amount" error={e.amount} required>
           <div className="relative">

@@ -27,6 +27,7 @@ import { OptionPicker } from "../../_components/option-picker";
 import type { CategoryOption } from "../../_lib/constants";
 import { createPayable } from "../actions";
 import { ActionForm, FormSubmit } from "../../_components/action-form";
+import { DateField, SelectField } from "@/components/system/fields";
 
 export function NewPayableDialog({
   suppliers,
@@ -90,14 +91,14 @@ function NewPayableForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Categoria" htmlFor="categoryId" error={e.categoryId} required>
-          <select id="categoryId" name="categoryId" defaultValue={categories[0]?.id ?? ""} className={nativeSelectClass} required>
+          <SelectField id="categoryId" name="categoryId" defaultValue={categories[0]?.id ?? ""} className={nativeSelectClass} required>
             {categories.length === 0 && <option value="">Crie uma categoria de despesa</option>}
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Fornecedor" htmlFor="supplierId" error={e.supplierId} hint="Opcional.">
           <OptionPicker
@@ -113,7 +114,7 @@ function NewPayableForm({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Vencimento" htmlFor="dueDate" error={e.dueDate} required>
-          <Input id="dueDate" name="dueDate" type="date" value={dueDate} onChange={(ev) => setDueDate(ev.target.value)} required />
+          <DateField id="dueDate" name="dueDate" value={dueDate} onChange={(ev) => setDueDate(ev.target.value)} required />
         </Field>
         <Field label="Valor" htmlFor="amount" error={e.amount} required>
           <div className="relative">

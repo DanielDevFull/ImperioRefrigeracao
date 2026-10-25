@@ -17,6 +17,7 @@ import { saveCustomer } from "../actions";
 import { documentError } from "../_lib/document";
 import { PendingButton, useFormSubmit } from "./form-submit";
 import { SiteFields } from "./site-fields";
+import { SelectField } from "@/components/system/fields";
 
 export type CustomerFormValues = {
   id?: string;
@@ -224,7 +225,7 @@ export function CustomerForm({
             error={fe.defaultTechnicianId}
             hint="Recebe as OMs deste cliente quando o contrato não indica outro"
           >
-            <select
+            <SelectField
               id="defaultTechnicianId"
               name="defaultTechnicianId"
               defaultValue={initial?.defaultTechnicianId ?? ""}
@@ -236,7 +237,7 @@ export function CustomerForm({
                   {t.name}
                 </option>
               ))}
-            </select>
+            </SelectField>
           </Field>
           {editing && (
             <Field
@@ -244,10 +245,10 @@ export function CustomerForm({
               htmlFor="status"
               hint="Clientes inativos não recebem OMs automáticas"
             >
-              <select id="status" name="status" defaultValue={initial?.status ?? "ativo"} className={nativeSelectClass}>
+              <SelectField id="status" name="status" defaultValue={initial?.status ?? "ativo"} className={nativeSelectClass}>
                 <option value="ativo">Ativo</option>
                 <option value="inativo">Inativo</option>
-              </select>
+              </SelectField>
             </Field>
           )}
           <Field label="Observações" htmlFor="notes" error={fe.notes} className="sm:col-span-2 lg:col-span-3">

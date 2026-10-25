@@ -36,7 +36,8 @@ function SelectTrigger({
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
-  size?: "sm" | "default"
+  /** "auto": sem altura fixa (quem chama define, ex.: SelectField com h-9) */
+  size?: "sm" | "default" | "auto"
 }) {
   return (
     <SelectPrimitive.Trigger

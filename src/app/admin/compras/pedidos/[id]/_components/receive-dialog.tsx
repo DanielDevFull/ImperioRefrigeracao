@@ -14,6 +14,7 @@ import { formatQty, parseDecimal, round3 } from "../../../../estoque/_lib/stock-
 import type { PickerLocation } from "../../../../estoque/_lib/types";
 import { receiveOrder } from "../actions";
 import type { ItemRow } from "./order-items";
+import { DateField, SelectField } from "@/components/system/fields";
 
 /** "Receber mercadoria": quantidade recebida por item (parcial permitido). */
 export function ReceiveDialog({
@@ -145,13 +146,13 @@ function ReceiveForm({
       </ul>
 
       <Field label="Dar entrada em" required error={e.locationId} htmlFor="rc-loc">
-        <select id="rc-loc" name="locationId" defaultValue={defaultLocationId} className={nativeSelectClass}>
+        <SelectField id="rc-loc" name="locationId" defaultValue={defaultLocationId} className={nativeSelectClass}>
           {locations.map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
 
       {needsPayable && (
@@ -162,7 +163,7 @@ function ReceiveForm({
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Vencimento" required error={e.dueDate} htmlFor="rc-due">
-              <Input id="rc-due" name="dueDate" type="date" defaultValue={defaultDueDate} className="h-9" />
+              <DateField id="rc-due" name="dueDate" defaultValue={defaultDueDate} className="h-9" />
             </Field>
             <Field label="Nota fiscal" error={e.documentNumber} htmlFor="rc-doc">
               <Input id="rc-doc" name="documentNumber" className="h-9" placeholder="Ex.: NF 004512" />

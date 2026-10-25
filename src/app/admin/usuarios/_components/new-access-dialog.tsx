@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { PendingButton, useFormAction } from "@/app/admin/configuracoes/_components/form-kit";
 import { createStaffAccess } from "../actions";
 import { copyText, PasswordField } from "./password-field";
+import { SelectField } from "@/components/system/fields";
 
 type Created = { name: string; email: string; password: string; role: string };
 
@@ -150,10 +151,10 @@ function NewAccessForm({ onClose }: { onClose: () => void }) {
         hint="O gestor opera o sistema todo; só o administrador gerencia acessos."
         required
       >
-        <select id="na-role" name="role" value={role} onChange={(e) => setRole(e.target.value)} className={nativeSelectClass}>
+        <SelectField id="na-role" name="role" value={role} onChange={(e) => setRole(e.target.value)} className={nativeSelectClass}>
           <option value="gestor">Gestor</option>
           <option value="admin">Administrador</option>
-        </select>
+        </SelectField>
       </Field>
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onClose}>

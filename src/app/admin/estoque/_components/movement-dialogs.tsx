@@ -15,6 +15,7 @@ import { formatQty, parseDecimal, round3, weightedAverageCost } from "../_lib/st
 import type { MovementData, PickerLocation } from "../_lib/types";
 import { DialogActions, FormDialog } from "./form-dialog";
 import { ProductPicker } from "./product-picker";
+import { SelectField } from "@/components/system/fields";
 
 type Kind = "entrada" | "ajuste" | "transferencia";
 
@@ -174,13 +175,13 @@ function EntryForm({ data, fixedProductId, onDone }: { data: MovementData; fixed
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Local" required error={e.locationId} htmlFor="en-loc">
-          <select id="en-loc" name="locationId" defaultValue={defaultWarehouse(data.locations)} className={nativeSelectClass}>
+          <SelectField id="en-loc" name="locationId" defaultValue={defaultWarehouse(data.locations)} className={nativeSelectClass}>
             {data.locations.map((l) => (
               <option key={l.id} value={l.id}>
                 {locationLabel(l)}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Quantidade" required error={e.quantity} htmlFor="en-qty">
           <QtyInput id="en-qty" name="quantity" unit={product?.unit} value={qty} onChange={setQty} invalid={Boolean(e.quantity)} />
@@ -273,7 +274,7 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Local" required error={e.locationId} htmlFor="aj-loc">
-          <select
+          <SelectField
             id="aj-loc"
             name="locationId"
             value={locationId}
@@ -285,7 +286,7 @@ function AdjustForm({ data, fixedProductId, onDone }: { data: MovementData; fixe
                 {locationLabel(l)}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         {mode === "contagem" ? (
           <Field label="Quantidade contada" required error={e.counted} htmlFor="aj-counted">
@@ -371,22 +372,22 @@ function TransferForm({ data, fixedProductId, onDone }: { data: MovementData; fi
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="De" required error={e.fromId} htmlFor="tr-from">
-          <select id="tr-from" name="fromId" value={fromId} onChange={(ev) => setFromId(ev.target.value)} className={nativeSelectClass}>
+          <SelectField id="tr-from" name="fromId" value={fromId} onChange={(ev) => setFromId(ev.target.value)} className={nativeSelectClass}>
             {data.locations.map((l) => (
               <option key={l.id} value={l.id}>
                 {locationLabel(l)}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Para" required error={e.toId} htmlFor="tr-to">
-          <select id="tr-to" name="toId" value={toId} onChange={(ev) => setToId(ev.target.value)} className={nativeSelectClass}>
+          <SelectField id="tr-to" name="toId" value={toId} onChange={(ev) => setToId(ev.target.value)} className={nativeSelectClass}>
             {data.locations.map((l) => (
               <option key={l.id} value={l.id} disabled={l.id === fromId}>
                 {locationLabel(l)}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
       <Field label="Quantidade" required error={e.quantity} htmlFor="tr-qty">

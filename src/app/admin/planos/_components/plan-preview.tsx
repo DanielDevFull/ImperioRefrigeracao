@@ -3,13 +3,13 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Panel } from "@/components/system/panel";
-import { Input } from "@/components/ui/input";
 import { weekday } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { periodLabel, planPreview, plural } from "../_lib/preview";
 import { MonthStrip } from "./month-strip";
 import type { DraftTask } from "./types";
+import { DateField } from "@/components/system/fields";
 
 const WEEKDAYS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
@@ -30,8 +30,7 @@ export function PlanPreview({ tasks, today }: { tasks: DraftTask[]; today: strin
     >
       <label className="flex flex-wrap items-center justify-between gap-2 text-sm text-steel">
         Primeira visita
-        <Input
-          type="date"
+        <DateField
           value={anchor}
           onChange={(e) => setAnchor(e.target.value)}
           className="h-9 w-40"

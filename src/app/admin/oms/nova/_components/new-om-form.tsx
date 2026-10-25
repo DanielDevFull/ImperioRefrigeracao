@@ -19,6 +19,7 @@ import { createOmAction, customerContextAction } from "../../actions";
 import { BILLABLE_BY_DEFAULT, PRIORITIES, WORK_ORDER_TYPES } from "../../_lib/constants";
 import { Segmented } from "../../_components/segmented";
 import { CustomerPicker, type CustomerOption } from "./customer-picker";
+import { DateField, SelectField, TimeField } from "@/components/system/fields";
 
 type Context = Awaited<ReturnType<typeof customerContextAction>>;
 type Plan = {
@@ -146,7 +147,7 @@ export function NewOmForm({
             </Field>
             <Field label="Local de atendimento" htmlFor="siteId" error={fe.siteId}>
               <div className="relative">
-                <select
+                <SelectField
                   id="siteId"
                   name="siteId"
                   className={nativeSelectClass}
@@ -165,7 +166,7 @@ export function NewOmForm({
                       {s.district ? `, ${s.district}` : ""}
                     </option>
                   ))}
-                </select>
+                </SelectField>
                 {loadingCtx && <Loader2 className="absolute right-8 top-1/2 size-4 -translate-y-1/2 animate-spin text-steel" />}
               </div>
             </Field>
@@ -175,7 +176,7 @@ export function NewOmForm({
               error={fe.equipmentId}
               hint={ctx && !ctx.equipment.length ? "Este cliente ainda não tem equipamentos cadastrados." : "Opcional para visitas e instalações."}
             >
-              <select
+              <SelectField
                 id="equipmentId"
                 name="equipmentId"
                 className={nativeSelectClass}
@@ -193,7 +194,7 @@ export function NewOmForm({
                     {formatEquipmentCode(e.code)} {e.typeName ?? ""} {e.location ? `(${e.location})` : ""}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
             <Field
               label="Plano de manutenção"
@@ -202,7 +203,7 @@ export function NewOmForm({
               hint={plan ? `${plan.taskCount} item(ns) de checklist serão copiados para a OM.` : "Opcional: copia o checklist do plano para a OM."}
               className="sm:col-span-2"
             >
-              <select
+              <SelectField
                 id="maintenancePlanId"
                 name="maintenancePlanId"
                 className={nativeSelectClass}
@@ -216,7 +217,7 @@ export function NewOmForm({
                     {eqp?.typeId && p.equipmentTypeId === eqp.typeId ? " (indicado para este equipamento)" : ""}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
           </div>
         </Panel>
@@ -254,7 +255,7 @@ export function NewOmForm({
         <Panel title="Agendamento" description="Com técnico e data, a OM já nasce agendada e o técnico é avisado.">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_10rem_8rem]">
             <Field label="Técnico" htmlFor="technicianId" error={fe.technicianId}>
-              <select
+              <SelectField
                 id="technicianId"
                 name="technicianId"
                 className={nativeSelectClass}
@@ -271,13 +272,13 @@ export function NewOmForm({
                     {ctx?.defaultTechnicianId === t.id ? " (técnico do cliente)" : ""}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </Field>
             <Field label="Data" htmlFor="scheduledDate" error={fe.scheduledDate}>
-              <Input id="scheduledDate" name="scheduledDate" type="date" className="h-9" min={today} value={date} onChange={(e) => setDate(e.target.value)} />
+              <DateField id="scheduledDate" name="scheduledDate" className="h-9" min={today} value={date} onChange={(e) => setDate(e.target.value)} />
             </Field>
             <Field label="Horário" htmlFor="scheduledTime" error={fe.scheduledTime}>
-              <Input id="scheduledTime" name="scheduledTime" type="time" className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
+              <TimeField id="scheduledTime" name="scheduledTime" className="h-9" value={time} onChange={(e) => setTime(e.target.value)} />
             </Field>
           </div>
         </Panel>

@@ -5,8 +5,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { nativeSelectClass } from "@/components/system/form";
 import { cn } from "@/lib/utils";
+import { SelectField } from "@/components/system/fields";
 
-/** <select> que grava a escolha em um parâmetro da URL (ex.: ?categoria=gas). */
+/** <SelectField> que grava a escolha em um parâmetro da URL (ex.: ?categoria=gas). */
 export function ParamSelect({
   param,
   options,
@@ -26,7 +27,7 @@ export function ParamSelect({
   const [pending, start] = useTransition();
   const current = params.get(param) ?? "";
   return (
-    <select
+    <SelectField
       aria-label={label}
       value={current}
       onChange={(e) => {
@@ -44,7 +45,7 @@ export function ParamSelect({
           {o.label}
         </option>
       ))}
-    </select>
+    </SelectField>
   );
 }
 

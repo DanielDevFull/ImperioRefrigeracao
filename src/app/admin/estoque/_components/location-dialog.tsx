@@ -8,6 +8,7 @@ import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from
 import { initialActionState } from "@/lib/action";
 import { saveLocation } from "../actions";
 import { DialogActions, FormDialog } from "./form-dialog";
+import { SelectField } from "@/components/system/fields";
 
 type Tech = { id: string; name: string; vehiclePlate: string | null };
 type Loc = { id: string; name: string; type: "almoxarifado" | "veiculo"; technicianId: string | null };
@@ -59,7 +60,7 @@ function LocationForm({ location, technicians, onDone }: { location?: Loc; techn
     <ActionForm action={action} pending={pending} className="space-y-4">
       {location && <input type="hidden" name="id" value={location.id} />}
       <Field label="Tipo" required error={e.type} htmlFor="lc-type">
-        <select
+        <SelectField
           id="lc-type"
           name="type"
           value={type}
@@ -72,11 +73,11 @@ function LocationForm({ location, technicians, onDone }: { location?: Loc; techn
         >
           <option value="almoxarifado">Almoxarifado</option>
           <option value="veiculo">Veículo de técnico</option>
-        </select>
+        </SelectField>
       </Field>
       {type === "veiculo" && (
         <Field label="Técnico" required error={e.technicianId} htmlFor="lc-tech" hint="As baixas de material das OMs desse técnico saem deste local.">
-          <select
+          <SelectField
             id="lc-tech"
             name="technicianId"
             value={techId}
@@ -93,7 +94,7 @@ function LocationForm({ location, technicians, onDone }: { location?: Loc; techn
                 {t.vehiclePlate ? ` (${t.vehiclePlate})` : ""}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       )}
       <Field label="Nome" required error={e.name} htmlFor="lc-name">

@@ -16,6 +16,7 @@ import { fitImage, setInputFiles, UPLOAD_BUDGET_BYTES } from "@/lib/upload-clien
 import { cn } from "@/lib/utils";
 import { PendingButton, useFormSubmit } from "../../clientes/_components/form-submit";
 import { saveEquipment, sitesForCustomer } from "../actions";
+import { DateField, SelectField } from "@/components/system/fields";
 
 export type EquipmentFormValues = {
   id: string;
@@ -110,7 +111,7 @@ export function EquipmentForm({
       <Panel title="Cliente e local" description="Onde o aparelho está instalado.">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Cliente" htmlFor="customerId" error={fe.customerId} required>
-            <select
+            <SelectField
               id="customerId"
               name="customerId"
               value={customerId}
@@ -124,7 +125,7 @@ export function EquipmentForm({
                   {c.inactive ? " (inativo)" : ""}
                 </option>
               ))}
-            </select>
+            </SelectField>
           </Field>
           <Field
             label="Local de atendimento"
@@ -133,7 +134,7 @@ export function EquipmentForm({
             hint={customerId && !loadingSites && sites.length === 0 ? "Cliente sem locais. Cadastre um na ficha do cliente." : undefined}
           >
             <div className="relative">
-              <select
+              <SelectField
                 id="siteId"
                 name="siteId"
                 value={siteId}
@@ -148,7 +149,7 @@ export function EquipmentForm({
                     {s.isPrimary ? " (principal)" : ""}
                   </option>
                 ))}
-              </select>
+              </SelectField>
               {loadingSites && <Loader2 className="absolute right-8 top-2.5 size-4 animate-spin text-steel" />}
             </div>
           </Field>
@@ -173,14 +174,14 @@ export function EquipmentForm({
       <Panel title="Identificação">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Tipo" htmlFor="typeId" error={fe.typeId}>
-            <select id="typeId" name="typeId" defaultValue={initial?.typeId ?? ""} className={nativeSelectClass}>
+            <SelectField id="typeId" name="typeId" defaultValue={initial?.typeId ?? ""} className={nativeSelectClass}>
               <option value="">Não informado</option>
               {types.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.name}
                 </option>
               ))}
-            </select>
+            </SelectField>
           </Field>
           <Field label="Marca" htmlFor="brand" error={fe.brand}>
             <Input id="brand" name="brand" list="brand-options" defaultValue={initial?.brand ?? ""} className="h-9" placeholder="Samsung" />
@@ -274,19 +275,19 @@ export function EquipmentForm({
       <Panel title="Instalação, garantia e situação">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Data de instalação" htmlFor="installDate" error={fe.installDate}>
-            <Input id="installDate" name="installDate" type="date" defaultValue={initial?.installDate ?? ""} className="h-9" />
+            <DateField id="installDate" name="installDate" defaultValue={initial?.installDate ?? ""} className="h-9" />
           </Field>
           <Field label="Garantia até" htmlFor="warrantyUntil" error={fe.warrantyUntil}>
-            <Input id="warrantyUntil" name="warrantyUntil" type="date" defaultValue={initial?.warrantyUntil ?? ""} className="h-9" />
+            <DateField id="warrantyUntil" name="warrantyUntil" defaultValue={initial?.warrantyUntil ?? ""} className="h-9" />
           </Field>
           {editing ? (
             <Field label="Situação" htmlFor="status" error={fe.status} className="sm:col-span-2">
-              <select id="status" name="status" defaultValue={initial?.status ?? "ativo"} className={nativeSelectClass}>
+              <SelectField id="status" name="status" defaultValue={initial?.status ?? "ativo"} className={nativeSelectClass}>
                 <option value="ativo">Ativo</option>
                 <option value="em_manutencao">Em manutenção</option>
                 <option value="inativo">Inativo (desligado no local)</option>
                 {initial?.status === "removido" && <option value="removido">Removido</option>}
-              </select>
+              </SelectField>
             </Field>
           ) : (
             <input type="hidden" name="status" value="ativo" />

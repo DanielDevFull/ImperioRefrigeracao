@@ -7,7 +7,6 @@ import { Field, nativeSelectClass, SubmitButton, useActionToast } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { initialActionState } from "@/lib/action";
 import { formatDate, formatEquipmentCode } from "@/lib/format";
 import { visitIntervalMonths } from "@/server/core/schedule";
@@ -16,6 +15,7 @@ import { addContractItem, removeContractItem, updateContractItem } from "../acti
 import { defaultPlanFor } from "../_lib/defaults";
 import { nextVisitAfterChange, type ContractWindow, type ScheduleTask } from "../_lib/forecast";
 import { openOrdersText } from "./contract-actions";
+import { DateField, SelectField } from "@/components/system/fields";
 
 type PlanOpt = { id: string; name: string; equipmentTypeId: string | null; isPmoc: boolean; tasks: ScheduleTask[] };
 type TechOpt = { id: string; name: string };
@@ -123,7 +123,7 @@ function AddItemForm({
   return (
     <form action={action} className="grid gap-4" noValidate>
       <Field label="Equipamento" htmlFor="ai-eq" required error={fe.equipmentId}>
-        <select
+        <SelectField
           id="ai-eq"
           name="equipmentId"
           value={equipmentId}
@@ -138,30 +138,30 @@ function AddItemForm({
               {formatEquipmentCode(e.code)} {e.label}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <Field label="Plano de manutenção" htmlFor="ai-plan" required error={fe.maintenancePlanId} hint={planHint(plans.find((p) => p.id === planId))}>
-        <select id="ai-plan" name="maintenancePlanId" value={planId} onChange={(e) => setPlanChoice(e.target.value)} className={nativeSelectClass}>
+        <SelectField id="ai-plan" name="maintenancePlanId" value={planId} onChange={(e) => setPlanChoice(e.target.value)} className={nativeSelectClass}>
           {plans.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Primeira visita" htmlFor="ai-anchor" required error={fe.anchorDate} hint="As próximas seguem o intervalo do plano.">
-          <Input id="ai-anchor" name="anchorDate" type="date" defaultValue={today} className="h-9" />
+          <DateField id="ai-anchor" name="anchorDate" defaultValue={today} className="h-9" />
         </Field>
         <Field label="Técnico preferencial" htmlFor="ai-tech" error={fe.preferredTechnicianId}>
-          <select id="ai-tech" name="preferredTechnicianId" defaultValue={defaultTechnicianId ?? ""} className={nativeSelectClass}>
+          <SelectField id="ai-tech" name="preferredTechnicianId" defaultValue={defaultTechnicianId ?? ""} className={nativeSelectClass}>
             <option value="">Definir na agenda</option>
             {technicians.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
       <DialogFooter>
@@ -260,28 +260,28 @@ function EditItemForm({
   return (
     <form action={action} className="grid gap-4" noValidate>
       <Field label="Plano de manutenção" htmlFor="ei-plan" required error={fe.maintenancePlanId} hint={planHint(plans.find((p) => p.id === planId))}>
-        <select id="ei-plan" name="maintenancePlanId" value={planId} onChange={(e) => setPlanId(e.target.value)} className={nativeSelectClass}>
+        <SelectField id="ei-plan" name="maintenancePlanId" value={planId} onChange={(e) => setPlanId(e.target.value)} className={nativeSelectClass}>
           {!current && <option value={item.maintenancePlanId}>Plano atual (inativo)</option>}
           {plans.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Âncora (primeira visita)" htmlFor="ei-anchor" required error={fe.anchorDate}>
-          <Input id="ei-anchor" name="anchorDate" type="date" value={anchor} onChange={(e) => setAnchor(e.target.value)} className="h-9" />
+          <DateField id="ei-anchor" name="anchorDate" value={anchor} onChange={(e) => setAnchor(e.target.value)} className="h-9" />
         </Field>
         <Field label="Técnico preferencial" htmlFor="ei-tech" error={fe.preferredTechnicianId}>
-          <select id="ei-tech" name="preferredTechnicianId" value={tech} onChange={(e) => setTech(e.target.value)} className={nativeSelectClass}>
+          <SelectField id="ei-tech" name="preferredTechnicianId" value={tech} onChange={(e) => setTech(e.target.value)} className={nativeSelectClass}>
             <option value="">Definir na agenda</option>
             {technicians.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
       {scheduleChanged && (

@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { nativeSelectClass } from "@/components/system/form";
 import { cn } from "@/lib/utils";
+import { SelectField } from "@/components/system/fields";
 
 /** Select que grava a escolha num parâmetro da URL (ex.: ?tipo=). */
 export function ParamSelect({
@@ -26,7 +27,7 @@ export function ParamSelect({
   const [pending, start] = useTransition();
   return (
     <div className={cn("relative", className)}>
-      <select
+      <SelectField
         aria-label={label}
         value={params.get(param) ?? ""}
         onChange={(e) => {
@@ -44,7 +45,7 @@ export function ParamSelect({
             {o.label}
           </option>
         ))}
-      </select>
+      </SelectField>
       {pending && <Loader2 className="pointer-events-none absolute right-8 top-2.5 size-4 animate-spin text-steel" />}
     </div>
   );

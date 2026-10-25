@@ -18,6 +18,7 @@ import { MaskedInput } from "@/components/system/masked-input";
 import { commissionBasis, workOrderType } from "@/lib/labels";
 import { FormError, PendingButton, useFormAction } from "../../tecnicos/_components/form-kit";
 import { saveRule } from "../actions";
+import { SelectField } from "@/components/system/fields";
 
 export type RuleRow = {
   id: string;
@@ -81,7 +82,7 @@ function RuleForm({ rule, technicians, onDone }: { rule?: RuleRow; technicians: 
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Técnico" htmlFor="rule-tech" error={err("technicianId")}>
-          <select id="rule-tech" name="technicianId" defaultValue={rule?.technicianId ?? ""} className={nativeSelectClass}>
+          <SelectField id="rule-tech" name="technicianId" defaultValue={rule?.technicianId ?? ""} className={nativeSelectClass}>
             <option value="">Todos os técnicos</option>
             {technicians.map((t) => (
               <option key={t.id} value={t.id}>
@@ -89,21 +90,21 @@ function RuleForm({ rule, technicians, onDone }: { rule?: RuleRow; technicians: 
                 {t.active ? "" : " (inativo)"}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Tipo de OM" htmlFor="rule-type" error={err("workOrderType")}>
-          <select id="rule-type" name="workOrderType" defaultValue={rule?.workOrderType ?? ""} className={nativeSelectClass}>
+          <SelectField id="rule-type" name="workOrderType" defaultValue={rule?.workOrderType ?? ""} className={nativeSelectClass}>
             <option value="">Todos os tipos</option>
             {Object.entries(workOrderType).map(([k, v]) => (
               <option key={k} value={k}>
                 {v.label}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
       <Field label="Base de cálculo" htmlFor="rule-basis" required error={err("basis")} hint={commissionBasis[basis]?.hint}>
-        <select
+        <SelectField
           id="rule-basis"
           name="basis"
           value={basis}
@@ -115,7 +116,7 @@ function RuleForm({ rule, technicians, onDone }: { rule?: RuleRow; technicians: 
               {v.label}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label={fixed ? "Valor por OM" : "Percentual"} htmlFor="rule-rate" required error={err("rate")}>

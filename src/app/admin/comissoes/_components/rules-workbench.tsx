@@ -21,6 +21,7 @@ import { computeCommission, pickRule } from "@/server/core/commission";
 import { deleteRule, setRuleActive } from "../actions";
 import { formatRate, scopeOf } from "../_lib/format";
 import { RuleDialog, type RuleRow, type TechOption } from "./rule-dialog";
+import { SelectField } from "@/components/system/fields";
 
 export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; technicians: TechOption[] }) {
   const techName = useMemo(() => new Map(technicians.map((t) => [t.id, t])), [technicians]);
@@ -212,24 +213,24 @@ export function RulesWorkbench({ rules, technicians }: { rules: RuleRow[]; techn
           <div className="grid grid-cols-2 gap-3">
             <label className="col-span-2 space-y-1.5 sm:col-span-1 xl:col-span-2">
               <span className="text-xs text-steel">Técnico</span>
-              <select value={simTech} onChange={(e) => setSimTech(e.target.value)} className={nativeSelectClass}>
+              <SelectField value={simTech} onChange={(e) => setSimTech(e.target.value)} className={nativeSelectClass}>
                 {technicians.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
                     {t.active ? "" : " (inativo)"}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </label>
             <label className="col-span-2 space-y-1.5 sm:col-span-1 xl:col-span-2">
               <span className="text-xs text-steel">Tipo de OM</span>
-              <select value={simType} onChange={(e) => setSimType(e.target.value)} className={nativeSelectClass}>
+              <SelectField value={simType} onChange={(e) => setSimType(e.target.value)} className={nativeSelectClass}>
                 {Object.entries(workOrderType).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v.label}
                   </option>
                 ))}
-              </select>
+              </SelectField>
             </label>
             <label className="space-y-1.5">
               <span className="text-xs text-steel">Mão de obra</span>

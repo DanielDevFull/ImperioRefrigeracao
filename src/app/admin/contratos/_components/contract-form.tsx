@@ -26,6 +26,7 @@ import { defaultPlanFor } from "../_lib/defaults";
 import { firstInvoice, invoicesGeneratedNow, monthlyForecast, visitsBetween, visitsGeneratedNow } from "../_lib/forecast";
 import type { CoverageEquipment, CustomerOption, PlanOption } from "../_lib/queries";
 import { CustomerPicker } from "./customer-picker";
+import { DateField, SelectField } from "@/components/system/fields";
 
 type Tech = { id: string; name: string };
 type Draft = { selected: boolean; planId: string; anchorDate: string; anchorDirty: boolean; technicianId: string };
@@ -291,20 +292,18 @@ export function ContractForm({
               />
             </Field>
             <Field label="Início" htmlFor="startDate" required error={errors.startDate} hint="A primeira mensalidade é a do mês de início.">
-              <Input
+              <DateField
                 id="startDate"
                 name="startDate"
-                type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="h-9"
               />
             </Field>
             <Field label="Término" htmlFor="endDate" error={errors.endDate} hint="Opcional. Sem término, renova todo mês.">
-              <Input
+              <DateField
                 id="endDate"
                 name="endDate"
-                type="date"
                 value={endDate}
                 min={startDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -412,7 +411,7 @@ export function ContractForm({
                                 <label className="mb-1 block text-xs text-steel" htmlFor={`plan-${e.id}`}>
                                   Plano de manutenção
                                 </label>
-                                <select
+                                <SelectField
                                   id={`plan-${e.id}`}
                                   value={d.planId}
                                   onChange={(ev) => patchDraft(e, { planId: ev.target.value })}
@@ -424,7 +423,7 @@ export function ContractForm({
                                       {p.name}
                                     </option>
                                   ))}
-                                </select>
+                                </SelectField>
                                 <p className="mt-1 text-xs text-steel">
                                   {plan
                                     ? plan.tasks.length
@@ -440,9 +439,8 @@ export function ContractForm({
                                 <label className="mb-1 block text-xs text-steel" htmlFor={`anchor-${e.id}`}>
                                   Primeira visita
                                 </label>
-                                <Input
+                                <DateField
                                   id={`anchor-${e.id}`}
-                                  type="date"
                                   value={d.anchorDirty ? d.anchorDate : validStart}
                                   onChange={(ev) => patchDraft(e, { anchorDate: ev.target.value, anchorDirty: true })}
                                   className="h-9"
@@ -453,7 +451,7 @@ export function ContractForm({
                                 <label className="mb-1 block text-xs text-steel" htmlFor={`tech-${e.id}`}>
                                   Técnico preferencial
                                 </label>
-                                <select
+                                <SelectField
                                   id={`tech-${e.id}`}
                                   value={d.technicianId}
                                   onChange={(ev) => patchDraft(e, { technicianId: ev.target.value })}
@@ -465,7 +463,7 @@ export function ContractForm({
                                       {t.name}
                                     </option>
                                   ))}
-                                </select>
+                                </SelectField>
                               </div>
                             </div>
                           </motion.div>

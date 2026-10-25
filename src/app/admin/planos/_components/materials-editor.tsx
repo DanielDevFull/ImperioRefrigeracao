@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { productUnit } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { formatQty, parseQty, type DraftMaterial, type ProductOption } from "./types";
+import { SelectField } from "@/components/system/fields";
 
 export function MaterialsEditor({
   materials,
@@ -58,7 +59,7 @@ export function MaterialsEditor({
                 <div className="flex items-start gap-2">
                   <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1fr)_9rem]">
                     <div className="min-w-0">
-                      <select
+                      <SelectField
                         value={m.productId}
                         onChange={(e) => onChange(m.key, { productId: e.target.value })}
                         className={cn(nativeSelectClass, err.productId && "border-gauge-red/60")}
@@ -74,7 +75,7 @@ export function MaterialsEditor({
                               {p.sku ? ` (${p.sku})` : ""}
                             </option>
                           ))}
-                      </select>
+                      </SelectField>
                       {err.productId && <p className="mt-1 text-xs text-gauge-red">{err.productId}</p>}
                     </div>
                     <div>

@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { formatBRL, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { addMaterialAction, removeMaterialAction, type MaterialState } from "../../actions";
+import { SelectField } from "@/components/system/fields";
 
 export type MaterialItem = {
   id: string;
@@ -72,7 +73,7 @@ function AddMaterialForm({
     <ActionForm action={action} pending={pending} className="space-y-4 border-t border-rime bg-night/30 px-5 py-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Field label="Produto" htmlFor="mat-product" error={fe.productId} required>
-          <select id="mat-product" name="productId" className={nativeSelectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
+          <SelectField id="mat-product" name="productId" className={nativeSelectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
             <option value="">Escolha o produto</option>
             {options.products.map((p) => (
               <option key={p.id} value={p.id}>
@@ -80,17 +81,17 @@ function AddMaterialForm({
                 {p.sku ? ` (${p.sku})` : ""}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
         <Field label="Sai do estoque" htmlFor="mat-location" error={fe.locationId}>
-          <select id="mat-location" name="locationId" className={nativeSelectClass} value={locationId} onChange={(e) => setLocationId(e.target.value)}>
+          <SelectField id="mat-location" name="locationId" className={nativeSelectClass} value={locationId} onChange={(e) => setLocationId(e.target.value)}>
             {options.locations.map((l) => (
               <option key={l.id} value={l.id}>
                 {l.name}
                 {l.id === defaultLocationId ? " (do técnico)" : ""}
               </option>
             ))}
-          </select>
+          </SelectField>
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-[8rem_10rem_minmax(0,1fr)]">

@@ -4,12 +4,12 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, nativeSelectClass, useActionToast, ActionForm, FormSubmit } from "@/components/system/form";
 import { initialActionState } from "@/lib/action";
 import { DialogActions, FormDialog } from "../../estoque/_components/form-dialog";
 import { createOrder } from "../actions";
+import { DateField, SelectField } from "@/components/system/fields";
 
 /** "Novo pedido" manual: cria o rascunho e abre a página do pedido para incluir os itens. */
 export function NewOrderDialog({
@@ -54,7 +54,7 @@ function OrderForm({ suppliers, supplierId }: { suppliers: { id: string; name: s
   return (
     <ActionForm action={action} pending={pending} className="space-y-4">
       <Field label="Fornecedor" required error={e.supplierId} htmlFor="po-supplier">
-        <select id="po-supplier" name="supplierId" defaultValue={supplierId ?? ""} className={nativeSelectClass}>
+        <SelectField id="po-supplier" name="supplierId" defaultValue={supplierId ?? ""} className={nativeSelectClass}>
           <option value="" disabled>
             Escolha o fornecedor
           </option>
@@ -63,10 +63,10 @@ function OrderForm({ suppliers, supplierId }: { suppliers: { id: string; name: s
               {s.name}
             </option>
           ))}
-        </select>
+        </SelectField>
       </Field>
       <Field label="Previsão de entrega" error={e.expectedDate} htmlFor="po-expected">
-        <Input id="po-expected" name="expectedDate" type="date" className="h-9" />
+        <DateField id="po-expected" name="expectedDate" className="h-9" />
       </Field>
       <Field label="Observações" htmlFor="po-notes">
         <Textarea id="po-notes" name="notes" rows={2} placeholder="Condição de pagamento, forma de entrega…" />

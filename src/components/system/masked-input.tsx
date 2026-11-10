@@ -8,7 +8,7 @@ import { normalizeDocument, onlyDigits } from "@/lib/format";
  * cpf: só números (11). cnpj: 12 caracteres [0-9A-Z] + 2 dígitos (CNPJ alfanumérico).
  * cpfcnpj: CPF enquanto tiver só números e até 11 dígitos; com letra ou mais de 11, CNPJ.
  */
-type Mask = "cpfcnpj" | "cpf" | "cnpj" | "phone" | "cep" | "money";
+export type Mask = "cpfcnpj" | "cpf" | "cnpj" | "phone" | "cep" | "money";
 
 function cpfLayout(d: string) {
   return d
@@ -27,7 +27,8 @@ function cnpjLayout(raw: string) {
   return parts.map((p, i) => (p ? seps[i] + p : "")).join("");
 }
 
-function apply(mask: Mask, raw: string, prev = "") {
+/** Aplica a máscara ao texto digitado (útil para campos controlados). */
+export function applyMask(mask: Mask, raw: string, prev = "") {
   const d = onlyDigits(raw);
   switch (mask) {
     case "cpf":
@@ -71,7 +72,7 @@ export function MaskedInput({
       ? ""
       : mask === "money"
         ? Number(defaultValue).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : apply(mask, String(defaultValue));
+        : applyMask(mask, String(defaultValue));
   const [value, setValue] = useState(initial);
   const isDocument = mask === "cnpj" || mask === "cpfcnpj";
   return (
@@ -84,7 +85,7 @@ export function MaskedInput({
       value={value}
       onChange={(e) => {
         const raw = e.target.value;
-        setValue((prev) => apply(mask, raw, prev));
+        setValue((prev) => applyMask(mask, raw, prev));
       }}
     />
   );

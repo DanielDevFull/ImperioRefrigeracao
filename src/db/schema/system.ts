@@ -37,6 +37,9 @@ export const settings = pgTable("settings", {
   pmocResponsibleName: text("pmoc_responsible_name"),
   pmocResponsibleRegistry: text("pmoc_responsible_registry"),
   pmocResponsibleArt: text("pmoc_responsible_art"),
+  /** Orçamentos: validade sugerida (dias) e condições impressas no documento */
+  quoteValidityDays: integer("quote_validity_days").default(15).notNull(),
+  quoteTerms: text("quote_terms"),
   lastDailyRunAt: timestamp("last_daily_run_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()

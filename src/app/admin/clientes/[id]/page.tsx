@@ -7,6 +7,7 @@ import {
   CalendarClock,
   ClipboardList,
   FileSignature,
+  FileText,
   History,
   MapPin,
   MessageCircle,
@@ -150,6 +151,12 @@ export default async function ClientePage({ params, searchParams }: PageProps<"/
               <Link href={`/admin/contratos/novo?customerId=${c.id}`}>
                 <FileSignature />
                 Novo contrato
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href={`/admin/orcamentos/novo?customerId=${c.id}`}>
+                <FileText />
+                Novo orçamento
               </Link>
             </Button>
             <Button asChild size="lg">

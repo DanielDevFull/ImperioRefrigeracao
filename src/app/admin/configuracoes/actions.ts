@@ -259,6 +259,27 @@ export async function savePmocResponsible(_prev: ActionState, fd: FormData): Pro
   });
 }
 
+/* ---------------------------------------------------------------- Orçamentos */
+
+const quoteSettingsSchema = z.object({
+  quoteValidityDays: z
+    .number({ error: "Informe a validade em dias." })
+    .int("Use um número inteiro de dias.")
+    .min(1, "No mínimo 1 dia.")
+    .max(180, "No máximo 180 dias."),
+  quoteTerms: optionalText(4000, "Condições longas demais."),
+});
+
+export async function saveQuoteSettings(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  return runAction(async () => {
+    await assertRole([...EDITORS]);
+    const f = formValues(fd);
+    const parsed = quoteSettingsSchema.safeParse({ quoteValidityDays: f.num("quoteValidityDays") ?? undefined, quoteTerms: f.str("quoteTerms") });
+    if (!parsed.success) return invalid(parsed.error);
+    return save(parsed.data, "Padrões de orçamento salvos");
+  });
+}
+
 /* ------------------------------------------------------------ Rotina diária */
 
 export type DailySummary = Awaited<ReturnType<typeof runDaily>>;

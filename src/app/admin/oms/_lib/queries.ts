@@ -29,7 +29,7 @@ export type OmListFilters = {
 };
 
 const TYPES = ["preventiva", "corretiva", "instalacao", "visita_tecnica", "pmoc"] as const;
-const ORIGINS = ["manual", "automatica", "portal_cliente"] as const;
+const ORIGINS = ["manual", "automatica", "portal_cliente", "orcamento"] as const;
 
 function escapeLike(s: string) {
   return s.replace(/[\\%_]/g, (c) => `\\${c}`);

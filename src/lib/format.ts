@@ -146,6 +146,7 @@ export function formatCEP(value: string | null | undefined) {
 
 export const formatOM = (n: number | null | undefined) => `OM-${String(n ?? 0).padStart(6, "0")}`;
 export const formatPO = (n: number | null | undefined) => `PC-${String(n ?? 0).padStart(5, "0")}`;
+export const formatQuote = (n: number | null | undefined) => `ORC-${String(n ?? 0).padStart(5, "0")}`;
 export const formatCustomerCode = (n: number | null | undefined) =>
   `CLI-${String(n ?? 0).padStart(4, "0")}`;
 export const formatEquipmentCode = (n: number | null | undefined) =>
@@ -166,6 +167,9 @@ export function whatsappLink(phone: string | null | undefined, text?: string) {
   const full = d.length === 10 || d.length === 11 ? `55${d}` : d;
   return `https://wa.me/${full}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
+
+/** Fecha a frase com ponto, sem duplicar quando o texto já termina em pontuação ("Marina S."). */
+export const endSentence = (text: string) => (/[.!?…]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`);
 
 export function initials(name: string | null | undefined) {
   return (name ?? "?")

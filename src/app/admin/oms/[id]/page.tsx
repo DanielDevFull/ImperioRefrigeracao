@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { gte } from "drizzle-orm";
+import { eq, gte } from "drizzle-orm";
 import { AirVent, CalendarDays, MapPin, Navigation, Phone, TriangleAlert, UserRound } from "lucide-react";
 import { db } from "@/db";
-import { technicianAbsences } from "@/db/schema";
+import { quotes, technicianAbsences } from "@/db/schema";
 import { PageHeader } from "@/components/system/page-header";
 import { Panel } from "@/components/system/panel";
 import { CommissionStatusBadge, PriorityBadge, ReceivableStatusBadge, WorkOrderTypeBadge } from "@/components/system/status";
@@ -21,6 +21,7 @@ import {
   formatOM,
   formatPercent,
   formatPhone,
+  formatQuote,
   formatTime,
   mapsLink,
 } from "@/lib/format";
@@ -72,13 +73,16 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
   const today = todayISO();
   const closed = status === "concluida" || status === "cancelada";
 
-  const [technicians, absences, options] = await Promise.all([
+  const [technicians, absences, options, quote] = await Promise.all([
     activeTechnicians(),
     db.query.technicianAbsences.findMany({
       where: gte(technicianAbsences.endDate, today),
       columns: { technicianId: true, startDate: true, endDate: true, reason: true },
     }),
     closed ? Promise.resolve(null) : materialOptions(),
+    wo.origin === "orcamento"
+      ? db.query.quotes.findFirst({ where: eq(quotes.workOrderId, wo.id), columns: { id: true, number: true } })
+      : Promise.resolve(undefined),
   ]);
 
   const late = (ACTIVE_STATUSES as readonly string[]).includes(status) && !!wo.scheduledDate && wo.scheduledDate < today;
@@ -112,7 +116,16 @@ export default async function OmDetailPage({ params }: PageProps<"/admin/oms/[id
             <StatusLive status={status} />
             <WorkOrderTypeBadge type={wo.type} />
             {wo.priority !== "normal" && <PriorityBadge value={wo.priority} />}
-            <span className="text-xs text-steel">Origem: {labelOf(workOrderOrigin, wo.origin).label}</span>
+            {quote ? (
+              <span className="text-xs text-steel">
+                Origem:{" "}
+                <Link href={`/admin/orcamentos/${quote.id}`} className="text-frost hover:underline">
+                  Orçamento {formatQuote(quote.number)}
+                </Link>
+              </span>
+            ) : (
+              <span className="text-xs text-steel">Origem: {labelOf(workOrderOrigin, wo.origin).label}</span>
+            )}
           </>
         }
         actions={

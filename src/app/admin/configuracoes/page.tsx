@@ -17,6 +17,7 @@ import {
   CompanyForm,
   PixForm,
   PmocResponsibleForm,
+  QuoteSettingsForm,
 } from "./_components/settings-forms";
 
 export const metadata: Metadata = { title: "Configurações" };
@@ -28,6 +29,7 @@ const SECTIONS = [
   { id: "automacao", label: "Geração automática de OMs" },
   { id: "comissoes", label: "Comissões" },
   { id: "pmoc", label: "Responsável técnico do PMOC" },
+  { id: "orcamentos", label: "Orçamentos" },
   { id: "rotina", label: "Rotina automática" },
 ];
 
@@ -162,6 +164,12 @@ export default async function SettingsPage() {
                   pmocResponsibleArt: s.pmocResponsibleArt,
                 }}
               />
+            </Panel>
+          </section>
+
+          <section id="orcamentos" className="scroll-mt-24">
+            <Panel title="Orçamentos" description="Validade e condições sugeridas em cada novo orçamento." flush>
+              <QuoteSettingsForm initial={{ quoteValidityDays: s.quoteValidityDays, quoteTerms: s.quoteTerms }} />
             </Panel>
           </section>
 

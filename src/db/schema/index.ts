@@ -7,4 +7,5 @@ export * from "./inventory";
 export * from "./work-orders";
 export * from "./finance";
 export * from "./system";
+export * from "./quotes";
 export * from "./relations";

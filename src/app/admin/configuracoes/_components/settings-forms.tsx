@@ -19,7 +19,10 @@ import {
   saveCompany,
   savePix,
   savePmocResponsible,
+  saveQuoteSettings,
 } from "../actions";
+import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_QUOTE_TERMS } from "../../orcamentos/_lib/defaults";
 import { PendingButton, useFormAction } from "./form-kit";
 
 type Errors = Record<string, string>;
@@ -458,6 +461,37 @@ export function PmocResponsibleForm({
           </Field>
           <Field label="Número da ART padrão" htmlFor="pmocResponsibleArt" error={fe.pmocResponsibleArt} className="sm:col-span-3">
             <Input id="pmocResponsibleArt" name="pmocResponsibleArt" defaultValue={initial.pmocResponsibleArt ?? ""} className="tabular-nums" aria-invalid={inv(fe.pmocResponsibleArt)} />
+          </Field>
+        </div>
+      )}
+    </SectionForm>
+  );
+}
+
+/* ---------------------------------------------------------------- Orçamentos */
+
+export function QuoteSettingsForm({ initial }: { initial: { quoteValidityDays: number; quoteTerms: string | null } }) {
+  return (
+    <SectionForm action={saveQuoteSettings} submitLabel="Salvar padrões de orçamento" note="Valem para os próximos orçamentos; cada um pode ser ajustado.">
+      {(fe) => (
+        <div className="grid gap-5 sm:grid-cols-6">
+          <Field
+            label="Validade padrão (dias)"
+            htmlFor="quoteValidityDays"
+            error={fe.quoteValidityDays}
+            hint="Depois disso o cliente não consegue mais aprovar pelo link."
+            className="sm:col-span-2"
+          >
+            <Input id="quoteValidityDays" name="quoteValidityDays" type="number" min={1} max={180} defaultValue={initial.quoteValidityDays} className="tabular-nums" aria-invalid={inv(fe.quoteValidityDays)} />
+          </Field>
+          <Field
+            label="Condições impressas no orçamento"
+            htmlFor="quoteTerms"
+            error={fe.quoteTerms}
+            hint="Pagamento, garantia e prazo. Uma condição por linha."
+            className="sm:col-span-6"
+          >
+            <Textarea id="quoteTerms" name="quoteTerms" rows={5} maxLength={4000} defaultValue={initial.quoteTerms ?? DEFAULT_QUOTE_TERMS} aria-invalid={inv(fe.quoteTerms)} />
           </Field>
         </div>
       )}

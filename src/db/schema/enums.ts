@@ -30,7 +30,18 @@ export const workOrderOriginEnum = pgEnum("work_order_origin", [
   "automatica",
   "manual",
   "portal_cliente",
+  /** gerada quando um orçamento é aprovado */
+  "orcamento",
 ]);
+
+/**
+ * Orçamento: rascunho → enviado → aprovado (vira OM) | recusado; cancelado encerra sem decisão.
+ * "vencido" não é armazenado: rascunho/enviado com validade antes de hoje.
+ */
+export const quoteStatusEnum = pgEnum("quote_status", ["rascunho", "enviado", "aprovado", "recusado", "cancelado"]);
+
+/** Serviço entra na mão de obra da OM; material do estoque vira material cobrado na OM. */
+export const quoteItemKindEnum = pgEnum("quote_item_kind", ["servico", "material"]);
 
 /**
  * Fluxo da OM:

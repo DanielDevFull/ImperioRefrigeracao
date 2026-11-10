@@ -8,6 +8,7 @@ import {
   priority,
   purchaseOrderStatus,
   purchaseRequestStatus,
+  quoteStatus,
   receivableStatus,
   workOrderStatus,
   workOrderType,
@@ -73,5 +74,11 @@ export function PurchaseRequestStatusBadge({ status }: { status: string }) {
 
 export function CommissionPayoutStatusBadge({ status }: { status: string }) {
   const l = labelOf(payoutStatus, status);
+  return <ToneBadge tone={l.tone}>{l.label}</ToneBadge>;
+}
+
+/** Recebe o status efetivo do orçamento (effectiveQuoteStatus devolve "vencido"). */
+export function QuoteStatusBadge({ status }: { status: string }) {
+  const l = labelOf(quoteStatus, status);
   return <ToneBadge tone={l.tone}>{l.label}</ToneBadge>;
 }

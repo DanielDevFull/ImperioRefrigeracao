@@ -50,6 +50,17 @@ export const workOrderOrigin: LabelMap = {
   automatica: { label: "Automática", tone: "ice" },
   manual: { label: "Manual", tone: "frost" },
   portal_cliente: { label: "Portal do cliente", tone: "violet" },
+  orcamento: { label: "Orçamento", tone: "mint" },
+};
+
+/** Inclui o estado calculado "vencido" (rascunho/enviado com validade antes de hoje). */
+export const quoteStatus: LabelMap = {
+  rascunho: { label: "Rascunho", tone: "steel" },
+  enviado: { label: "Enviado", tone: "frost" },
+  aprovado: { label: "Aprovado", tone: "mint" },
+  recusado: { label: "Recusado", tone: "red" },
+  cancelado: { label: "Cancelado", tone: "steel" },
+  vencido: { label: "Vencido", tone: "brass" },
 };
 
 export const priority: LabelMap = {

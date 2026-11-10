@@ -19,6 +19,7 @@ import {
   maintenancePlanTasks,
   maintenancePlans,
 } from "./maintenance";
+import { quoteItems, quotes } from "./quotes";
 import { notifications, pmocDocuments } from "./system";
 import {
   commissionEntries,
@@ -53,6 +54,7 @@ export const customersRelations = relations(customers, ({ one, many }) => ({
   workOrders: many(workOrders),
   receivables: many(receivables),
   pmocDocuments: many(pmocDocuments),
+  quotes: many(quotes),
 }));
 
 export const customerSitesRelations = relations(customerSites, ({ one, many }) => ({
@@ -338,4 +340,16 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 export const pmocDocumentsRelations = relations(pmocDocuments, ({ one }) => ({
   customer: one(customers, { fields: [pmocDocuments.customerId], references: [customers.id] }),
   site: one(customerSites, { fields: [pmocDocuments.siteId], references: [customerSites.id] }),
+}));
+
+export const quotesRelations = relations(quotes, ({ one, many }) => ({
+  customer: one(customers, { fields: [quotes.customerId], references: [customers.id] }),
+  workOrder: one(workOrders, { fields: [quotes.workOrderId], references: [workOrders.id] }),
+  createdBy: one(user, { fields: [quotes.createdById], references: [user.id] }),
+  items: many(quoteItems),
+}));
+
+export const quoteItemsRelations = relations(quoteItems, ({ one }) => ({
+  quote: one(quotes, { fields: [quoteItems.quoteId], references: [quotes.id] }),
+  product: one(products, { fields: [quoteItems.productId], references: [products.id] }),
 }));

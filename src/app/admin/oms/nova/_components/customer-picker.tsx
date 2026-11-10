@@ -22,12 +22,14 @@ export function CustomerPicker({
   onChange,
   invalid,
   id,
+  emptyText = "Nenhum cliente encontrado. Cadastre o cliente antes de abrir a OM.",
 }: {
   customers: CustomerOption[];
   value: string | null;
   onChange: (id: string) => void;
   invalid?: boolean;
   id?: string;
+  emptyText?: string;
 }) {
   const [open, setOpen] = useState(false);
   const current = customers.find((c) => c.id === value);
@@ -65,7 +67,7 @@ export function CustomerPicker({
         >
           <CommandInput placeholder="Nome, CLI-0001 ou CPF/CNPJ" />
           <CommandList id="customer-picker-list">
-            <CommandEmpty>Nenhum cliente encontrado. Cadastre o cliente antes de abrir a OM.</CommandEmpty>
+            <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {customers.map((c) => (
                 <CommandItem

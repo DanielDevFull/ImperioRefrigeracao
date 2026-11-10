@@ -73,7 +73,7 @@ export async function logEvent(
 
 export type CreateWorkOrderInput = {
   type: "preventiva" | "corretiva" | "instalacao" | "visita_tecnica" | "pmoc";
-  origin?: "manual" | "portal_cliente" | "automatica";
+  origin?: "manual" | "portal_cliente" | "automatica" | "orcamento";
   priority?: "baixa" | "normal" | "alta" | "urgente";
   customerId: string;
   siteId?: string | null;
@@ -164,7 +164,9 @@ export async function createWorkOrder(
         ? "Gerada automaticamente pelo plano de manutenção."
         : input.origin === "portal_cliente"
           ? "Chamado aberto pelo cliente no portal."
-          : "OM criada.",
+          : input.origin === "orcamento"
+            ? "Gerada pela aprovação do orçamento."
+            : "OM criada.",
     actor,
   });
   if (wo.technicianId) {

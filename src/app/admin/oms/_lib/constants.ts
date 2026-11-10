@@ -31,6 +31,7 @@ export const ORIGINS = [
   { value: "manual", label: "Manual" },
   { value: "automatica", label: "Automática" },
   { value: "portal_cliente", label: "Portal do cliente" },
+  { value: "orcamento", label: "Orçamento aprovado" },
 ] as const;
 
 /** Tipos que normalmente geram cobrança avulsa ao concluir. */
